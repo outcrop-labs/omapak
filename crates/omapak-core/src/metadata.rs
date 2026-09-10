@@ -9,11 +9,12 @@ pub enum SourceAccess {
     /// Source is public and gets digested for the judge.
     #[default]
     Public,
-    /// Closed source, reviewed with the owner's cooperation: the owner
-    /// grants a maintainer scoped read access, the judge runs against the
-    /// real source, only the report is public. Unaudited binaries do not
-    /// ship from omapak, full stop.
-    PrivateAssisted,
+    /// Closed source, mirrored from Flathub's model: allowed when the
+    /// owner submitted or documented permission; badged proprietary on the
+    /// site; judged on packaging and provenance since there is no source.
+    /// Owner-assisted source review stays available as an offer, never a
+    /// requirement.
+    Proprietary,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
