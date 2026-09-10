@@ -59,12 +59,23 @@ jobs:
             const run = context.payload.workflow_run;
             const prNumber = run.pull_requests[0]?.number;
             if (!prNumber) { core.warning('no PR associated with this run'); return; }
+            if (!fs.existsSync('final')) { core.info('no reports to post'); return; }
+            const existing = await github.rest.issues.listComments({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, per_page: 100,
+            });
             for (const dir of fs.readdirSync('final')) {
               const md = fs.readFileSync(`final/${dir}/report.md`, 'utf8');
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                body: md,
-              });
+              const marker = md.split('\n')[0];
+              const prior = existing.data.find(c => c.body.startsWith(marker));
+              if (prior) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  comment_id: prior.id, body: md,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: prNumber, body: md,
+                });
+              }
             }
