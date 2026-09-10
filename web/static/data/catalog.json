@@ -1,12 +1,31 @@
 {
-  "generated_at": "2026-09-10T21:33:42.320Z",
+  "generated_at": "2026-09-10T21:46:08.824Z",
   "entries": [
     {
       "app_id": "io.github.juwan_hwang.Zephyr",
       "name": "Zephyr",
       "icon": null,
-      "summary": "A modern, lightweight Mihomo / Clash Meta GUI client built with Tauri and Rust",
-      "description": "Continuity submission. Zephyr's Flathub submission PR (flathub/flathub#9810) was closed; omapak picked it up. Original app by Juwan-Hwang (MIT, 700+ stars, actively maintained). Manifest adapted from the Flathub submission with sources still pinned to upstream release v2.4.3.",
+      "developer": "Juwan",
+      "description": [
+        "Zephyr is a state-of-the-art cross-platform GUI client for Mihomo, combining modern desktop aesthetics, high performance with Rust and Tauri v2, and a 13-layer security defense architecture.",
+        [
+          "High performance and low memory footprint with Tauri v2 and native Rust IPC",
+          "Zero heavyweight frontend frameworks — pure native JavaScript UI",
+          "Full proxy protocol management, subscription parsing, and latency testing",
+          "Real-time traffic oscilloscope monitoring and system tray integration"
+        ]
+      ],
+      "urls": {
+        "homepage": "https://github.com/Juwan-Hwang/Zephyr",
+        "bugtracker": "https://github.com/Juwan-Hwang/Zephyr/issues",
+        "vcs-browser": "https://github.com/Juwan-Hwang/Zephyr"
+      },
+      "bugtracker": "https://github.com/Juwan-Hwang/Zephyr/issues",
+      "help": null,
+      "screenshots": [
+        "https://raw.githubusercontent.com/Juwan-Hwang/Zephyr/main/apps/desktop/assets/screenshot-home.png"
+      ],
+      "summary": "A modern, lightweight Mihomo GUI client",
       "submitter": "jon",
       "source_repo": "https://github.com/Juwan-Hwang/Zephyr",
       "license": "MIT",
@@ -26,12 +45,42 @@
       "app_id": "io.ipfs.Desktop",
       "name": "IPFS Desktop",
       "icon": null,
-      "summary": "IPFS Desktop, the official desktop client for the InterPlanetary File System",
-      "description": "Continuity submission. IPFS Desktop (6.5k stars, MIT) had its Flathub submission (flathub/flathub#10144) closed after the submitter questioned the AI policy checklist and was told \"No, AI is not allowed in submission process\". omapak picked it up. Manifest from that PR unchanged: pinned upstream deb, Electron BaseApp, x-checker-data wired for updates.",
+      "developer": "Interplanetary Shipyard",
+      "description": [
+        "IPFS Desktop gives you all the power of IPFS in a convenient desktop app:\n      a complete IPFS node, plus handy OS menubar/taskbar shortcuts and an all-in-one\n      file manager, peer map, and content explorer.",
+        "Use IPFS Desktop to get acquainted with IPFS without needing to touch the\n      terminal — or, if you're already experienced, use the powerful menubar/taskbar\n      shortcuts alongside the command line to make your IPFS workflow faster.",
+        "Features include:",
+        [
+          "Start your node at system startup and control it from your OS system tray",
+          "Quickly import files, folders, and screenshots to IPFS",
+          "Easily manage the contents of your node (pin, preview, rename, and share)",
+          "Visualize your IPFS peers worldwide on an interactive world map",
+          "Explore the \"Merkle Forest\" of IPFS files and content-addressed data",
+          "OS-wide protocol handler support for ipfs:// and ipns:// links"
+        ]
+      ],
+      "urls": {
+        "homepage": "https://ipfs.tech/",
+        "bugtracker": "https://github.com/ipfs/ipfs-desktop/issues",
+        "vcs-browser": "https://github.com/ipfs/ipfs-desktop",
+        "help": "https://discuss.ipfs.tech/",
+        "faq": "https://docs.ipfs.tech/",
+        "details": "https://github.com/ipfs/ipfs-desktop/releases/tag/v0.49.0"
+      },
+      "bugtracker": "https://github.com/ipfs/ipfs-desktop/issues",
+      "help": null,
+      "screenshots": [
+        "https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-status.png",
+        "https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-files.png",
+        "https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-explore.png",
+        "https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-peers.png",
+        "https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-settings.png"
+      ],
+      "summary": "An unobtrusive and user-friendly desktop application for IPFS",
       "submitter": "jon",
       "source_repo": "https://github.com/ipfs/ipfs-desktop",
       "license": "MIT",
-      "homepage": "https://ipfs.tech",
+      "homepage": "https://ipfs.tech/",
       "tags": [
         "network",
         "file-sharing",
@@ -43,11 +92,89 @@
       "report_available": false
     },
     {
+      "app_id": "me.tyrrrz.DiscordChatExporter",
+      "name": "Discord Chat Exporter",
+      "icon": null,
+      "developer": "Oleksii Holub",
+      "description": [
+        "Discord Chat Exporter is an application that can be used to export message history\n      from any Discord channel to a file. It works with direct messages, group messages,\n      and server channels, and supports various output formats.",
+        "Features:",
+        [
+          "Export to HTML, plain text, CSV, or JSON",
+          "Filter by date range",
+          "Support for attachments, embeds, and reactions",
+          "Dark and light HTML themes",
+          "Works with user tokens and bot tokens"
+        ]
+      ],
+      "urls": {
+        "homepage": "https://github.com/Tyrrrz/DiscordChatExporter",
+        "bugtracker": "https://github.com/Tyrrrz/DiscordChatExporter/issues"
+      },
+      "bugtracker": "https://github.com/Tyrrrz/DiscordChatExporter/issues",
+      "help": null,
+      "screenshots": [
+        "https://raw.githubusercontent.com/Tyrrrz/DiscordChatExporter/2.47.1/.assets/list.png",
+        "https://raw.githubusercontent.com/Tyrrrz/DiscordChatExporter/2.47.1/.assets/output.png"
+      ],
+      "summary": "Export Discord chat logs to a file",
+      "submitter": "jon",
+      "source_repo": "https://github.com/Tyrrrz/DiscordChatExporter",
+      "license": "MIT",
+      "homepage": "https://github.com/Tyrrrz/DiscordChatExporter",
+      "tags": [
+        "utility"
+      ],
+      "source_access": "public",
+      "verdict": "published",
+      "certified": false,
+      "report_available": false
+    },
+    {
       "app_id": "org.libredb.Studio",
       "name": "LibreDB Studio",
       "icon": null,
-      "summary": "LibreDB Studio, the open-source database IDE",
-      "description": "Continuity submission. LibreDB Studio (557 stars, MIT, pushed the day of this submission) had its Flathub submission (flathub/flathub#9538) closed by its own author, with honor, after asking directly whether using an AI code-assistant during development conflicted with the policy. The moderator's answer: \"yes. It is vibecoded as he[ll].\" The author thanked him for the direct answer, kept his word, and closed the PR himself. omapak's answer to the same question is no.",
+      "developer": "LibreDB",
+      "description": [
+        "LibreDB Studio is an open-source SQL IDE for developers and data teams. The desktop\n      app runs entirely on your machine: it starts a local LibreDB Studio server in the\n      background and shows it in a native window. Nothing is sent to a cloud service.",
+        "Databases it speaks:",
+        [
+          "PostgreSQL",
+          "MySQL and MariaDB",
+          "SQLite",
+          "Microsoft SQL Server",
+          "Oracle Database",
+          "MongoDB",
+          "Redis"
+        ],
+        "What you get:",
+        [
+          "A Monaco-based SQL editor with schema-aware completion and formatting",
+          "A virtualized results grid built for large result sets, with CSV and JSON export",
+          "Schema browser, entity-relationship diagrams and index advice",
+          "Query plans, slow-query and session monitoring",
+          "Optional AI assistance (natural language to SQL, query explanation) using your own API key",
+          "An embedded sample database, so there is something to query on first launch"
+        ],
+        "Connections are made over TCP. The sandbox has no access to your home directory by\n      default; grant it explicitly if you need to open SQLite files or reach a database\n      through a Unix socket - the project documentation lists the exact commands."
+      ],
+      "urls": {
+        "homepage": "https://libredb.org",
+        "bugtracker": "https://github.com/libredb/libredb-studio/issues",
+        "vcs-browser": "https://github.com/libredb/libredb-studio",
+        "help": "https://github.com/libredb/libredb-studio/tree/main/docs",
+        "contribute": "https://github.com/libredb/libredb-studio/blob/main/CONTRIBUTING.md",
+        "details": "https://github.com/libredb/libredb-studio/releases/tag/0.9.59"
+      },
+      "bugtracker": "https://github.com/libredb/libredb-studio/issues",
+      "help": null,
+      "screenshots": [
+        "https://github.com/libredb/libredb-studio/raw/cb74378ddef24ec543a7b84154fadd8b7e1f8694/public/screenshots/hero-editor.png",
+        "https://github.com/libredb/libredb-studio/raw/cb74378ddef24ec543a7b84154fadd8b7e1f8694/public/screenshots/connection-modal.png",
+        "https://github.com/libredb/libredb-studio/raw/cb74378ddef24ec543a7b84154fadd8b7e1f8694/public/screenshots/erd-diagram.png",
+        "https://github.com/libredb/libredb-studio/raw/cb74378ddef24ec543a7b84154fadd8b7e1f8694/public/screenshots/nl2sql.png"
+      ],
+      "summary": "AI-powered SQL IDE for PostgreSQL, MySQL, MongoDB and more",
       "submitter": "jon",
       "source_repo": "https://github.com/libredb/libredb-studio",
       "license": "MIT",
