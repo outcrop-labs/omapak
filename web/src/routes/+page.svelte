@@ -41,7 +41,8 @@
   </h1>
   <p class="mt-5 max-w-[var(--read-width)] text-lg text-muted">
     Normal people don't give a shit how an app was built if it works well and fits their
-    needs. Omapak takes that seriously. Every submission gets scored by an
+    needs. Omapak takes that seriously. One remote gets you everything: omapak apps plus
+    the entire flathub catalog, served and cached by us. Every submission gets scored by an
     <a href="/rubric" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">agent judge</a>
     we build in the open, every report is
     <a href="/rubric" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">public</a>,
@@ -162,6 +163,7 @@
         {#each flathubFiltered.slice(0, 60) as app (app.app_id)}
           <a
             href="https://flathub.org/apps/{app.app_id}"
+            title="flatpak install omapak {app.app_id}"
             class="group flex items-center gap-3 rounded-sm border border-line-subtle bg-panel p-3 transition-colors hover:border-line hover:bg-hover"
           >
             {#if app.icon}
@@ -181,9 +183,10 @@
         {/each}
       </div>
       <p class="mt-4 font-mono text-xs text-ink-dim">
-        showing 60 of {flathubFiltered.length}. these install from the flathub remote
-        (<code class="text-fg">flatpak install flathub &lt;app-id&gt;</code>); omapak never
-        mirrors or proxies their bytes. apps we host ourselves always win the ID collision.
+        showing 60 of {flathubFiltered.length}. these install straight from the omapak
+        remote (<code class="text-fg">flatpak install omapak &lt;app-id&gt;</code>): fetched
+        from flathub once, cached, and served by us. apps we host ourselves always win the
+        ID collision.
       </p>
     {/if}
   {/if}

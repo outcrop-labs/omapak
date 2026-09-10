@@ -1,0 +1,16 @@
+[package]
+name = "omapak-repo-proxy"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+worker = "0.4"
+
+[profile.release]
+lto = true
+strip = true
