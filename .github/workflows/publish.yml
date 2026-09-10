@@ -37,8 +37,10 @@ jobs:
       - name: Install flatpak tooling
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder pipx rclone
-          pipx install flatpak-builder-lint
+          # PyGObject (flatpak-builder-lint dep) compiles from source on noble
+          sudo apt-get install -y flatpak flatpak-builder pipx rclone \
+            pkg-config libcairo2-dev libgirepository1.0-dev libglib2.0-dev
+          pipx install git+https://github.com/flathub/flatpak-builder-lint.git
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Install runtime + SDK
