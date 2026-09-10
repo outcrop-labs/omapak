@@ -1,0 +1,15 @@
+[package]
+name = "omapak-repo-proxy"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+worker = "0.8"
+
+[profile.release]
+lto = true
+strip = true

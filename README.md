@@ -2,6 +2,8 @@
 
 The open Flatpak repo. **Grade the app on its own merits.**
 
+**[omapak.org](https://omapak.org)** · [mission](https://omapak.org/mission) · [catalog](https://omapak.org/) · [rubric](https://omapak.org/rubric) · [submit an app](https://omapak.org/submit) · [repo.omapak.org](https://repo.omapak.org)
+
 I built this because Flathub decided in May 2026 that new apps get banned if AI
 had anything to do with them. Even one commit. That's a dumb rule, and I'd
 rather build the alternative than argue with people who won't have a fair
@@ -19,7 +21,8 @@ whole point, and it's the tone to expect around here. If you disagree with it,
 that's fine; this repo probably isn't for you.
 
 Born in [Omarchy](https://omarchy.org), works on any distro, because it's just
-flatpak. If another repo deplatforms a good app, we'll happily host the
+flatpak. One remote gets you everything: omapak apps plus the flathub catalog,
+fetched from them once, cached, and served from repo.omapak.org. If another repo deplatforms a good app, we'll happily host the
 continuation.
 
 ## What's in here

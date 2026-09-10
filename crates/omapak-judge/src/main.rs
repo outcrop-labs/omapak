@@ -2,6 +2,7 @@ mod build_stage;
 mod digest;
 mod dynamic_stage;
 mod judge_stage;
+mod legitimacy;
 mod prompt;
 mod static_stage;
 
@@ -110,27 +111,48 @@ fn main() -> Result<()> {
     let config = judge_stage::config_from_env()?;
     let (rubric, judge_info) = finish_judging(&cli, &static_report, build_ok, config.as_ref())?;
 
-    // Deterministic gates: build passed, appstream valid, submitter metadata
-    // present. Store-presence matters; blank tiles in software stores don't
-    // ship from here.
-    let gates_ok = build_ok
-        && omapak_core::appstream_clean(&static_report)
-        && static_report.metadata_present;
-
-    // Closed source ships only through owner-assisted review: until a
-    // maintainer runs the judge against the real source, the verdict can
-    // not exceed needs-human, no matter what the rubric says.
-    let assisted_pending = metadata_source_access(&cli.app_dir)
-        == Some(omapak_core::SourceAccess::PrivateAssisted)
-        && cli.source_dir.is_none();
-
-    let mut verdict = match &rubric {
-        Some(r) => compute_verdict(r, gates_ok),
-        None => gates_only_verdict(&static_report, gates_ok),
+    // Proprietary submissions get a web legitimacy pass: does this thing
+    // exist, is the channel real, is anything known-bad. Published with
+    // sources; documented malware is a hard gate.
+    let legitimacy = match (
+        config.as_ref(),
+        omapak_core::load_metadata(&cli.app_dir)
+            .map(|m| m.source_access == omapak_core::SourceAccess::Proprietary),
+    ) {
+        (Some(cfg), Some(true)) => {
+            eprintln!("→ legitimacy stage (web check)");
+            let app_id = static_report
+                .manifest
+                .as_ref()
+                .map(|m| m.app_id.clone())
+                .unwrap_or_else(|| "unknown".into());
+            let meta = omapak_core::load_metadata(&cli.app_dir)
+                .context("re-read metadata for legitimacy")?;
+            Some(legitimacy::run(cfg, &meta, &app_id).unwrap_or_else(|e| {
+                eprintln!("  legitimacy stage failed (continuing): {e:#}");
+                omapak_core::LegitimacyReport {
+                    model: format!("{}:online", cfg.model),
+                    summary: format!("legitimacy check failed to run: {e:#}"),
+                    confidence: 0,
+                    findings: vec![],
+                }
+            }))
+        }
+        _ => None,
     };
-    if assisted_pending && verdict == Verdict::AcceptRecommended {
-        verdict = Verdict::NeedsHuman;
-    }
+
+    // ONE gate: the build passed. Everything else is tags and scores.
+    // The omapak Certified badge is computed from the rubric but never
+    // gates publication.
+    let _ = metadata_source_access(&cli.app_dir);
+
+    let verdict = compute_verdict(
+        rubric.as_ref().unwrap_or(&empty_rubric()),
+        build_ok,
+    );
+    let certified = rubric.as_ref().is_some_and(|r| {
+        omapak_core::is_certified(r, omapak_core::appstream_clean(&static_report))
+    });
 
     let app_id = static_report
         .manifest
@@ -147,7 +169,9 @@ fn main() -> Result<()> {
         dynamic,
         rubric: rubric.clone(),
         verdict,
+        certified,
         judge: judge_info,
+        legitimacy,
     };
 
     std::fs::create_dir_all(&cli.out)?;
@@ -157,13 +181,13 @@ fn main() -> Result<()> {
     std::fs::write(&md_path, render_markdown(&report))?;
 
     eprintln!(
-        "✦ {} → {} (report: {})",
+        "✦ {} → {}{} (report: {})",
         report.app_id,
         match verdict {
-            Verdict::AcceptRecommended => "ACCEPT recommended",
-            Verdict::NeedsHuman => "NEEDS HUMAN",
-            Verdict::RejectRecommended => "REJECT recommended",
+            Verdict::Published => "PUBLISHED",
+            Verdict::BuildFailed => "BUILD FAILED",
         },
+        if certified { " [CERTIFIED]" } else { "" },
         json_path.display()
     );
     Ok(())
@@ -218,18 +242,23 @@ fn metadata_source_access(app_dir: &std::path::Path) -> Option<omapak_core::Sour
     omapak_core::load_metadata(app_dir).map(|m| m.source_access)
 }
 
-/// Without an agent rubric; only the deterministic gates speak.
-fn gates_only_verdict(static_report: &StaticReport, gates_ok: bool) -> Verdict {
-    if !gates_ok || static_report.manifest.is_none() {
-        return Verdict::RejectRecommended;
+/// Neutral rubric for when the agent couldn't run; certification is false.
+fn empty_rubric() -> Rubric {
+    let score = omapak_core::RubricScore {
+        score: 0,
+        rationale: "agent did not run".into(),
+    };
+    Rubric {
+        problem_clarity: omapak_core::RubricScore { ..score.clone() },
+        differentiation: omapak_core::Differentiation {
+            score: 0,
+            rationale: "agent did not run".into(),
+            better_alternatives: vec![],
+        },
+        architecture: omapak_core::RubricScore { ..score.clone() },
+        code_quality: omapak_core::RubricScore { ..score.clone() },
+        ui_ux: omapak_core::RubricScore { ..score.clone() },
+        packaging_hygiene: omapak_core::RubricScore { ..score },
+        security_flags: vec![],
     }
-    let hard_lint_fail = static_report.linters.iter().any(|l| {
-        l.status == omapak_core::LinterStatus::Failed
-            && l.tool == "flatpak-builder-lint"
-            && l.findings.iter().any(|f| f.contains("error"))
-    });
-    if hard_lint_fail {
-        return Verdict::RejectRecommended;
-    }
-    Verdict::NeedsHuman
 }

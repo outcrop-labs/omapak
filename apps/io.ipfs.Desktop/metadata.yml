@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/ipfs/ipfs-desktop
+summary: IPFS Desktop, the official desktop client for the InterPlanetary File System
+description: >-
+  Continuity submission. IPFS Desktop (6.5k stars, MIT) had its Flathub
+  submission (flathub/flathub#10144) closed after the submitter questioned
+  the AI policy checklist and was told "No, AI is not allowed in submission
+  process". omapak picked it up. Manifest from that PR unchanged: pinned
+  upstream deb, Electron BaseApp, x-checker-data wired for updates.
+license: MIT
+homepage: https://ipfs.tech
+tags: [network, file-sharing, p2p]

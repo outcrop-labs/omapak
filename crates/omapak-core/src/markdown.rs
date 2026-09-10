@@ -6,11 +6,31 @@ pub fn render_markdown(report: &crate::schema::Report) -> String {
     let mut out = String::new();
     out.push_str(&format!("## omapak judge · `{}`\n\n", report.app_id));
 
-    out.push_str(&format!("**Verdict: {}**\n\n", verdict_label(report.verdict)));
+    out.push_str(&format!("**{}**\n\n", verdict_label(report.verdict)));
+    if report.certified {
+        out.push_str("**✅ omapak Certified** — meets the published badge criteria.\n\n");
+    }
 
-    if !report.build.ok {
-        out.push_str("**Packaging gate FAILED.** The flatpak did not build. ");
-        out.push_str("Everything below is advisory context for fixing it.\n\n");
+    if let Some(legit) = &report.legitimacy {
+        out.push_str("**Web legitimacy check** (proprietary submission)\n\n");
+        out.push_str(&format!("{}\n\n", escape_table(&legit.summary)));
+        out.push_str(&format!("Confidence: {}/100 · checked by `{}`\n", legit.confidence, legit.model));
+        if !legit.findings.is_empty() {
+            out.push_str("\n| severity | finding | source |\n|---|---|---|\n");
+            for f in &legit.findings {
+                out.push_str(&format!(
+                    "| {} | {} | {} |\n",
+                    match f.severity {
+                        Severity::Critical => "**CRITICAL**",
+                        Severity::Warning => "warning",
+                        Severity::Info => "info",
+                    },
+                    escape_table(&f.detail),
+                    f.source.as_deref().unwrap_or("-")
+                ));
+            }
+        }
+        out.push('\n');
     }
 
     if report.build.ok && !crate::schema::appstream_clean(&report.static_report) {
@@ -32,7 +52,7 @@ pub fn render_markdown(report: &crate::schema::Report) -> String {
         ));
         out.push('\n');
         if !rubric.differentiation.better_alternatives.is_empty() {
-            out.push_str("**Better existing solutions** (informational, does not gate):\n");
+            out.push_str("**Existing solutions** (informational, does not gate):\n");
             for alt in &rubric.differentiation.better_alternatives {
                 out.push_str(&format!("- {alt}\n"));
             }
@@ -88,9 +108,8 @@ pub fn render_markdown(report: &crate::schema::Report) -> String {
 
 fn verdict_label(v: Verdict) -> &'static str {
     match v {
-        Verdict::AcceptRecommended => "✅ ACCEPT recommended",
-        Verdict::NeedsHuman => "🧑 NEEDS HUMAN review",
-        Verdict::RejectRecommended => "🛑 REJECT recommended",
+        Verdict::Published => "📦 PUBLISHED",
+        Verdict::BuildFailed => "🔧 BUILD FAILED (fix and resubmit)",
     }
 }
 
@@ -137,8 +156,10 @@ mod tests {
                 packaging_hygiene: RubricScore { score: 5, rationale: "clean".into() },
                 security_flags: vec![],
             }),
-            verdict: Verdict::AcceptRecommended,
+            verdict: Verdict::Published,
+            certified: false,
             judge: None,
+            legitimacy: None,
         }
     }
 

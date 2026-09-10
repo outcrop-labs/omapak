@@ -2,6 +2,7 @@ name: judge
 
 on:
   pull_request:
+    paths: ["apps/**"]
   push:
     branches: [main]
     paths: ["apps/**"]
@@ -39,14 +40,14 @@ jobs:
           key: flatpak-runtimes-${{ hashFiles('apps/**/com.*', 'apps/**/io.*', 'apps/**/net.*') }}-v1
           restore-keys: flatpak-runtimes-
 
-      - name: Add flathub remote
+      - name: Install runtimes
         run: |
-          df -h / | tail -1
-          # Runtimes are pulled by flatpak-builder itself via
-          # --install-deps-from=flathub at build time; explicit preinstalls
-          # kept dying mid-Sdk-download on CI runners.
-          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          df -h / | tail -1
+          sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
+          grep -rh "runtime:" apps/ 2>/dev/null | grep -oE "[a-z]+\.[A-Za-z]+\.[A-Za-z]+" | sort -u | while read rt; do
+            echo "installing $rt"
+            sudo flatpak install --system -y --noninteractive flathub "$rt" 2>&1 | tail -2 || true
+          done
+          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 2>&1 | tail -2 || true
 
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2

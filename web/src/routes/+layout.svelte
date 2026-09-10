@@ -2,6 +2,7 @@
   import "../app.css";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import ThemeToggle from "$lib/components/ThemeToggle.svelte";
+  import OmapakMark from "$lib/components/OmapakMark.svelte";
   import { initTheme } from "$lib/theme.svelte";
 
   let { children } = $props();
@@ -25,14 +26,16 @@
 
 <QueryClientProvider client={queryClient}>
   <div class="flex min-h-dvh flex-col">
-    <header class="border-b border-line bg-[var(--theme-header-bg)]">
+    <header class="border-b border-line bg-[var(--theme-glass)] backdrop-blur-xl">
       <div
         class="mx-auto flex h-14 w-full max-w-[var(--page-width)] items-center justify-between px-6"
       >
-        <a href="/" class="flex items-baseline gap-2">
-          <span class="font-mono text-lg font-medium text-accent">omapak</span>
-          <span class="hidden font-mono text-xs text-ink-dim sm:inline"
-            >grade the app on its own merits</span
+        <a href="/" class="flex items-center gap-2.5">
+          <OmapakMark size={20} />
+          <span
+            class="text-[13px] font-semibold uppercase tracking-[0.18em] text-fg"
+          >
+            omapak</span
           >
         </a>
         <nav class="flex items-center gap-5 font-mono text-sm">
@@ -54,7 +57,7 @@
         class="mx-auto flex w-full max-w-[var(--page-width)] flex-wrap items-center justify-between gap-3 px-6 py-5 font-mono text-xs text-ink-dim"
       >
         <span>Omapak · every flatpak, every distro</span>
-        <span>normal people don't give a shit how it was built. neither do we.</span>
+        <span>one remote · every app · normal people don't give a shit how it was built, neither do we</span>
       </div>
     </footer>
   </div>

@@ -1,0 +1,18 @@
+name = "omapak-repo-proxy"
+main = "build/worker/shim.mjs"
+compatibility_date = "2026-09-01"
+
+# Serves repo.omapak.org: omapak objects from R2, flathub pass-through
+# cached on first fetch. Deployed with the omapak Cloudflare account.
+routes = [{ pattern = "repo.omapak.org/*", zone_name = "omapak.org" }]
+
+[[r2_buckets]]
+binding = "OMAPAK_REPO"
+bucket_name = "omapak-repo"
+
+# Must stay last: keys after this table would scope into [build].
+# --no-panic-recovery: wasm-bindgen's catch wrappers require an externref
+# table worker-build can't produce; abort-on-panic is a fine trade for a
+# 60-line proxy. Builds locally and in CI with the pinned toolchain.
+[build]
+command = "worker-build --release --no-panic-recovery"
