@@ -33,6 +33,11 @@
     { key: "packaging_hygiene", label: "packaging" },
   ];
 
+  function descBlocks(d: string | string[] | null | undefined): (string | string[])[] {
+    if (!d) return [];
+    return Array.isArray(d) ? d : [d];
+  }
+
   function score(key: string): number {
     const rubric = $report.data?.rubric as Record<string, { score: number }> | undefined;
     return rubric?.[key]?.score ?? 0;
@@ -98,7 +103,7 @@
       <section class="mt-8">
         <h2 class="font-mono text-sm uppercase tracking-[0.15em] text-ink-dim">about</h2>
         <div class="mt-4 max-w-3xl space-y-3">
-          {#each Array.isArray(entry.description) ? entry.description : [entry.description] as block}
+          {#each descBlocks(entry.description) as block}
             {#if typeof block === "string"}
               <p class="leading-relaxed text-muted">{block}</p>
             {:else if Array.isArray(block)}

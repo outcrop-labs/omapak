@@ -89,7 +89,6 @@ export interface CatalogEntry {
   help?: string | null;
   screenshots?: string[];
   summary: string;
-  description?: string;
   submitter: string;
   source_repo: string;
   source_access?: SourceAccess;
