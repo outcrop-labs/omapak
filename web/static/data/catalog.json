@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-09-10T03:35:14.320Z",
+  "entries": [
+    {
+      "app_id": "io.outcroplabs.OmapakFixture",
+      "summary": "Fixture app used to exercise the omapak judge pipeline end to end",
+      "description": "Not a real app. It exists so `cargo run -p omapak-judge -- fixtures/testapp` has something honest to grade — builds fast, packages cleanly, does nothing.",
+      "submitter": "jon",
+      "source_repo": "https://github.com/outcrop-labs/omapak",
+      "license": "MIT",
+      "tags": [
+        "fixture",
+        "testing"
+      ],
+      "verdict": "needs_human",
+      "report_available": true
+    }
+  ]
+}

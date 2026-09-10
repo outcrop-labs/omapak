@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/*
+ * MERCURY — Outcrop Labs' design system, ported to omapak from the
+ * outcrop-labs monorepo (`apps/web/src/app/globals.css`, spec:
+ * `talaria/docs/design/mercury-spec.md`). Near-black instrument surfaces,
+ * cream readout, warm gold for action, safety orange for failure only.
+ * Matte — no glows, no gradients.
+ */
+
+:root {
+  --font-plex-mono: "IBM Plex Mono";
+  --font-plex-sans: "IBM Plex Sans";
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  --font-display: var(--font-sans);
+
+  --page-width: 1152px;
+  --converse-width: 900px;
+  --focus-width: 800px;
+  --read-width: 46rem;
+}
+
+/* ── Mercury Dark ────────────────────────────────────────────────────────── */
+[data-theme="mercury"] {
+  color-scheme: dark;
+
+  --theme-bg: #090a09;
+  --theme-sidebar: #141312;
+  --theme-panel: #141312;
+  --theme-raised: #1e1c1a;
+  --theme-hover: #24221f;
+  --theme-card: var(--theme-raised);
+  --theme-card2: var(--theme-hover);
+  --theme-border: #302d29;
+  --theme-border-strong: #4a4640;
+  --theme-border-subtle: #232019;
+  --theme-text: #e7e2db;
+  --theme-muted: #8e877e;
+  --theme-ink-dim: #5f5a53;
+
+  --theme-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --theme-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --theme-shadow-3: 0 14px 44px rgba(0, 0, 0, 0.5);
+  --theme-glass: rgba(9, 10, 9, 0.82);
+
+  --theme-focus: #c8b46c;
+  --theme-accent: #c8b46c;
+  --theme-accent-secondary: #d9c98f;
+  --theme-accent-subtle: rgba(200, 180, 108, 0.12);
+  --theme-accent-border: rgba(200, 180, 108, 0.32);
+  --theme-active: #c8b46c;
+  --theme-link: #c8b46c;
+
+  --theme-success: #a0ca92;
+  --theme-warning: #c8b46c;
+  --theme-danger: #ee6018;
+  --theme-chart-1: #68b6c8;
+  --theme-chart-2: #d77968;
+
+  --theme-glow: 0 2px 10px rgba(0, 0, 0, 0.4);
+
+  --theme-header-bg: #090a09;
+  --theme-header-border: #302d29;
+  --theme-input: #1e1c1a;
+}
+
+/* ── Mercury Light ───────────────────────────────────────────────────────── */
+[data-theme="mercury-light"] {
+  color-scheme: light;
+
+  --theme-bg: #f2f0eb;
+  --theme-sidebar: #faf8f4;
+  --theme-panel: #faf8f4;
+  --theme-raised: #ffffff;
+  --theme-hover: #ece8e0;
+  --theme-card: var(--theme-raised);
+  --theme-card2: var(--theme-hover);
+  --theme-border: #dcd6cc;
+  --theme-border-strong: #c9c2b6;
+  --theme-border-subtle: #e6e1d8;
+  --theme-text: #1b1917;
+  --theme-muted: #6e675d;
+  --theme-ink-dim: #8a8378;
+
+  --theme-shadow-1: 0 1px 2px rgba(27, 25, 23, 0.06);
+  --theme-shadow-2: 0 8px 24px rgba(27, 25, 23, 0.1);
+  --theme-shadow-3: 0 14px 40px rgba(27, 25, 23, 0.14);
+  --theme-glass: rgba(242, 240, 235, 0.9);
+
+  --theme-focus: #8f7a33;
+  --theme-accent: #8f7a33;
+  --theme-accent-secondary: #a38f45;
+  --theme-accent-subtle: rgba(143, 122, 51, 0.1);
+  --theme-accent-border: rgba(143, 122, 51, 0.3);
+  --theme-active: #8f7a33;
+  --theme-link: #8f7a33;
+
+  --theme-success: #5e7f4e;
+  --theme-warning: #8f7a33;
+  --theme-danger: #c8500f;
+  --theme-chart-1: #3e7a8a;
+  --theme-chart-2: #b05a4a;
+
+  --theme-glow: 0 2px 8px rgba(27, 25, 23, 0.1);
+
+  --theme-header-bg: #f2f0eb;
+  --theme-header-border: #dcd6cc;
+  --theme-input: #ffffff;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+
+  --color-surface: var(--theme-bg);
+  --color-sidebar: var(--theme-sidebar);
+  --color-panel: var(--theme-panel);
+  --color-card: var(--theme-card);
+  --color-card2: var(--theme-card2);
+  --color-raised: var(--theme-raised);
+  --color-hover: var(--theme-hover);
+  --color-line: var(--theme-border);
+  --color-line-strong: var(--theme-border-strong);
+  --color-line-subtle: var(--theme-border-subtle);
+  --color-fg: var(--theme-text);
+  --color-muted: var(--theme-muted);
+  --color-ink-dim: var(--theme-ink-dim);
+  --color-accent: var(--theme-accent);
+  --color-accent-soft: var(--theme-accent-subtle);
+  --color-success: var(--theme-success);
+  --color-warning: var(--theme-warning);
+  --color-danger: var(--theme-danger);
+  --color-chart-1: var(--theme-chart-1);
+  --color-chart-2: var(--theme-chart-2);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--theme-border);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--theme-accent-subtle);
+    color: var(--theme-text);
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+*:hover {
+  scrollbar-color: var(--theme-border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}

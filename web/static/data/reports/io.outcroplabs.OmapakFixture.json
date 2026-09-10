@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "app_id": "io.outcroplabs.OmapakFixture",
+  "created_at": "2026-09-10T03:25:32.654275726Z",
+  "static": {
+    "manifest": {
+      "app_id": "io.outcroplabs.OmapakFixture",
+      "runtime": "org.freedesktop.Platform",
+      "sdk": "org.freedesktop.Sdk",
+      "finish_args": [
+        "--share=network"
+      ],
+      "modules": [
+        {
+          "name": "omapak-fixture",
+          "sources": [
+            {}
+          ],
+          "buildsystem": "simple"
+        }
+      ],
+      "command": "omapak-fixture"
+    },
+    "metadata_present": true,
+    "appstream_present": true,
+    "linters": [
+      {
+        "tool": "flatpak-builder-lint",
+        "status": "not_found"
+      },
+      {
+        "tool": "appstreamcli",
+        "status": "failed",
+        "findings": [
+          "W: io.outcroplabs.OmapakFixture:~: url-homepage-missing",
+          "E: io.outcroplabs.OmapakFixture:~: desktop-app-launchable-missing",
+          "I: io.outcroplabs.OmapakFixture:~: content-rating-missing",
+          "I: io.outcroplabs.OmapakFixture:~: developer-info-missing",
+          "✘ Validation failed: errors: 1, warnings: 1, infos: 2, pedantic: 1"
+        ]
+      }
+    ],
+    "advisories": [],
+    "source_stats": {
+      "files": 3,
+      "bytes": 1710,
+      "largest": [
+        {
+          "path": "testapp/io.outcroplabs.OmapakFixture.json",
+          "bytes": 795
+        },
+        {
+          "path": "testapp/io.outcroplabs.OmapakFixture.metainfo.xml",
+          "bytes": 566
+        },
+        {
+          "path": "testapp/metadata.yml",
+          "bytes": 349
+        }
+      ]
+    }
+  },
+  "build": {
+    "ok": true,
+    "duration_secs": 0,
+    "log_tail": [
+      "recorded in an earlier phase"
+    ]
+  },
+  "verdict": "needs_human"
+}

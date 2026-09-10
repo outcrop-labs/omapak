@@ -1,0 +1,37 @@
+{
+  "name": "omapak-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "omapak catalog — the open Flatpak repository. SvelteKit + Mercury.",
+  "scripts": {
+    "dev": "vite dev --port 5217",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json",
+    "sync-rubric": "node scripts/sync-rubric.mjs",
+    "build-catalog": "node scripts/build-catalog.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "^3.0.8",
+    "@sveltejs/kit": "^2.20.0",
+    "@sveltejs/vite-plugin-svelte": "^6.2.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^26.2.0",
+    "svelte": "^5.56.8",
+    "svelte-check": "^4.3.4",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.7.2",
+    "vite": "^7.3.2"
+  },
+  "dependencies": {
+    "@lucide/svelte": "^1.28.0",
+    "@tanstack/svelte-query": "^5.90.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.4.0",
+    "yaml": "^2.8.0"
+  }
+}
