@@ -1,0 +1,1 @@
+{"rustc":11410426090777951712,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[52791169357520703,"build_script_build",false,9480020768129468146]],"local":[{"RerunIfEnvChanged":{"var":"ICU4X_DATA_DIR","val":null}}],"rustflags":["--cfg","getrandom_backend=\"wasm_js\"","-C","target-feature=+reference-types"],"config":0,"compile_kind":0}
