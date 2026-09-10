@@ -2,6 +2,8 @@
 
 The open Flatpak repo. **Grade the app on its own merits.**
 
+**[omapak.org](https://omapak.org)** · [mission](https://omapak.org/mission) · [catalog](https://omapak.org/) · [rubric](https://omapak.org/rubric) · [submit an app](https://omapak.org/submit) · [repo.omapak.org](https://repo.omapak.org)
+
 I built this because Flathub decided in May 2026 that new apps get banned if AI
 had anything to do with them. Even one commit. That's a dumb rule, and I'd
 rather build the alternative than argue with people who won't have a fair
