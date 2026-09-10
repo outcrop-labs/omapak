@@ -2,9 +2,6 @@ name = "omapak-repo-proxy"
 main = "build/worker/shim.mjs"
 compatibility_date = "2026-09-01"
 
-[build]
-command = "worker-build --release"
-
 # Serves repo.omapak.org: omapak objects from R2, flathub pass-through
 # cached on first fetch. Deployed with the omapak Cloudflare account.
 routes = [{ pattern = "repo.omapak.org/*", zone_name = "omapak.org" }]
@@ -12,3 +9,7 @@ routes = [{ pattern = "repo.omapak.org/*", zone_name = "omapak.org" }]
 [[r2_buckets]]
 binding = "OMAPAK_REPO"
 bucket_name = "omapak-repo"
+
+# Must stay last: keys after this table would scope into [build].
+[build]
+command = "worker-build --release"
