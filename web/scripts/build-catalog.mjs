@@ -69,6 +69,8 @@ for (const { dir, published } of sources) {
 
     entries.push({
       app_id: appId,
+      name: meta.name || null,
+      icon: meta.icon || null,
       summary: meta.summary,
       description: meta.description,
       submitter: meta.submitter,
