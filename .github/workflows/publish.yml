@@ -87,6 +87,11 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
-        # copy, not sync: the bucket also holds proxy-cached flathub
-        # objects that must never be reaped
-        run: R2_BUCKET=omapak-repo ./deploy/r2-copy.sh repo
+        # Inlined (not deploy/r2-copy.sh) because the repo-branch commit
+        # step above wipes the working tree with git rm -rf. Copy, not
+        # sync: the bucket also holds proxy-cached flathub objects.
+        run: |
+          rclone copy repo/ ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
+            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
+            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
+            --s3-no-check-bucket
