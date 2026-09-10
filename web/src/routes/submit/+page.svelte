@@ -69,6 +69,26 @@ tags: [utility, gnome]</pre>
         Note what's <strong class="text-fg">not</strong> in there: any question about who or
         what wrote the code. We don't ask. Don't tell us; we don't care.
       </p>
+      <div class="mt-6 max-w-[var(--read-width)] rounded-sm border border-warning/40 bg-card p-5">
+        <p class="font-mono text-xs uppercase tracking-[0.15em] text-warning">
+          private repo or closed source?
+        </p>
+        <p class="mt-3 text-sm text-muted">
+          Fine by us. Set <code class="font-mono text-sm text-fg">source_access: binaries-only</code>
+          in metadata.yml, point your manifest at your own release assets with pinned sha256
+          checksums, and declare the release channel as
+          <code class="font-mono text-sm text-fg">source_repo</code>. The judge grades the
+          packaging, appstream, and provenance instead of code, and your app carries a
+          <span class="text-warning">binaries only</span> badge on the site. No pretending we
+          audited what we couldn't see.
+        </p>
+        <p class="mt-3 text-sm text-muted">
+          One rule, and it's the security boundary: for binaries-only apps, a maintainer will
+          open an issue on your release repo to confirm you're behind the submission. A thumbs
+          up from the project owner unblocks the merge. That's it. We want to work with you,
+          not against you.
+        </p>
+      </div>
       <div class="mt-6 max-w-[var(--read-width)] rounded-sm border border-line bg-card p-5">
         <p class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">
           required: valid appstream metainfo

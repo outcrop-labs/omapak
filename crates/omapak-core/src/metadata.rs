@@ -3,12 +3,26 @@ use std::path::Path;
 
 /// `metadata.yml` — what the submitter attests about themselves and the app.
 /// The judge reads it; the judge does not trust it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
+pub enum SourceAccess {
+    /// Source is public and gets digested for the judge.
+    #[default]
+    Public,
+    /// No source available; the manifest ships the author's own pinned
+    /// release binaries. Judge works from packaging + metadata only and the
+    /// report carries a "code not audited" badge.
+    BinariesOnly,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Metadata {
     pub submitter: String,
-    /// Upstream source repository the manifest builds from.
+    /// Upstream repository or release channel the artifacts come from.
     pub source_repo: String,
     pub summary: String,
+    #[serde(default)]
+    pub source_access: SourceAccess,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub license: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
