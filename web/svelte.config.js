@@ -5,6 +5,9 @@ import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 const config = {
   preprocess: vitePreprocess(),
   kit: {
+    // An empty catalog (zero published apps) leaves /app/[id] uncrawled;
+    // that's a legitimate state, not an error.
+    prerender: { handleUnseenRoutes: "ignore" },
     adapter: adapter({
       // Fully prerendered static catalog — deployed to R2 / any static host.
       pages: "build",
