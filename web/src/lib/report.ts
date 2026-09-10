@@ -99,7 +99,7 @@ export interface Catalog {
   entries: CatalogEntry[];
 }
 
-// Pass-through entries: flathub's catalog, listed but never mirrored.
+// Flathub catalog entries, served through the omapak caching proxy.
 export interface FlathubEntry {
   app_id: string;
   name: string;
