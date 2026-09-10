@@ -16,8 +16,8 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
 
-      - name: Install cargo-worker
-        run: cargo install cargo-worker
+      - name: Install worker-build
+        run: cargo install worker-build
 
       - name: Deploy the repo proxy worker
         working-directory: worker
