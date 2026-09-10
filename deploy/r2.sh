@@ -4,7 +4,8 @@
 #
 # Required environment:
 #   R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY  — token with Object Write on the bucket
-#   R2_ENDPOINT — e.g. https://<account_id>.r2.cloudflarestorage.com/omapak-repo
+#   R2_ENDPOINT — e.g. https://<account_id>.r2.cloudflarestorage.com
+#   R2_BUCKET — e.g. omapak-repo
 # (In CI these come from repo secrets/vars of the same names.)
 set -euo pipefail
 
@@ -12,10 +13,12 @@ repo_dir="${1:?usage: r2.sh <repo-dir>}"
 : "${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID not set}"
 : "${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY not set}"
 : "${R2_ENDPOINT:?R2_ENDPOINT not set}"
+: "${R2_BUCKET:=omapak-repo}"
 
 command -v rclone >/dev/null || { echo "rclone not installed" >&2; exit 1; }
 
-remote=":s3,provider=Cloudflare,endpoint=${R2_ENDPOINT}"
+# Connection-string form: everything after the final ':' is bucket/path.
+remote=":s3,provider=Cloudflare,endpoint=${R2_ENDPOINT}:${R2_BUCKET}"
 rclone sync "$repo_dir/" "$remote" \
   --s3-access-key-id "$R2_ACCESS_KEY_ID" \
   --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
