@@ -47,7 +47,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     init.method = Method::Get;
     let upstream_req = Request::new_with_init(&format!("{UPSTREAM}/{path}"), &init)?;
     match Fetch::Request(upstream_req).send().await {
-        Ok(resp) if resp.status_code() == 200 => {
+        Ok(mut resp) if resp.status_code() == 200 => {
             let bytes = resp.bytes().await?;
             let _ = bucket.put(&path, bytes.clone()).execute().await;
             let mut headers = Headers::new();
