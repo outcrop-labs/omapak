@@ -31,9 +31,6 @@
       >
         <a href="/" class="flex items-baseline gap-2">
           <span class="font-mono text-lg font-medium text-accent">omapak</span>
-          <span class="hidden font-mono text-xs text-ink-dim sm:inline"
-            >grade the app on its own merits</span
-          >
         </a>
         <nav class="flex items-center gap-5 font-mono text-sm">
           <a href="/" class="text-muted transition-colors hover:text-fg">catalog</a>
