@@ -11,25 +11,34 @@
     the open flatpak repository
   </p>
   <h1 class="mt-3 max-w-3xl text-4xl leading-tight sm:text-5xl">
-    Grade the artifact, not the <span class="text-accent">authorship</span>.
+    Grade the app on its own <span class="text-accent">merits</span>.
   </h1>
   <p class="mt-5 max-w-[var(--read-width)] text-lg text-muted">
-    omapak accepts apps on what they are: does it work, is it built sanely, is it honest about
-    what it does. Who or what wrote the code — human, AI, or pair — is not our business. Every
-    submission is scored by a <a href="/rubric" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">published rubric</a>,
-    and every judge report is <a href="/rubric" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">public</a>.
+    Normal people don't give a shit how an app was built if it works well and fits their
+    needs. Omapak takes that seriously. Every submission gets scored by an
+    <a href="/rubric" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">agent judge</a>
+    we build in the open, every report is
+    <a href="/rubric" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">public</a>,
+    and a human makes the merge call. Scored, published, never gatekept — that's the
+    difference between a store and a gatekeeper.
   </p>
   <div class="mt-8 flex flex-wrap items-center gap-3">
+    <a
+      href="/mission"
+      class="rounded-sm border border-accent-border bg-accent-soft px-4 py-2.5 font-mono text-sm text-accent transition-colors hover:bg-accent hover:text-surface"
+    >
+      read the mission →</a
+    >
+    <a
+      href="/submit"
+      class="rounded-sm border border-line px-4 py-2.5 font-mono text-sm text-muted transition-colors hover:border-line-strong hover:text-fg"
+    >
+      submit an app</a
+    >
     <code
       class="rounded-sm border border-line bg-raised px-4 py-2.5 font-mono text-sm text-fg shadow-[var(--theme-shadow-1)]"
     >
       flatpak remote-add --if-not-exists omapak omapak.flatpakrepo</code
-    >
-    <a
-      href="/submit"
-      class="rounded-sm border border-accent-border bg-accent-soft px-4 py-2.5 font-mono text-sm text-accent transition-colors hover:bg-accent hover:text-surface"
-    >
-      submit an app →</a
     >
   </div>
 </section>

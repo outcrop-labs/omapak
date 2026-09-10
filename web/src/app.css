@@ -186,3 +186,68 @@
   width: 6px;
   height: 6px;
 }
+
+/* ── Mission prose — MISSION.md rendered on /mission ─────────────────────── */
+.mission-prose {
+  max-width: var(--read-width);
+}
+.mission-prose h1 {
+  font-size: 1.75rem;
+  margin-bottom: 1.75rem;
+}
+.mission-prose h2 {
+  font-size: 1.15rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+.mission-prose p {
+  color: var(--theme-muted);
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+}
+.mission-prose p:first-of-type {
+  color: var(--theme-text);
+  font-size: 1.125rem;
+}
+.mission-prose strong {
+  color: var(--theme-text);
+}
+.mission-prose a {
+  color: var(--theme-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--theme-accent-subtle);
+  text-underline-offset: 4px;
+}
+.mission-prose a:hover {
+  text-decoration-color: var(--theme-accent);
+}
+.mission-prose ul {
+  margin: 1.25rem 0;
+  padding-left: 1.25rem;
+  list-style: none;
+}
+.mission-prose li {
+  color: var(--theme-muted);
+  line-height: 1.75;
+  margin-bottom: 0.75rem;
+  padding-left: 0.75rem;
+  position: relative;
+}
+.mission-prose li::before {
+  content: "·";
+  position: absolute;
+  left: -0.75rem;
+  color: var(--theme-accent);
+}
+.mission-prose li strong {
+  color: var(--theme-text);
+}
+.mission-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--theme-text);
+  background: var(--theme-raised);
+  border: 1px solid var(--theme-border-subtle);
+  border-radius: 3px;
+  padding: 0.1rem 0.35rem;
+}

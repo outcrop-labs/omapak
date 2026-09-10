@@ -16,10 +16,10 @@
 </script>
 
 <svelte:head>
-  <title>omapak — the open Flatpak repo</title>
+  <title>Omapak — the open Flatpak repo</title>
   <meta
     name="description"
-    content="omapak grades the artifact, not the authorship. Every submission scored on a published rubric, every judge report public."
+    content="Omapak grades the app on its own merits. Every submission scored by an open agent judge, every report public, never gatekept."
   />
 </svelte:head>
 
@@ -32,11 +32,12 @@
         <a href="/" class="flex items-baseline gap-2">
           <span class="font-mono text-lg font-medium text-accent">omapak</span>
           <span class="hidden font-mono text-xs text-ink-dim sm:inline"
-            >grade the artifact, not the authorship</span
+            >grade the app on its own merits</span
           >
         </a>
         <nav class="flex items-center gap-5 font-mono text-sm">
           <a href="/" class="text-muted transition-colors hover:text-fg">catalog</a>
+          <a href="/mission" class="text-muted transition-colors hover:text-fg">mission</a>
           <a href="/rubric" class="text-muted transition-colors hover:text-fg">rubric</a>
           <a href="/submit" class="text-muted transition-colors hover:text-fg">submit</a>
           <ThemeToggle />
@@ -52,10 +53,8 @@
       <div
         class="mx-auto flex w-full max-w-[var(--page-width)] flex-wrap items-center justify-between gap-3 px-6 py-5 font-mono text-xs text-ink-dim"
       >
-        <span>omapak — an Outcrop Labs project · every flatpak, every distro</span>
-        <span
-          >we don't care who or what wrote your code — we care that the app is good</span
-        >
+        <span>Omapak — every flatpak, every distro</span>
+        <span>normal people don't give a shit how it was built. neither do we.</span>
       </div>
     </footer>
   </div>

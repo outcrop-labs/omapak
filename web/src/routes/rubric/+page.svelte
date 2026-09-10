@@ -20,7 +20,7 @@
     {
       name: "code quality",
       gates: false,
-      text: "Readability, consistency, dead code, error handling. Style differences don't score. Suspected authorship — human, AI, or mixed — is explicitly out of scope: the judge cannot know, and it does not matter.",
+      text: "Readability, consistency, dead code, error handling. Style differences don't score. And 'built with AI' is not a signal — that's the entire reason this repo exists. We judge slop, and slop is judgeable on its own.",
     },
     {
       name: "ui / ux",
@@ -30,12 +30,12 @@
     {
       name: "packaging hygiene",
       gates: true,
-      text: "Manifest sanity, pinned sources, runtime fit, sane finish-args, truthful appstream. Below 2/5 is a hard reject — an app that can't install cleanly has no business being distributed.",
+      text: "Manifest sanity, pinned sources, runtime fit, sane finish-args, truthful appstream. Below 2/5 is a hard reject — come back when it installs clean.",
     },
     {
       name: "security flags",
       gates: true,
-      text: "Obfuscated payloads, unexplained endpoints, harvesting beyond the stated purpose, miners, undisclosed telemetry, binaries of unknown provenance. A critical flag is a hard reject. An empty list is the common case — the judge is told not to invent flags to seem thorough.",
+      text: "Obfuscated payloads, mystery endpoints, undisclosed telemetry, miner-shaped code, harvesting beyond the stated purpose. Hard pass, pound sand. An empty list is the common case — the judge is told not to invent flags to seem thorough.",
     },
   ];
 </script>
@@ -50,9 +50,10 @@
     Every submission graded in the open.
   </h1>
   <p class="mt-5 max-w-[var(--read-width)] text-lg text-muted">
-    The judge prompt below is the exact prompt sent with every submission — published, versioned,
-    and versioned in the repo. Scores are advisory context; only two things gate: the app must
-    build, and it must not carry a critical security flag. Merging is always a human decision.
+    This is the exact prompt sent with every submission — published, versioned, in the repo.
+    The gates are honest and boring: it builds, it's not hostile to the user, the packaging
+    isn't a mess. Everything else is scored, published, and never gatekept. No vibes, no
+    overzealous mods denying on a whim, everything written down. A human makes the call.
   </p>
 </section>
 

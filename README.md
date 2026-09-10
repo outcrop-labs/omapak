@@ -26,7 +26,7 @@ continuation.
 
 ```
 crates/omapak-core/     the schema: rubric, reports, manifest parsing
-crates/omapak-judge/    the judge — static checks → real build → LLM rubric → public report
+crates/omapak-judge/    the judge — static checks → real build → agent rubric → public report
 apps/<app-id>/          submissions: your manifest + metadata.yml
 fixtures/testapp/       fixture app I use to beat on the pipeline
 web/                    omapak.org — SvelteKit + Mercury
@@ -41,8 +41,9 @@ cargo run -p omapak-judge -- apps/my.app --source-dir ~/src/my.app
 ```
 
 It runs the boring checks first (flatpak-builder-lint, appstream validation,
-sandbox holes, unpinned sources), does a real `flatpak-builder` build, then an
-LLM scores it against the rubric. Point it at any OpenAI-compatible endpoint:
+sandbox holes, unpinned sources), does a real `flatpak-builder` build, then the
+judge agent scores it against the rubric. Point it at any OpenAI-compatible
+endpoint:
 
 ```
 OMAPAK_LLM_BASE_URL / OMAPAK_LLM_KEY / OMAPAK_LLM_MODEL
