@@ -19,6 +19,10 @@ pub fn run(manifest: &Path, work_dir: &Path, repo_dir: &Path) -> Result<BuildRep
     let mut child = Command::new("flatpak-builder")
         .arg("--force-clean")
         .arg("--disable-rofiles-fuse")
+        // Runtimes/SDKs the manifest declares get pulled from flathub by
+        // flatpak-builder itself; preinstalling them in CI kept dying on the
+        // big Sdk refs with the error swallowed by the runner.
+        .arg("--install-deps-from=flathub")
         .arg("--repo")
         .arg(repo_dir)
         .arg(work_dir)
