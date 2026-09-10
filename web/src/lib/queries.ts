@@ -1,5 +1,5 @@
 import { createQuery } from "@tanstack/svelte-query";
-import type { Catalog, Report } from "./report";
+import type { Catalog, FlathubIndex, Report } from "./report";
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
@@ -12,6 +12,15 @@ export function useCatalog() {
     queryKey: ["catalog"],
     queryFn: () => fetchJson<Catalog>("/data/catalog.json"),
     staleTime: Infinity,
+  });
+}
+
+export function useFlathub() {
+  return createQuery({
+    queryKey: ["flathub"],
+    queryFn: () => fetchJson<FlathubIndex>("/data/flathub.json"),
+    staleTime: Infinity,
+    retry: 1,
   });
 }
 
