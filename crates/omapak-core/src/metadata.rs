@@ -9,10 +9,11 @@ pub enum SourceAccess {
     /// Source is public and gets digested for the judge.
     #[default]
     Public,
-    /// No source available; the manifest ships the author's own pinned
-    /// release binaries. Judge works from packaging + metadata only and the
-    /// report carries a "code not audited" badge.
-    BinariesOnly,
+    /// Closed source, reviewed with the owner's cooperation: the owner
+    /// grants a maintainer scoped read access, the judge runs against the
+    /// real source, only the report is public. Unaudited binaries do not
+    /// ship from omapak, full stop.
+    PrivateAssisted,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

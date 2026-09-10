@@ -73,11 +73,12 @@ pub fn build_user_prompt(inputs: &JudgeInputs) -> String {
         p.push_str(&format!("== Source digest ==\n{}\n\n", d));
     } else {
         p.push_str(
-            "== Source availability ==\nNo source digest was provided (binaries-only \
-submission). Judge the packaging, appstream metadata, and any public materials. \
-You cannot audit code you cannot see: say so plainly in the rationale, do not \
-speculate about hidden behavior, and let packaging_hygiene reflect provenance \
-quality (pinned author releases, checksums, attestations) rather than code.\n\n",
+            "== Source availability ==\nNo source digest was provided. If this is a \
+private-assisted submission, the maintainer's source review happens outside this \
+report and is noted in it. Judge the packaging, appstream metadata, and public \
+materials. Do not speculate about code you cannot see, and say plainly in the \
+rationale that code review is pending or was performed under owner-assisted \
+access.\n\n",
         );
     }
     p.push_str(&format!(
