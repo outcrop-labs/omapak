@@ -40,29 +40,14 @@ jobs:
           key: flatpak-runtimes-${{ hashFiles('apps/**/com.*', 'apps/**/io.*', 'apps/**/net.*') }}-v1
           restore-keys: flatpak-runtimes-
 
-      - name: Install runtimes at system level
+      - name: Install runtimes
         run: |
-          df -h / | tail -1
-          sudo mkdir -p /var/lib/flatpak
           sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
-          # Non-fatal: failures warn but the build proceeds; flatpak-builder
-          # will surface a clear error if a runtime is genuinely missing.
-          for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
-            [ -f "$m" ] || continue
-            rt=$(grep -m1 -oE 'runtime:[[:space:]]*[":]?(org|com|io|net)\.[a-z]+\.[A-Za-z]+' "$m" | grep -oE '(org|com|io|net)\.[a-z]+\.[A-Za-z]+' | head -1)
-            rv=$(grep -m1 -oE 'runtime-version:[[:space:]]*["\']?([0-9]+\.[0-9]+)' "$m" | grep -oE '[0-9]+\.[0-9]+')
-            if [ -n "$rt" ] && [ -n "$rv" ]; then
-              echo "::group::install $rt//$rv"
-              sudo flatpak install --system -y --noninteractive flathub "$rt//$rv" "$rt.Sdk//$rv" || \
-                echo "::warning::runtime $rt//$rv install failed; build may fail on missing runtime"
-              echo "::endgroup::"
-            fi
+          grep -rh "runtime:" apps/ 2>/dev/null | grep -oE "[a-z]+\.[A-Za-z]+\.[A-Za-z]+" | sort -u | while read rt; do
+            echo "installing $rt"
+            sudo flatpak install --system -y --noninteractive flathub "$rt" 2>&1 | tail -2 || true
           done
-          echo "::group::install base freedesktop 24.08"
-          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 || \
-            echo "::warning::base runtime install failed"
-          echo "::endgroup::"
-          df -h / | tail -1
+          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 2>&1 | tail -2 || true
 
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
