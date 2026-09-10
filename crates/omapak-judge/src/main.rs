@@ -53,6 +53,9 @@ fn main() -> Result<()> {
     if !app_dir.is_dir() {
         bail!("{} is not a directory", app_dir.display());
     }
+    // Track whether any app's build failed so the process can exit
+    // non-zero (GitHub shows a red X on the CI check).
+    let mut any_build_failed = false;
 
     let (static_report, build_report) = match &cli.partial {
         Some(path) => {
@@ -190,7 +193,13 @@ fn main() -> Result<()> {
         if certified { " [CERTIFIED]" } else { "" },
         json_path.display()
     );
-    Ok(())
+
+    if report.build.ok {
+        Ok(())
+    } else {
+        // Exit 1 so GitHub CI shows a red X for failed builds
+        std::process::exit(1);
+    }
 }
 
 /// Judge stage; assumes static + build already ran.
