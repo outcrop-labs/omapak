@@ -99,6 +99,20 @@ export interface Catalog {
   entries: CatalogEntry[];
 }
 
+// Pass-through entries: flathub's catalog, listed but never mirrored.
+export interface FlathubEntry {
+  app_id: string;
+  name: string;
+  summary: string;
+  icon: string | null;
+  license: string | null;
+}
+
+export interface FlathubIndex {
+  generated_at: string;
+  apps: FlathubEntry[];
+}
+
 export const VERDICT_LABEL: Record<Verdict, string> = {
   accept_recommended: "accepted",
   needs_human: "needs human",
