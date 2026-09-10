@@ -38,10 +38,11 @@ pub fn run(config: &JudgeConfig, inputs: &JudgeInputs) -> Result<(Rubric, JudgeI
     ];
 
     // Attempt 1 with json_object response_format; some OpenAI-compatible
-    // endpoints 400 on it, in which case retry bare. Then one corrective
-    // retry if the payload parses but fails schema validation.
+    // endpoints 400 on it, in which case retry bare. Then corrective retries
+    // for empty content (reasoning models can exhaust the token budget
+    // before emitting JSON) and schema-validation failures.
     let mut rubric = None;
-    for attempt in 0..3 {
+    for attempt in 0..4 {
         let use_json_mode = attempt < 2;
         let (status, body) = chat(&client, config, &messages, use_json_mode)?;
 
@@ -52,7 +53,22 @@ pub fn run(config: &JudgeConfig, inputs: &JudgeInputs) -> Result<(Rubric, JudgeI
             bail!("LLM endpoint returned {}: {}", status, body);
         }
 
-        let content = extract_content(&body)?;
+        let content = match extract_content(&body) {
+            Ok(c) => c,
+            Err(e) => {
+                let finish = serde_json::from_str::<Value>(&body)
+                    .ok()
+                    .and_then(|v| {
+                        v.get("choices")?.get(0)?.get("finish_reason")?.as_str().map(String::from)
+                    })
+                    .unwrap_or_default();
+                messages.push(json!({
+                    "role": "user",
+                    "content": format!("Your previous response produced no usable content ({e}; finish_reason={finish}). Respond again with strict JSON only — keep reasoning brief and reserve your output for the JSON object.")
+                }));
+                continue;
+            }
+        };
         match parse_rubric(&content) {
             Ok(r) if r.validate().is_ok() => {
                 rubric = Some(r);
@@ -97,7 +113,7 @@ fn chat(
         "model": config.model,
         "messages": messages,
         "temperature": 0.2,
-        "max_tokens": 4096,
+        "max_tokens": 16384,
     });
     if json_mode {
         body["response_format"] = json!({ "type": "json_object" });
