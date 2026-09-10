@@ -35,12 +35,10 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
             headers.set("Cache-Control", "public, max-age=31536000, immutable")?;
         }
         headers.set("X-Omapak-Origin", if is_summary { "omapak" } else { "cached" })?;
-        let body = match obj.body() {
-            Ok(b) => b,
-            Err(e) => return Response::error(format!("object body: {e}"), 500),
-        };
-        let _ = body;
-        return obj.as_response().with_headers(headers).into();
+        // worker 0.8: body() is Option<ObjectBody>; response_body() hands
+        // the stream to the runtime without buffering it in the worker.
+        let body = obj.body().ok_or_else(|| Error::RustError("object body consumed".into()))?;
+        return Ok(Response::from_body(body.response_body()?)?.with_headers(headers));
     }
 
     // Cache miss: fetch from flathub once, store, serve. Content-addressed
