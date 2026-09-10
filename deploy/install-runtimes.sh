@@ -1,5 +1,5 @@
 #!/bin/bash
-set -u
+
 sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
 for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
   [ -f "$m" ] || continue
@@ -23,3 +23,5 @@ for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
 done
 
 sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 2>/dev/null | tail -1
+
+exit 0
