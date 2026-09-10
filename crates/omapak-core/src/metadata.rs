@@ -3,12 +3,27 @@ use std::path::Path;
 
 /// `metadata.yml` — what the submitter attests about themselves and the app.
 /// The judge reads it; the judge does not trust it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
+pub enum SourceAccess {
+    /// Source is public and gets digested for the judge.
+    #[default]
+    Public,
+    /// Closed source, reviewed with the owner's cooperation: the owner
+    /// grants a maintainer scoped read access, the judge runs against the
+    /// real source, only the report is public. Unaudited binaries do not
+    /// ship from omapak, full stop.
+    PrivateAssisted,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Metadata {
     pub submitter: String,
-    /// Upstream source repository the manifest builds from.
+    /// Upstream repository or release channel the artifacts come from.
     pub source_repo: String,
     pub summary: String,
+    #[serde(default)]
+    pub source_access: SourceAccess,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub license: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]

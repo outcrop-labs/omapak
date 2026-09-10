@@ -153,7 +153,7 @@ fn parse_rubric(content: &str) -> Result<Rubric> {
     let start = text.find('{').context("no JSON object found")?;
     let end = text.rfind('}').context("no JSON object found")?;
     let slice = &text[start..=end];
-    let mut rubric: Rubric = serde_json::from_str(slice)?;
+    let rubric: Rubric = serde_json::from_str(slice)?;
     rubric.validate().map_err(|e| anyhow::anyhow!("{}", e))?;
     Ok(rubric)
 }
