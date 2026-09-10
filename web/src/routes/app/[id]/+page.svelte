@@ -97,7 +97,29 @@
     {#if entry.description}
       <section class="mt-8">
         <h2 class="font-mono text-sm uppercase tracking-[0.15em] text-ink-dim">about</h2>
-        <p class="mt-4 max-w-3xl leading-relaxed text-muted">{entry.description}</p>
+        <div class="mt-4 max-w-3xl space-y-3">
+          {#each Array.isArray(entry.description) ? entry.description : [entry.description] as block}
+            {#if typeof block === "string"}
+              <p class="leading-relaxed text-muted">{block}</p>
+            {:else if Array.isArray(block)}
+              <ul class="ml-4 list-disc space-y-1 text-muted">
+                {#each block as item}<li>{item}</li>{/each}
+              </ul>
+            {/if}
+          {/each}
+        </div>
+      </section>
+    {/if}
+
+    <!-- Screenshots -->
+    {#if entry.screenshots?.length}
+      <section class="mt-8">
+        <h2 class="font-mono text-sm uppercase tracking-[0.15em] text-ink-dim">screenshots</h2>
+        <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {#each entry.screenshots.slice(0, 4) as src}
+            <img src={src} alt={name} loading="lazy" class="rounded-sm border border-line shadow-[var(--theme-shadow-1)]" />
+          {/each}
+        </div>
       </section>
     {/if}
 

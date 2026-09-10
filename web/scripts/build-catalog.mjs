@@ -29,12 +29,48 @@ for (const { dir, published } of sources) {
     let meta;
     try {
       meta = parseYaml(readFileSync(metaPath, "utf8"));
-      // Extract nice name from the metainfo XML
-      const metainfoPath = join(appDir, `${name}.metainfo.xml`);
-      if (existsSync(metainfoPath)) {
-        const xml = readFileSync(metainfoPath, "utf8");
-        const nameMatch = xml.match(/<name>([^<]+)<\/name>/);
-        if (nameMatch) meta.name = nameMatch[1].trim();
+      // Parse metainfo XML for real store data (description, dev, urls, screenshots)
+      const appDirFiles = readdirSync(appDir);
+      const xmlFile = appDirFiles.find(f => f.endsWith(".metainfo.xml") || f.endsWith(".appdata.xml"));
+      if (xmlFile) {
+        const xml = readFileSync(join(appDir, xmlFile), "utf8");
+        const pick = (re) => { const m = xml.match(re); return m ? m[1].trim() : null; };
+        meta.name = pick(/<name>([^<]+)<\/name>/) || meta.name;
+        meta.summary = pick(/<summary>([^<]+)<\/summary>/) || meta.summary;
+        meta.developer = pick(/<developer[^>]*>[\s\S]*?<name>([^<]+)<\/name>/) || null;
+        // Full description: paragraphs + lists as structured data
+        const descMatch = xml.match(/<description>([\s\S]*?)<\/description>/);
+        if (descMatch) {
+          const raw = descMatch[1];
+          const blocks = [];
+          const parts = raw.split(/(<\/?(?:p|ul|li)>)/);
+          let list = null;
+          let para = null;
+          for (const part of parts) {
+            const t = part.trim();
+            if (t === "<p>") { para = ""; }
+            else if (t === "</p>") { if (para) blocks.push(para); para = null; }
+            else if (t === "<ul>") { list = []; }
+            else if (t === "</ul>") { if (list) blocks.push(list); list = null; }
+            else if (t === "<li>") { if (list) list.push(""); }
+            else if (t === "</li>") { continue; }
+            else if (t && !t.startsWith("<")) {
+              const text = t.replace(/<[^>]+>/g, "").trim();
+              if (!text) continue;
+              if (list) list[list.length - 1] = text;
+              else if (para !== null) para = text;
+            }
+          }
+          meta.description = blocks.length ? blocks : meta.description;
+        }
+        // URLs
+        meta.urls = {};
+        for (const m of xml.matchAll(/<url type="([^"]+)">([^<]+)<\/url>/g)) meta.urls[m[1]] = m[2].trim();
+        meta.homepage = meta.urls.homepage || meta.homepage;
+        meta.bugtracker = meta.urls.bugtracker || null;
+        // Screenshots
+        meta.screenshots = [...xml.matchAll(/<image[^>]*>([^<]+)<\/image>/g)].map(m => m[1].trim());
+        meta.icon = pick(/<icon[^>]*>([^<]+)<\/icon>/) || null;
       }
     } catch (e) {
       console.warn(`! ${name}: metadata.yml unreadable: ${e.message}`);
@@ -71,8 +107,13 @@ for (const { dir, published } of sources) {
       app_id: appId,
       name: meta.name || null,
       icon: meta.icon || null,
+      developer: meta.developer || null,
+      description: meta.description || null,
+      urls: meta.urls || {},
+      bugtracker: meta.bugtracker || null,
+      help: meta.help || null,
+      screenshots: meta.screenshots || [],
       summary: meta.summary,
-      description: meta.description,
       submitter: meta.submitter,
       source_repo: meta.source_repo,
       license: meta.license,
