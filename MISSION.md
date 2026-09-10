@@ -33,7 +33,7 @@ you can read (and the community guides); a human makes the call. The rubric does
 boring work so a small team of maintainers can reasonably run this repo.
 
 To be clear, I'm not anti-Flathub and I'm not anti-human-review. I'm anti *gatekeeping*, 
-and anti *treating "used an LLM" as a character flaw*. That said, Omapak is not a slop repo  
+and anti *treating "used an LLM" as a character flaw*. That said, Omapak is not a slop repo 
 either. That's the whole point. "Built it using AI/agents" and "slop" are different things.
 
 ## The other rules
