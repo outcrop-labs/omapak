@@ -77,6 +77,13 @@
               {#each entry.tags.slice(0, 3) as tag}
                 <span class="rounded-sm border border-line-subtle px-1.5 py-0.5">{tag}</span>
               {/each}
+              {#if entry.source_access === "private-assisted"}
+                <span
+                  class="rounded-sm border border-warning/40 px-1.5 py-0.5 text-warning"
+                  title="Closed source; reviewed with the owner's cooperation, report public"
+                  >closed source</span
+                >
+              {/if}
             </span>
             {#if entry.advisory_average !== undefined}
               <span class="text-accent">{entry.advisory_average.toFixed(1)} avg</span>
