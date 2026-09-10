@@ -13,6 +13,28 @@ pub fn render_markdown(report: &crate::schema::Report) -> String {
         out.push_str("Everything below is advisory context for fixing it.\n\n");
     }
 
+    if let Some(legit) = &report.legitimacy {
+        out.push_str("**Web legitimacy check** (proprietary submission)\n\n");
+        out.push_str(&format!("{}\n\n", escape_table(&legit.summary)));
+        out.push_str(&format!("Confidence: {}/100 · checked by `{}`\n", legit.confidence, legit.model));
+        if !legit.findings.is_empty() {
+            out.push_str("\n| severity | finding | source |\n|---|---|---|\n");
+            for f in &legit.findings {
+                out.push_str(&format!(
+                    "| {} | {} | {} |\n",
+                    match f.severity {
+                        Severity::Critical => "**CRITICAL**",
+                        Severity::Warning => "warning",
+                        Severity::Info => "info",
+                    },
+                    escape_table(&f.detail),
+                    f.source.as_deref().unwrap_or("-")
+                ));
+            }
+        }
+        out.push('\n');
+    }
+
     if report.build.ok && !crate::schema::appstream_clean(&report.static_report) {
         out.push_str("**Appstream gate FAILED.** Metainfo is missing or has validation errors; ");
         out.push_str("the app would render as a blank tile in software stores. Fix and resubmit.\n\n");
@@ -139,6 +161,7 @@ mod tests {
             }),
             verdict: Verdict::AcceptRecommended,
             judge: None,
+            legitimacy: None,
         }
     }
 

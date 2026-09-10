@@ -2,6 +2,7 @@ mod build_stage;
 mod digest;
 mod dynamic_stage;
 mod judge_stage;
+mod legitimacy;
 mod prompt;
 mod static_stage;
 
@@ -110,6 +111,36 @@ fn main() -> Result<()> {
     let config = judge_stage::config_from_env()?;
     let (rubric, judge_info) = finish_judging(&cli, &static_report, build_ok, config.as_ref())?;
 
+    // Proprietary submissions get a web legitimacy pass: does this thing
+    // exist, is the channel real, is anything known-bad. Published with
+    // sources; documented malware is a hard gate.
+    let legitimacy = match (
+        config.as_ref(),
+        omapak_core::load_metadata(&cli.app_dir)
+            .map(|m| m.source_access == omapak_core::SourceAccess::Proprietary),
+    ) {
+        (Some(cfg), Some(true)) => {
+            eprintln!("→ legitimacy stage (web check)");
+            let app_id = static_report
+                .manifest
+                .as_ref()
+                .map(|m| m.app_id.clone())
+                .unwrap_or_else(|| "unknown".into());
+            let meta = omapak_core::load_metadata(&cli.app_dir)
+                .context("re-read metadata for legitimacy")?;
+            Some(legitimacy::run(cfg, &meta, &app_id).unwrap_or_else(|e| {
+                eprintln!("  legitimacy stage failed (continuing): {e:#}");
+                omapak_core::LegitimacyReport {
+                    model: format!("{}:online", cfg.model),
+                    summary: format!("legitimacy check failed to run: {e:#}"),
+                    confidence: 0,
+                    findings: vec![],
+                }
+            }))
+        }
+        _ => None,
+    };
+
     // Deterministic gates: build passed, appstream valid, submitter metadata
     // present. Store-presence matters; blank tiles in software stores don't
     // ship from here.
@@ -125,6 +156,15 @@ fn main() -> Result<()> {
         Some(r) => compute_verdict(r, gates_ok),
         None => gates_only_verdict(&static_report, gates_ok),
     };
+
+    // Documented malware or fraud from the web check is a hard gate for
+    // proprietary apps, same standing as a critical security flag.
+    if legitimacy
+        .as_ref()
+        .is_some_and(|l| l.findings.iter().any(|f| f.severity == omapak_core::Severity::Critical))
+    {
+        verdict = Verdict::RejectRecommended;
+    }
 
     let app_id = static_report
         .manifest
@@ -142,6 +182,7 @@ fn main() -> Result<()> {
         rubric: rubric.clone(),
         verdict,
         judge: judge_info,
+        legitimacy,
     };
 
     std::fs::create_dir_all(&cli.out)?;
