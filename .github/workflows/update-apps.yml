@@ -1,0 +1,52 @@
+name: update-apps
+
+# Daily sweep for upstream releases. Runs flatpak-external-data-checker
+# (flathub's own bot) over every manifest's x-checker-data; it edits,
+# commits to a branch, and opens a PR per app with updates. Those PRs go
+# through the judge like any submission: a version bump that fails to
+# build or trips a gate does not merge. Auto-updates never bypass review.
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install flatpak-external-data-checker
+        run: |
+          sudo apt-get update
+          # PyGObject (a dependency) compiles from source on noble
+          sudo apt-get install -y pkg-config libcairo2-dev \
+            libgirepository1.0-dev libglib2.0-dev
+          pip install "git+https://github.com/flathub-infra/flatpak-external-data-checker.git"
+
+      - name: Configure git for bot commits
+        run: |
+          git config user.name "omapak-update-bot"
+          git config user.email "update-bot@omapak.outcrop.labs"
+
+      - name: Check manifests for upstream updates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          shopt -s nullglob
+          for manifest in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
+            echo "::group::check $manifest"
+            flatpak-external-data-checker --never-fork "$manifest" || \
+              echo "::warning::checker failed for $manifest"
+            git checkout main 2>/dev/null || git checkout master
+            git pull --ff-only origin "${GITHUB_REF_NAME:-main}" 2>/dev/null || true
+            echo "::endgroup::"
+          done
