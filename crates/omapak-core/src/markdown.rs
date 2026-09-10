@@ -13,6 +13,11 @@ pub fn render_markdown(report: &crate::schema::Report) -> String {
         out.push_str("Everything below is advisory context for fixing it.\n\n");
     }
 
+    if report.build.ok && !crate::schema::appstream_clean(&report.static_report) {
+        out.push_str("**Appstream gate FAILED.** Metainfo is missing or has validation errors; ");
+        out.push_str("the app would render as a blank tile in software stores. Fix and resubmit.\n\n");
+    }
+
     if let Some(rubric) = &report.rubric {
         out.push_str("| dimension | score | rationale |\n|---|---|---|\n");
         out.push_str(&rubric_row("problem clarity", &rubric.problem_clarity));
