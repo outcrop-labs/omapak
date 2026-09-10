@@ -71,6 +71,7 @@ for (const { dir, published } of sources) {
       tags: meta.tags ?? [],
       source_access: meta.source_access ?? "public",
       verdict: report?.verdict ?? "unpublished",
+      certified: report?.certified ?? false,
       advisory_average: advisory ? Number(advisory) : undefined,
       last_commit_date: report?.static?.source_stats?.last_commit_date,
       report_available: report !== null,

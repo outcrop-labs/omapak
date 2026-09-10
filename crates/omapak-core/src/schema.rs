@@ -12,9 +12,11 @@ pub const ACCEPT_ADVISORY_AVERAGE: f32 = 3.5;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Verdict {
-    AcceptRecommended,
-    NeedsHuman,
-    RejectRecommended,
+    /// The app built and installed; it ships. Period.
+    Published,
+    /// The build failed. This is the only reason an omapak submission
+    /// does not ship.
+    BuildFailed,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -94,27 +96,30 @@ impl Rubric {
     }
 }
 
-/// The entire gate logic of omapak, in one pure function. The judge's rubric
-/// informs; these rules decide. `gates_ok` is the deterministic packaging
-/// gate: build succeeded, appstream is valid, metadata is present.
-pub fn compute_verdict(rubric: &Rubric, gates_ok: bool) -> Verdict {
-    if !gates_ok {
-        return Verdict::RejectRecommended;
+/// The entire gate logic of omapak: build passed, it ships. There is no
+/// second gate. Quality, security, and packaging findings are tags on the
+/// catalog entry, not barriers. omapak certifies excellence (see
+/// is_certified) but does not withhold publication from apps that fall
+/// short of it — people are free to take a risk on a small dev.
+pub fn compute_verdict(_rubric: &Rubric, build_ok: bool) -> Verdict {
+    if build_ok {
+        Verdict::Published
+    } else {
+        Verdict::BuildFailed
     }
-    if rubric
-        .security_flags
-        .iter()
-        .any(|f| f.severity == Severity::Critical)
-    {
-        return Verdict::RejectRecommended;
-    }
-    if rubric.packaging_hygiene.score < GATE_MIN_PACKAGING_HYGIENE {
-        return Verdict::RejectRecommended;
-    }
-    if rubric.security_flags.is_empty() && rubric.advisory_average() >= ACCEPT_ADVISORY_AVERAGE {
-        return Verdict::AcceptRecommended;
-    }
-    Verdict::NeedsHuman
+}
+
+/// Certification badge criteria: the bar for the omapak Certified badge.
+/// Failing any criterion means the app ships without the badge, not that
+/// it doesn't ship.
+pub fn is_certified(rubric: &Rubric, appstream_clean: bool) -> bool {
+    appstream_clean
+        && rubric.advisory_average() >= 3.0
+        && rubric.packaging_hygiene.score >= 3
+        && !rubric
+            .security_flags
+            .iter()
+            .any(|f| f.severity == Severity::Critical)
 }
 
 /// Store-presence gate: appstream metainfo must exist and carry no
@@ -253,6 +258,9 @@ pub struct Report {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub rubric: Option<Rubric>,
     pub verdict: Verdict,
+    /// True when the app meets the omapak Certified badge criteria.
+    #[serde(default)]
+    pub certified: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub judge: Option<JudgeInfo>,
     /// Present only for proprietary submissions (web legitimacy check).
@@ -291,32 +299,31 @@ mod tests {
 
     #[test]
     fn verdict_gates() {
+        assert_eq!(compute_verdict(&rubric_with(5, 5, vec![]), true), Verdict::Published);
+        assert_eq!(compute_verdict(&rubric_with(5, 5, vec![]), false), Verdict::BuildFailed);
+        // Even critical security flags don't block publication; they are
+        // prominent tags. Certification is withheld, not the app.
         let critical = SecurityFlag {
             severity: Severity::Critical,
             detail: "obfuscated payload".into(),
         };
-        assert_eq!(compute_verdict(&rubric_with(5, 5, vec![]), true), Verdict::AcceptRecommended);
-        assert_eq!(compute_verdict(&rubric_with(5, 5, vec![]), false), Verdict::RejectRecommended);
         assert_eq!(
             compute_verdict(&rubric_with(5, 5, vec![critical]), true),
-            Verdict::RejectRecommended
+            Verdict::Published
         );
-        assert_eq!(
-            compute_verdict(&rubric_with(5, 1, vec![]), true),
-            Verdict::RejectRecommended
-        );
-        assert_eq!(
-            compute_verdict(&rubric_with(2, 5, vec![]), true),
-            Verdict::NeedsHuman
-        );
-        let warning = SecurityFlag {
-            severity: Severity::Warning,
-            detail: "unexplained endpoint".into(),
+    }
+
+    #[test]
+    fn certification_badge() {
+        assert!(is_certified(&rubric_with(4, 4, vec![]), true));
+        assert!(!is_certified(&rubric_with(4, 4, vec![]), false)); // bad appstream
+        assert!(!is_certified(&rubric_with(2, 4, vec![]), true));  // low scores
+        assert!(!is_certified(&rubric_with(4, 2, vec![]), true));  // bad packaging
+        let critical = SecurityFlag {
+            severity: Severity::Critical,
+            detail: "x".into(),
         };
-        assert_eq!(
-            compute_verdict(&rubric_with(5, 5, vec![warning]), true),
-            Verdict::NeedsHuman
-        );
+        assert!(!is_certified(&rubric_with(5, 5, vec![critical]), true));
     }
 
     #[test]
@@ -357,7 +364,8 @@ mod tests {
             },
             dynamic: None,
             rubric: Some(rubric_with(4, 5, vec![])),
-            verdict: Verdict::AcceptRecommended,
+            verdict: Verdict::Published,
+            certified: false,
             judge: None,
             legitimacy: None,
         };
