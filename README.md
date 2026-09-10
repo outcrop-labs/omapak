@@ -1,19 +1,26 @@
-# omapak
+# Omapak
 
-The open Flatpak repo. **Grade the artifact, not the authorship.**
+The open Flatpak repo. **Grade the app on its own merits.**
 
-I built this because Flathub decided in May 2026 that new apps get banned if any
-part of them touched an LLM — even one commit. That's a dumb rule. Users don't
-install your git history, they install software. So here, we judge the software:
-does it build, does it install, is it safe, is it any good. Who or what typed
-the code — human, AI, or a raccoon with a keyboard — is not our business.
+I built this because Flathub decided in May 2026 that new apps get banned if AI
+had anything to do with them — even one commit. That's a dumb rule, and I'd
+rather build the alternative than argue with people who won't have a fair
+conversation about it. Normal people don't give a shit how something was built
+if it works well and fits their needs. Neither do we.
 
-Every submission gets scored by a [published rubric](https://omapak.org/rubric),
-every judge report is public, and a human makes the merge call. That's the whole
-gimmick. Read [MISSION.md](MISSION.md) if you want the long version — it's short.
+So: every submission gets scored by an [agent judge](https://omapak.org/rubric)
+we build in the open, every report is public, and a human makes the merge call.
+The gates are honest and boring — it builds, it's not hostile to the user, the
+packaging isn't a mess. Everything else is scored, published, and never
+gatekept. If your app is a clone, the report says so and the user decides. Not us.
 
-Started for the [Omarchy](https://omarchy.org) crowd, works on any distro,
-because it's just flatpak.
+**Read [MISSION.md](MISSION.md) before anything else** — it's short, it's the
+whole point, and it's the tone to expect around here. If you disagree with it,
+that's fine; this repo probably isn't for you.
+
+Born in [Omarchy](https://omarchy.org), works on any distro, because it's just
+flatpak. If another repo deplatforms a good app, we'll happily host the
+continuation.
 
 ## What's in here
 
