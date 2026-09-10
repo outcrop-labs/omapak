@@ -12,12 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --panic-unwind builds std with panic_unwind on nightly so
-      # wasm-bindgen can generate catch wrappers.
-      - uses: dtolnay/rust-toolchain@nightly
+      # worker/rust-toolchain.toml pins the template's known-good version
+      - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
-          components: rust-src
 
       - name: Install worker-build
         run: cargo install worker-build
