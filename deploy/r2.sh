@@ -17,8 +17,9 @@ repo_dir="${1:?usage: r2.sh <repo-dir>}"
 
 command -v rclone >/dev/null || { echo "rclone not installed" >&2; exit 1; }
 
-# Connection-string form: everything after the final ':' is bucket/path.
-remote=":s3,provider=Cloudflare,endpoint=${R2_ENDPOINT}:${R2_BUCKET}"
+# Connection-string form: everything after the final ':' is bucket/path;
+# the endpoint value must be quoted or its '://' colons split the parser.
+remote=":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":${R2_BUCKET}"
 rclone sync "$repo_dir/" "$remote" \
   --s3-access-key-id "$R2_ACCESS_KEY_ID" \
   --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
