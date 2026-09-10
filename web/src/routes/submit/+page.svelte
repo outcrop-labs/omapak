@@ -36,10 +36,17 @@
     </div>
 
     <div>
-      <p class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">step 1 · fork and branch</p>
+      <p class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">step 1 · branch and PR</p>
+      <p class="mt-3 max-w-[var(--read-width)] text-muted">
+        Collaborator? Push a branch straight to
+        <code class="font-mono text-sm text-fg">outcrop-labs/omapak</code> and open the PR.
+        Everyone else: fork first. No account on our side either way, and the fork path
+        isn't busywork; it's why submitters never need write access to anything of ours.
+      </p>
       <pre
-        class="mt-3 max-w-full overflow-x-auto rounded-sm border border-line bg-panel p-4 font-mono text-xs leading-relaxed text-muted">git clone git@github.com:<span class="text-fg">your-handle</span>/omapak.git
-cd omapak
+        class="mt-3 max-w-full overflow-x-auto rounded-sm border border-line bg-panel p-4 font-mono text-xs leading-relaxed text-muted">git checkout -b <span class="text-fg">add-my-app</span>   <span class="text-ink-dim"># in-repo if you're a collaborator</span>
+<span class="text-ink-dim"># or, from your fork:</span>
+git clone git@github.com:<span class="text-fg">your-handle</span>/omapak.git && cd omapak
 git checkout -b <span class="text-fg">add-my-app</span></pre>
     </div>
 
