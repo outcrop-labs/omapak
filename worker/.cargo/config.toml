@@ -1,0 +1,8 @@
+# wasm-bindgen's catch wrappers need the reference-types externref table;
+# without this flag the release build compiles and then fails post-processing
+# with "externref table required for catch wrappers".
+[build]
+target = "wasm32-unknown-unknown"
+
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=+reference-types"]
