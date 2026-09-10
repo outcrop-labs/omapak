@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/NickHirras/macrotrainer-releases
+summary: Privacy-first macro and nutrition tracker for the desktop (Flutter)
+description: >-
+  Continuity submission. MacroTrainer's Flathub submission (flathub/flathub#9690)
+  was closed automatically after a checklist misstep; the submitter's follow-up
+  went unanswered. omapak picked it up. Original app by NickHirras; the manifest
+  repacks the author's own pinned release bundle per their flatpak runbook.
+license: GPL-3.0
+homepage: https://github.com/NickHirras/macrotrainer-releases
+tags: [health, utility, nutrition]
