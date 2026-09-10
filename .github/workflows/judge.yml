@@ -2,7 +2,6 @@ name: judge
 
 on:
   pull_request:
-    paths: ["apps/**"]
   push:
     branches: [main]
     paths: ["apps/**"]
@@ -37,11 +36,21 @@ jobs:
           pipx install git+https://github.com/flathub/flatpak-builder-lint.git
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Install runtime + SDK
+      - name: Install runtimes + SDKs the manifests declare
         run: |
           flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
           flatpak --user install -y --noninteractive \
             flathub org.freedesktop.Platform//$RUNTIME_VERSION org.freedesktop.Sdk//$RUNTIME_VERSION
+          # Apps may pin other runtimes (GNOME, KDE). Collect them all.
+          for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
+            [ -f "$m" ] || continue
+            rt=$(grep -m1 -oE '"?runtime"?:?[[:space:]]*[":]?[a-z]+\.[A-Za-z.0-9]+' "$m" | grep -oE '[a-z]+\.[A-Za-z.0-9]+' | head -1)
+            rv=$(grep -m1 -oE '"?runtime-version"?:?[[:space:]]*"?[0-9.]+' "$m" | grep -oE '[0-9.]+$')
+            [ -n "$rt" ] || continue
+            [ -n "$rv" ] || continue
+            flatpak --user install -y --noninteractive flathub "$rt//$rv" "$rt.SDK//$rv" \
+              || echo "::warning::could not install $rt//$rv"
+          done
 
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
@@ -85,7 +94,7 @@ jobs:
             out/
             sources/
           retention-days: 3
-          if-no-files-found: error
+          if-no-files-found: warn
 
   # Main-branch pushes have secrets: full agent run, commit reports back
   # into apps/ so every accepted app carries its public report in-repo.
