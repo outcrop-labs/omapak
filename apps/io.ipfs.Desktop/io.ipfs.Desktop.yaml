@@ -1,0 +1,84 @@
+app-id: io.ipfs.Desktop
+runtime: org.freedesktop.Platform
+runtime-version: '26.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '25.08'
+command: ipfs-desktop
+separate-locales: false
+
+finish-args:
+  # IPC sharing for X11/compositor
+  - --share=ipc
+  # Wayland and X11 fallback
+  - --socket=wayland
+  - --socket=fallback-x11
+  # Audio
+  - --socket=pulseaudio
+  # Hardware accelerated graphics
+  - --device=dri
+  # Network access for IPFS swarm, DHT, and HTTP gateway
+  - --share=network
+  # System notifications
+  - --talk-name=org.freedesktop.Notifications
+  # System tray / StatusNotifierWatcher integration
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --talk-name=com.canonical.AppMenu.Registrar
+  - --talk-name=com.canonical.Unity
+  - --talk-name=com.canonical.indicator.application
+  # Access for file import / export
+  - --filesystem=xdg-download
+  - --filesystem=xdg-documents
+  # Optional access to IPFS repo on host if user configured standard path
+  - --filesystem=~/.ipfs:create
+  # Consistent cursor sizing across Wayland and X11
+  - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
+
+modules:
+  - name: ipfs-desktop
+    buildsystem: simple
+    build-commands:
+      # Extract Debian package contents
+      - ar x ipfs-desktop.deb
+      - tar -xf data.tar.xz
+
+      # Install application directory
+      - mv "opt/IPFS Desktop" "${FLATPAK_DEST}/ipfs-desktop"
+
+      # Install desktop file
+      - install -Dm644 io.ipfs.Desktop.desktop "${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop"
+
+      # Install icon
+      - install -Dm644 io.ipfs.Desktop.png "${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png"
+
+      # Install AppStream MetaInfo
+      - install -Dm644 io.ipfs.Desktop.metainfo.xml "${FLATPAK_DEST}/share/metainfo/${FLATPAK_ID}.metainfo.xml"
+
+      # Install launcher wrapper
+      - install -Dm755 ipfs-desktop.sh "${FLATPAK_DEST}/bin/ipfs-desktop"
+
+      # Provide ipfs CLI command in /app/bin
+      - ln -sf "${FLATPAK_DEST}/ipfs-desktop/resources/app.asar.unpacked/node_modules/kubo/kubo/ipfs" "${FLATPAK_DEST}/bin/ipfs"
+
+      # Patch app.asar desktop filename for proper WM_CLASS and notifications
+      - patch-electron-desktop-filename "${FLATPAK_DEST}/ipfs-desktop/resources/app.asar"
+    sources:
+      - type: file
+        only-arches: [x86_64]
+        dest-filename: ipfs-desktop.deb
+        url: https://github.com/ipfs/ipfs-desktop/releases/download/v0.50.0/ipfs-desktop-0.50.0-linux-amd64.deb
+        sha256: 93332777997fba8d5011d3cd2a21a1d89ede8c4af752ff969ed6c671b0bc29c8
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/ipfs/ipfs-desktop/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: .assets[] | select(.name | endswith("-linux-amd64.deb")) | .browser_download_url
+      - type: file
+        path: io.ipfs.Desktop.desktop
+      - type: file
+        path: io.ipfs.Desktop.png
+      - type: file
+        path: io.ipfs.Desktop.metainfo.xml
+      - type: file
+        path: ipfs-desktop.sh
