@@ -81,20 +81,21 @@ tags: [utility, gnome]</pre>
           private repo or closed source?
         </p>
         <p class="mt-3 text-sm text-muted">
-          We ship it, but never unaudited. Set
-          <code class="font-mono text-sm text-fg">source_access: private-assisted</code> in
-          metadata.yml and point your manifest at your own release assets with pinned sha256
-          checksums. Then: grant a maintainer scoped read access to the repo (a fine-grained
-          GitHub token, read-only, single repo, expiring). The maintainer runs the same judge
-          against your real source locally, the report is published, and the token is deleted.
-          Your code never lands in omapak and never leaves the maintainer's machine; only the
-          verdict does.
+          Allowed, Flathub-style. Set
+          <code class="font-mono text-sm text-fg">source_access: proprietary</code> in
+          metadata.yml and pin your manifest to your own release assets with sha256
+          checksums. The judge grades packaging and provenance (it can't read the code,
+          and it will say so), and the catalog shows a
+          <span class="text-warning">proprietary</span> badge so users know what they're
+          installing. Third-party submissions of someone else's closed app need the
+          owner's okay on an omapak notification issue before merge; if it's your app,
+          you ARE the okay.
         </p>
         <p class="mt-3 text-sm text-muted">
-          Until that source review happens, the submission is capped at "needs human": no
-          amount of good scores merges a closed-source app that nobody read. And no, we won't
-          relax this. An app store that ships binaries it can't read is a malware vector with
-          extra steps.
+          Optionally: if you'd rather have the code actually read, grant a maintainer a
+          scoped read-only token and we'll run the judge against the real source, publish
+          only the verdict, and delete the token. Nice offer, never a requirement. Same
+          as Flathub, minus the gatekeeping theater.
         </p>
       </div>
       <div class="mt-6 max-w-[var(--read-width)] rounded-sm border border-line bg-card p-5">

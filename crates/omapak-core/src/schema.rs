@@ -211,6 +211,26 @@ pub struct DynamicReport {
     pub log_tail: Vec<String>,
 }
 
+/// Web-validated legitimacy, proprietary submissions only: does this app
+/// exist publicly, is its release channel real, is anything known-bad?
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct LegitimacyFinding {
+    pub severity: Severity,
+    pub detail: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct LegitimacyReport {
+    pub model: String,
+    pub summary: String,
+    /// 0-100; how confident the web check is this is a legitimate app.
+    pub confidence: u8,
+    #[serde(default)]
+    pub findings: Vec<LegitimacyFinding>,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JudgeInfo {
     pub model: String,
@@ -235,6 +255,9 @@ pub struct Report {
     pub verdict: Verdict,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub judge: Option<JudgeInfo>,
+    /// Present only for proprietary submissions (web legitimacy check).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub legitimacy: Option<LegitimacyReport>,
 }
 
 use crate::manifest::ManifestInfo;
@@ -336,6 +359,7 @@ mod tests {
             rubric: Some(rubric_with(4, 5, vec![])),
             verdict: Verdict::AcceptRecommended,
             judge: None,
+            legitimacy: None,
         };
         let json = serde_json::to_string(&report).unwrap();
         let back: Report = serde_json::from_str(&json).unwrap();

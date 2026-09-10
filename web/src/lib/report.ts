@@ -68,9 +68,15 @@ export interface Report {
   rubric?: Rubric;
   verdict: Verdict;
   judge?: { model: string; base_url: string; prompt_version: string; duration_secs: number };
+  legitimacy?: {
+    model: string;
+    summary: string;
+    confidence: number;
+    findings: { severity: "info" | "warning" | "critical"; detail: string; source?: string }[];
+  };
 }
 
-export type SourceAccess = "public" | "private-assisted";
+export type SourceAccess = "public" | "proprietary";
 
 export interface CatalogEntry {
   app_id: string;
