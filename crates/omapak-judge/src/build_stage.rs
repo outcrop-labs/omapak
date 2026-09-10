@@ -19,6 +19,7 @@ pub fn run(manifest: &Path, work_dir: &Path, repo_dir: &Path) -> Result<BuildRep
     let mut child = Command::new("flatpak-builder")
         .arg("--force-clean")
         .arg("--disable-rofiles-fuse")
+        .arg("--user")
         .arg("--repo")
         .arg(repo_dir)
         .arg(work_dir)
