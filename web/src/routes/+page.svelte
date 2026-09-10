@@ -148,7 +148,7 @@
 
   {#if filter !== "omapak"}
     <p class="mt-10 font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">
-      flathub managed · pass-through, not mirrored
+      flathub managed · fetched once, cached, served by us
     </p>
     {#if $flathub.isPending}
       <p class="mt-4 font-mono text-sm text-muted">loading flathub catalog…</p>
@@ -182,12 +182,6 @@
           </a>
         {/each}
       </div>
-      <p class="mt-4 font-mono text-xs text-ink-dim">
-        showing 60 of {flathubFiltered.length}. these install straight from the omapak
-        remote (<code class="text-fg">flatpak install omapak &lt;app-id&gt;</code>): fetched
-        from flathub once, cached, and served by us. apps we host ourselves always win the
-        ID collision.
-      </p>
     {/if}
   {/if}
 </section>
