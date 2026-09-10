@@ -80,6 +80,7 @@ export type SourceAccess = "public" | "proprietary";
 
 export interface CatalogEntry {
   app_id: string;
+  name?: string;
   summary: string;
   description?: string;
   submitter: string;
