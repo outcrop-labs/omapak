@@ -38,7 +38,7 @@ either. That's the whole point. "Built it using AI/agents" and "slop" are differ
 
 ## The other rules
 
-- **Maintenance.** Apps here have to be alive. Quiet past the window (TBD —
+- **Maintenance.** Apps here have to be alive or perma-stable. Quiet or broken past the window (TBD —
   we'll set it as a community, in the open) and your app gets archived to
   `omapak-unmaintained`, still installable, clearly labeled. Quiet after that
   and it drops from the repo and the servers. Pretending dead software is fine
