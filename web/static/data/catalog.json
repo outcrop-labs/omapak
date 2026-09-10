@@ -1,4 +1,59 @@
 {
-  "generated_at": "2026-09-10T13:59:24.069Z",
-  "entries": []
+  "generated_at": "2026-09-10T21:29:40.133Z",
+  "entries": [
+    {
+      "app_id": "io.github.juwan_hwang.Zephyr",
+      "summary": "A modern, lightweight Mihomo / Clash Meta GUI client built with Tauri and Rust",
+      "description": "Continuity submission. Zephyr's Flathub submission PR (flathub/flathub#9810) was closed; omapak picked it up. Original app by Juwan-Hwang (MIT, 700+ stars, actively maintained). Manifest adapted from the Flathub submission with sources still pinned to upstream release v2.4.3.",
+      "submitter": "jon",
+      "source_repo": "https://github.com/Juwan-Hwang/Zephyr",
+      "license": "MIT",
+      "homepage": "https://github.com/Juwan-Hwang/Zephyr",
+      "tags": [
+        "network",
+        "proxy",
+        "clash",
+        "utility"
+      ],
+      "source_access": "public",
+      "verdict": "published",
+      "certified": false,
+      "report_available": false
+    },
+    {
+      "app_id": "io.ipfs.Desktop",
+      "summary": "IPFS Desktop, the official desktop client for the InterPlanetary File System",
+      "description": "Continuity submission. IPFS Desktop (6.5k stars, MIT) had its Flathub submission (flathub/flathub#10144) closed after the submitter questioned the AI policy checklist and was told \"No, AI is not allowed in submission process\". omapak picked it up. Manifest from that PR unchanged: pinned upstream deb, Electron BaseApp, x-checker-data wired for updates.",
+      "submitter": "jon",
+      "source_repo": "https://github.com/ipfs/ipfs-desktop",
+      "license": "MIT",
+      "homepage": "https://ipfs.tech",
+      "tags": [
+        "network",
+        "file-sharing",
+        "p2p"
+      ],
+      "source_access": "public",
+      "verdict": "published",
+      "certified": false,
+      "report_available": false
+    },
+    {
+      "app_id": "org.libredb.Studio",
+      "summary": "LibreDB Studio, the open-source database IDE",
+      "description": "Continuity submission. LibreDB Studio (557 stars, MIT, pushed the day of this submission) had its Flathub submission (flathub/flathub#9538) closed by its own author, with honor, after asking directly whether using an AI code-assistant during development conflicted with the policy. The moderator's answer: \"yes. It is vibecoded as he[ll].\" The author thanked him for the direct answer, kept his word, and closed the PR himself. omapak's answer to the same question is no.",
+      "submitter": "jon",
+      "source_repo": "https://github.com/libredb/libredb-studio",
+      "license": "MIT",
+      "homepage": "https://libredb.org",
+      "tags": [
+        "development",
+        "database"
+      ],
+      "source_access": "public",
+      "verdict": "published",
+      "certified": false,
+      "report_available": false
+    }
+  ]
 }
