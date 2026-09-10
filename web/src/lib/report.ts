@@ -70,7 +70,7 @@ export interface Report {
   judge?: { model: string; base_url: string; prompt_version: string; duration_secs: number };
 }
 
-export type SourceAccess = "public" | "private-assisted";
+export type SourceAccess = "public" | "proprietary";
 
 export interface CatalogEntry {
   app_id: string;
