@@ -14,7 +14,7 @@ const UPSTREAM: &str = "https://dl.flathub.org/repo";
 
 #[event(fetch)]
 async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
-    if req.method() != Method::Get {
+    if req.method() != Method::Get && req.method() != Method::Head {
         return Response::error("method not allowed", 405);
     }
 
@@ -42,22 +42,48 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     }
 
     // Cache miss: fetch from flathub once, store, serve. Content-addressed
-    // paths make this safe forever; upstream 404s pass through as 404s.
-    let mut init = RequestInit::new();
-    init.method = Method::Get;
-    let upstream_req = Request::new_with_init(&format!("{UPSTREAM}/{path}"), &init)?;
-    match Fetch::Request(upstream_req).send().await {
-        Ok(mut resp) if resp.status_code() == 200 => {
-            let bytes = resp.bytes().await?;
-            let _ = bucket.put(&path, bytes.clone()).execute().await;
-            let mut headers = Headers::new();
-            headers.set("Content-Type", "application/octet-stream")?;
-            headers.set("Cache-Control", "public, max-age=31536000, immutable")?;
-            headers.set("X-Omapak-Origin", "flathub-pass-through")?;
-            Response::from_bytes(bytes)
-                .map(|r| r.with_headers(headers))
-                .into()
+    // paths make this safe forever. Anything but a clean upstream 200
+    // becomes a 404: clients (rightly) treat speculative paths like
+    // deltas/ as miss-and-fallback, and a thrown 500 would abort installs.
+    async fn fetch_upstream(path: &str, bucket: &worker::Bucket) -> Result<Response> {
+        let mut init = RequestInit::new();
+        init.method = Method::Get;
+        let upstream_req = Request::new_with_init(&format!("{UPSTREAM}/{path}"), &init)?;
+        let mut resp = Fetch::Request(upstream_req).send().await?;
+        if resp.status_code() != 200 {
+            return Response::error("not found", 404);
         }
-        _ => Response::error("not found", 404).into(),
+
+        let mut headers = Headers::new();
+        headers.set("Content-Type", "application/octet-stream")?;
+        headers.set("Cache-Control", "public, max-age=31536000, immutable")?;
+
+        // Deltas run to hundreds of MB and would blow the worker's memory
+        // if buffered; stream them through untouched. Same for any object
+        // claiming more than 64MB. Everything bounded gets cached.
+        let content_length: Option<usize> = resp
+            .headers()
+            .get("Content-Length")
+            .ok()
+            .flatten()
+            .and_then(|v| v.parse().ok());
+        let huge = path.starts_with("deltas/") || content_length.is_some_and(|n| n > 8 * 1024 * 1024);
+        if huge {
+            headers.set("X-Omapak-Origin", "flathub-stream")?;
+            return Ok(resp.with_headers(headers));
+        }
+
+        let bytes = resp.bytes().await?;
+        let _ = bucket.put(path, bytes.clone()).execute().await;
+        headers.set("X-Omapak-Origin", "flathub-pass-through")?;
+        Ok(Response::from_bytes(bytes)?.with_headers(headers))
+    }
+
+    match fetch_upstream(&path, &bucket).await {
+        Ok(resp) => Ok(resp),
+        Err(e) => {
+            console_debug!("upstream fetch failed for {path}: {e:#}");
+            Response::error("not found", 404)
+        }
     }
 }
