@@ -192,7 +192,9 @@ fn finish_judging(
     let manifest_summary = static_report.manifest.as_ref().map(|m| {
         serde_json::to_string_pretty(m).unwrap_or_else(|_| format!("app-id: {}", m.app_id))
     });
-    let static_findings = serde_json::to_string_pretty(&static_report.linters).ok();
+    // The full static report, not just linters: the agent needs to see
+    // appstream presence, advisories, and source stats to judge honestly.
+    let static_findings = serde_json::to_string_pretty(static_report).ok();
 
     let inputs = prompt::JudgeInputs {
         app_id: static_report
