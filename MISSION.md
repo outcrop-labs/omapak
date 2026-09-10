@@ -44,9 +44,12 @@ either. That's the whole point. "Built it using AI/agents" and "slop" are differ
   does users no favors.
 - **Every distro.** Born in Omarchy, but it's a standard flatpak repo, so it will do flatpak
   things. If another repo deplatforms a good app, we'll happily host the continuation.
-- **Flathub's apps.** We don't mirror or proxy them; the catalog links through.
-  If that ever gets blocked, we'll mirror overnight and keep going. Not because
-  I want to, but because your app store shouldn't depend on anyone's permission or opinions.
+- **Flathub's apps.** We list their whole catalog and serve it: fetched from
+  them once, cached on our infra, delivered from repo.omapak.org. Not a
+  pre-mirror, and I'm not going to pretend we don't hold bytes we hold. If
+  they ever block us, users keep updating from what we've cached and we
+  backfill the rest overnight. Your app store shouldn't depend on anyone's
+  permission or opinions.
 
 Let's just support people who want to make things, and do it in the open.
 

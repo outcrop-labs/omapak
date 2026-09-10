@@ -19,7 +19,8 @@ whole point, and it's the tone to expect around here. If you disagree with it,
 that's fine; this repo probably isn't for you.
 
 Born in [Omarchy](https://omarchy.org), works on any distro, because it's just
-flatpak. If another repo deplatforms a good app, we'll happily host the
+flatpak. One remote gets you everything: omapak apps plus the flathub catalog,
+fetched from them once, cached, and served from repo.omapak.org. If another repo deplatforms a good app, we'll happily host the
 continuation.
 
 ## What's in here
