@@ -35,9 +35,15 @@ struct Cli {
     #[arg(long)]
     skip_build: bool,
 
-    /// Output directory (default: omapak-out)
+    /// Output directory for reports (default: omapak-out)
     #[arg(long, default_value = "omapak-out")]
     out: PathBuf,
+
+    /// Build scratch directory (default: omapak-work). Kept separate from
+    /// --out because flatpak build trees contain root-owned files that
+    /// artifact uploaders cannot scan.
+    #[arg(long, default_value = "omapak-work")]
+    work: PathBuf,
 }
 
 fn main() -> Result<()> {
@@ -47,36 +53,41 @@ fn main() -> Result<()> {
         bail!("{} is not a directory", app_dir.display());
     }
 
-    let (static_report, build_ok) = match &cli.partial {
+    let (static_report, build_report) = match &cli.partial {
         Some(path) => {
             let text = std::fs::read_to_string(path)
                 .with_context(|| format!("read partial report {}", path.display()))?;
             let prior: Report = serde_json::from_str(&text).context("parse partial report")?;
-            (prior.static_report, prior.build.ok)
+            (prior.static_report, prior.build)
         }
         None => {
             eprintln!("→ static stage");
             let static_report = static_stage::run(app_dir, cli.source_dir.as_deref())?;
-            let build_ok = if cli.skip_build {
-                eprintln!("→ build stage SKIPPED (--skip-build)");
-                true
+            eprintln!("→ build stage");
+            let build_report = if cli.skip_build {
+                eprintln!("  SKIPPED (--skip-build)");
+                omapak_core::BuildReport {
+                    ok: true,
+                    duration_secs: 0,
+                    log_tail: vec!["skipped: --skip-build".into()],
+                }
             } else {
-                eprintln!("→ build stage");
                 let manifest = omapak_core::find_manifest(app_dir)
                     .context("no flatpak manifest found in app dir")?;
                 let build = build_stage::run(
                     &manifest,
-                    &cli.out.join("build"),
-                    &cli.out.join("repo"),
+                    &cli.work.join("build"),
+                    &cli.work.join("repo"),
                 )?;
                 for line in &build.log_tail {
                     eprintln!("  {line}");
                 }
-                build.ok
+                build
             };
-            (static_report, build_ok)
+            (static_report, build_report)
         }
     };
+    let build_ok = build_report.ok;
 
     let dynamic = if cli.with_dynamic {
         let manifest = omapak_core::find_manifest(app_dir);
@@ -97,8 +108,7 @@ fn main() -> Result<()> {
     };
 
     let config = judge_stage::config_from_env()?;
-    let (rubric, judge_info, build_report) =
-        finish_judging(&cli, &static_report, build_ok, config.as_ref())?;
+    let (rubric, judge_info) = finish_judging(&cli, &static_report, build_ok, config.as_ref())?;
 
     // Deterministic gates: build passed, appstream valid, submitter metadata
     // present. Store-presence matters; blank tiles in software stores don't
@@ -133,11 +143,7 @@ fn main() -> Result<()> {
         app_id,
         created_at: chrono::Utc::now(),
         static_report,
-        build: build_report.unwrap_or(omapak_core::BuildReport {
-            ok: build_ok,
-            duration_secs: 0,
-            log_tail: vec!["skipped: --skip-build or resumed from partial".into()],
-        }),
+        build: build_report,
         dynamic,
         rubric: rubric.clone(),
         verdict,
@@ -163,26 +169,16 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-/// Judge (and, when resuming from a partial, reconstruct the build report).
+/// Judge stage; assumes static + build already ran.
 fn finish_judging(
     cli: &Cli,
     static_report: &StaticReport,
     build_ok: bool,
     config: Option<&judge_stage::JudgeConfig>,
-) -> Result<(Option<Rubric>, Option<omapak_core::JudgeInfo>, Option<omapak_core::BuildReport>)> {
-    let build_report = if cli.partial.is_some() || cli.skip_build {
-        Some(omapak_core::BuildReport {
-            ok: build_ok,
-            duration_secs: 0,
-            log_tail: vec!["recorded in an earlier phase".into()],
-        })
-    } else {
-        None
-    };
-
+) -> Result<(Option<Rubric>, Option<omapak_core::JudgeInfo>)> {
     let Some(config) = config else {
         eprintln!("→ judge stage SKIPPED (no OMAPAK_LLM_* env) — gates only");
-        return Ok((None, None, build_report));
+        return Ok((None, None));
     };
     eprintln!("→ judge stage ({} @ {})", config.model, config.base_url);
 
@@ -213,7 +209,7 @@ fn finish_judging(
     };
 
     let (rubric, judge_info) = judge_stage::run(config, &inputs)?;
-    Ok((Some(rubric), Some(judge_info), build_report))
+    Ok((Some(rubric), Some(judge_info)))
 }
 
 fn metadata_source_access(app_dir: &std::path::Path) -> Option<omapak_core::SourceAccess> {
