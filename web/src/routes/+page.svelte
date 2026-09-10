@@ -65,8 +65,7 @@
     <code
       class="rounded-sm border border-line bg-raised px-4 py-2.5 font-mono text-sm text-fg shadow-[var(--theme-shadow-1)]"
     >
-      curl -O https://repo.omapak.org/omapak.flatpakrepo &&<br />
-      flatpak remote-add --if-not-exists omapak omapak.flatpakrepo</code
+      curl -fsSL https://omapak.org/omapak.sh | sh</code
     >
   </div>
 </section>
