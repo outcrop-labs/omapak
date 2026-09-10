@@ -52,8 +52,8 @@
   <p class="mt-5 max-w-[var(--read-width)] text-lg text-muted">
     This is the exact prompt sent with every submission. Published, versioned, in the repo.
     The gates are honest and boring: it builds, it's not hostile to the user, the packaging
-    isn't a mess. Everything else is scored, published, and never gatekept. No vibes, no
-    overzealous mods denying on a whim, everything written down. A human makes the call.
+    isn't a mess. Everything else is scored, published, and never gatekept. Everything
+    written down. A human makes the call.
   </p>
 </section>
 
