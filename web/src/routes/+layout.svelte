@@ -2,6 +2,7 @@
   import "../app.css";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import ThemeToggle from "$lib/components/ThemeToggle.svelte";
+  import OmapakMark from "$lib/components/OmapakMark.svelte";
   import { initTheme } from "$lib/theme.svelte";
 
   let { children } = $props();
@@ -25,12 +26,17 @@
 
 <QueryClientProvider client={queryClient}>
   <div class="flex min-h-dvh flex-col">
-    <header class="border-b border-line bg-[var(--theme-header-bg)]">
+    <header class="border-b border-line bg-[var(--theme-glass)] backdrop-blur-xl">
       <div
         class="mx-auto flex h-14 w-full max-w-[var(--page-width)] items-center justify-between px-6"
       >
-        <a href="/" class="flex items-baseline gap-2">
-          <span class="font-mono text-lg font-medium text-accent">omapak</span>
+        <a href="/" class="flex items-center gap-2.5">
+          <OmapakMark size={20} />
+          <span
+            class="text-[13px] font-semibold uppercase tracking-[0.18em] text-fg"
+          >
+            omapak</span
+          >
         </a>
         <nav class="flex items-center gap-5 font-mono text-sm">
           <a href="/" class="text-muted transition-colors hover:text-fg">catalog</a>
