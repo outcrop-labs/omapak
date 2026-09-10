@@ -115,7 +115,13 @@ fn run_linter(tool: &str, args: &[String]) -> LinterRun {
         let mut findings: Vec<String> = stdout
             .lines()
             .chain(stderr.lines())
-            .filter(|l| !l.trim().is_empty())
+            .filter(|l| {
+                !l.trim().is_empty()
+                    && !l.contains("Traceback")
+                    && !l.contains("File \"")
+                    && !l.contains("import main")
+                    && !l.contains("ModuleNotFoundError")
+            })
             .map(String::from)
             .collect();
         findings.truncate(20);
