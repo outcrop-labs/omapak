@@ -117,11 +117,10 @@ jobs:
             cp "final/$name/report.md" "$app/report.md"
           done
 
-      - name: Commit updated reports
-        run: |
-          git config user.name "omapak-judge"
-          git config user.email "judge@omapak.outcrop.labs"
-          git add apps/
-          git diff --cached --quiet && echo "no report changes" && exit 0
-          git commit -m "judge: refresh reports"
-          git push
+      - name: Upload final reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: judge-final
+          path: final/
+          retention-days: 90
+          if-no-files-found: error

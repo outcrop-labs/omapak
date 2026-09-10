@@ -3,14 +3,66 @@ name: site
 on:
   push:
     branches: [main]
-    paths: ["web/**"]
+    paths: ["web/**", "MISSION.md"]
   workflow_dispatch:
+  workflow_run:
+    workflows: [judge]
+    types: [completed]
+    branches: [main]
 
 jobs:
   deploy:
+    # Also deploys when a main-branch judge run finishes, so fresh reports
+    # reach the catalog without anything committing to protected main.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Find latest judged reports
+        id: judged
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'judge.yml',
+              branch: 'main',
+              status: 'success',
+              per_page: 5,
+            });
+            let runId = null;
+            for (const run of runs.data.workflow_runs) {
+              const jobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner, repo: context.repo.repo, run_id: run.id,
+              });
+              if (jobs.data.jobs.some(j => j.name === 'report' && j.conclusion === 'success')) {
+                runId = run.id;
+                break;
+              }
+            }
+            core.setOutput('run_id', runId ?? '');
+
+      - name: Fetch judged reports
+        if: steps.judged.outputs.run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: judge-final
+          run-id: ${{ steps.judged.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge reports into the catalog tree
+        if: steps.judged.outputs.run_id != ''
+        run: |
+          for dir in final/*/; do
+            name=$(basename "$dir")
+            [ -f "apps/$name/metadata.yml" ] || continue
+            cp "$dir/report.json" "apps/$name/report.json"
+          done
 
       - uses: oven-sh/setup-bun@v2
 
@@ -19,7 +71,7 @@ jobs:
         run: |
           bun install --frozen-lockfile
           bun run sync-rubric
-          bun run build-catalog --with-fixtures
+          bun run build-catalog
           bun run build
 
       - name: Deploy to Cloudflare Pages
