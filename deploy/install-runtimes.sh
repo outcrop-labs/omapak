@@ -1,7 +1,7 @@
 #!/bin/bash
 sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
 
-strip() { local s=$1; s=${s#\"}; s=${s%\"}; s=${s#\'}; s=${s%\'}; echo $s | xargs; }
+strip() { local s=$1; s=${s#\"}; s=${s%\"}; s=${s#\'}; s=${s%\'}; echo "$s" | tr -d ' '; }
 
 for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
   [ -f "$m" ] || continue
@@ -16,7 +16,7 @@ for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
   bv=$(strip "$(grep -m1 "^base-version:" "$m" | cut -d: -f2-)")
   if [ -n "$bt" ] && [ -n "$bv" ]; then
     echo "Installing base $bt//$bv"
-    sudo flatpak install --system -y --noninteractive flathub "$bt//$bv" 2>&1 | tail -1
+    sudo flatpak install --system -y --noninteractive flathub "$bt//bv" 2>&1 | tail -1
   fi
 done
 
