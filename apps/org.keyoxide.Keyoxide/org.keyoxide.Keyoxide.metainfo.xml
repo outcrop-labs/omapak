@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.keyoxide.Keyoxide</id>
+
+  <name>Keyoxide</name>
+  <summary>Verify decentralized cryptographic identities on the go</summary>
+
+  <developer id="org.keyoxide">
+    <name>Keyoxide</name>
+  </developer>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-or-later</project_license>
+
+  <description>
+    <p>
+      Keyoxide allows you to prove “ownership” of accounts on websites, domain
+      names, IM, etc., regardless of your username.
+    </p>
+    <p>
+      When you visit someone’s Keyoxide profile and see a green tick next to an
+      account on some website, it was proven beyond doubt that the same person
+      who set up this profile also holds that account.
+    </p>
+    <p>App features:</p>
+    <ul>
+      <li>Runs on Linux desktop and mobile</li>
+      <li>Simple and straightforward UI</li>
+      <li>Onboarding and guided tour</li>
+      <li>Fully open source</li>
+      <li>Supports fingerprint and email address as identifiers</li>
+      <li>Supports fetching identities via keyservers and Web Key Directory</li>
+      <li>Deep linking with openpgp4fpr and aspe URL schemes</li>
+      <li>Search history</li>
+      <li>Contacts feature</li>
+      <li>ASP profile management: create, edit, delete, import, export profiles and add claims directly within the app</li>
+      <li>Hide sensitive user profiles and protect them with authentication</li>
+      <li>Add multiple PGP or ASP profiles</li>
+      <li>Available in 11 languages</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">org.keyoxide.Keyoxide.desktop</launchable>
+
+  <url type="homepage">https://keyoxide.org</url>
+  <url type="vcs-browser">https://codeberg.org/Berker/keyoxide-flutter</url>
+  <url type="bugtracker">https://codeberg.org/Berker/keyoxide-flutter/issues</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://codeberg.org/Berker/keyoxide-flutter/raw/branch/master/metadata/en-US/images/phoneScreenshots/Screenshot_1.png</image>
+      <caption>Profile overview</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://codeberg.org/Berker/keyoxide-flutter/raw/branch/master/metadata/en-US/images/phoneScreenshots/Screenshot_2.png</image>
+      <caption>Verified claims</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://codeberg.org/Berker/keyoxide-flutter/raw/branch/master/metadata/en-US/images/phoneScreenshots/Screenshot_3.png</image>
+      <caption>Proof verification</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://codeberg.org/Berker/keyoxide-flutter/raw/branch/master/metadata/en-US/images/phoneScreenshots/Screenshot_4.png</image>
+      <caption>QR code scanning</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://codeberg.org/Berker/keyoxide-flutter/raw/branch/master/metadata/en-US/images/phoneScreenshots/Screenshot_5.png</image>
+      <caption>Settings</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://codeberg.org/Berker/keyoxide-flutter/raw/branch/master/metadata/en-US/images/phoneScreenshots/Screenshot_6.png</image>
+      <caption>Profile management</caption>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="2.4.4" date="2026-09-06">
+      <description>
+        <p>Linux support (desktop and mobile) with Flathub packaging:</p>
+        <ul>
+          <li>Adaptive window: no title bar on mobile Linux (Phosh/small screens)</li>
+          <li>Deep linking (aspe:/openpgp4fpr:) on Linux, including Flatpak portal forwarding</li>
+        </ul>
+        <p>Fixes:</p>
+        <ul>
+          <li>Pressing Enter in the search field now submits the query</li>
+          <li>Settings persistence and hydrated key encryption issues</li>
+          <li>Breaking changes from package upgrades</li>
+        </ul>
+        <p>Updated packages and Flutter to 3.44.9.</p>
+      </description>
+      <url type="details">https://codeberg.org/Berker/keyoxide-flutter/src/tag/2.4.4/CHANGELOG.md</url>
+    </release>
+    <release version="2.4.3" date="2025-04-12"/>
+    <release version="2.4.2" date="2024-08-12"/>
+    <release version="2.4.1" date="2024-08-09"/>
+    <release version="2.4.0" date="2024-07-18"/>
+  </releases>
+
+  <content_rating type="oars-1.1"/>
+
+  <recommends>
+    <!-- Mobile-first UI, but also fully usable on desktop — "ge" states the
+         smallest supported screen without hiding the app from desktop stores. -->
+    <display_length compare="ge" side="shortest">360</display_length>
+    <internet>always</internet>
+  </recommends>
+</component>

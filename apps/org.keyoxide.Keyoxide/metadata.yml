@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://codeberg.org/Berker/keyoxide-flutter
+summary: Keyoxide, the Flutter client for verifying decentralized cryptographic identities
+description: >-
+  Continuity submission. Keyoxide-flutter (67 stars on Codeberg, active this
+  week) had its Flathub submission (flathub/flathub#10101) closed. omapak
+  picked it up. Manifest and build machinery from that PR; metainfo and
+  desktop file from upstream packaging, sources pinned to the 2.4.4 release
+  tarball.
+license: MIT
+homepage: https://keyoxide.org
+tags: [utility, identity, security]
