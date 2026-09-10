@@ -26,19 +26,24 @@ jobs:
 
       - name: Restore OSTree repo from the repo branch
         run: |
+          mkdir -p repo
           if git ls-remote --heads origin repo | grep -q repo; then
             git fetch origin repo --depth=1
             git worktree add wt origin/repo
-            mv wt/repo ./repo
-          else
-            mkdir repo
+            cp -r wt/repo/. ./repo/ || true
+            rm -rf wt
           fi
+          # Ensure a valid archive-z2 OSTree repo even on first publish
+          printf '[core]\nrepo_version=1\nmode=archive-z2\n' > repo/config
+          mkdir -p repo/objects repo/refs/heads repo/refs/remotes repo/extensions
 
       - name: Install flatpak tooling
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder pipx rclone
-          pipx install flatpak-builder-lint
+          # PyGObject (flatpak-builder-lint dep) compiles from source on noble
+          sudo apt-get install -y flatpak flatpak-builder pipx rclone \
+            pkg-config libcairo2-dev libgirepository1.0-dev libglib2.0-dev
+          pipx install git+https://github.com/flathub/flatpak-builder-lint.git
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Install runtime + SDK
@@ -82,6 +87,11 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
-        # copy, not sync: the bucket also holds proxy-cached flathub
-        # objects that must never be reaped
-        run: R2_BUCKET=omapak-repo ./deploy/r2-copy.sh repo
+        # Inlined (not deploy/r2-copy.sh) because the repo-branch commit
+        # step above wipes the working tree with git rm -rf. Copy, not
+        # sync: the bucket also holds proxy-cached flathub objects.
+        run: |
+          rclone copy repo/ ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
+            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
+            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
+            --s3-no-check-bucket
