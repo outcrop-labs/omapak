@@ -40,11 +40,7 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Install runtimes
-        run: |
-          sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08
-          sudo flatpak install --system -y --noninteractive flathub org.gnome.Platform//50 org.gnome.Sdk//50
-          sudo flatpak install --system -y --noninteractive flathub org.gnome.Platform//48 org.gnome.Sdk//48
+        run: ./deploy/install-runtimes.sh
 
       - name: Build every app on main
         run: |
