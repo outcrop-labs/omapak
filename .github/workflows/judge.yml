@@ -39,13 +39,29 @@ jobs:
           key: flatpak-runtimes-${{ hashFiles('apps/**/com.*', 'apps/**/io.*', 'apps/**/net.*') }}-v1
           restore-keys: flatpak-runtimes-
 
-      - name: Add flathub remote
+      - name: Install runtimes at system level
         run: |
           df -h / | tail -1
-          # Runtimes are pulled by flatpak-builder itself via
-          # --install-deps-from=flathub at build time; explicit preinstalls
-          # kept dying mid-Sdk-download on CI runners.
-          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          # Pre-install the base runtime + every runtime declared in the
+          # manifests (flatpak-builder expects system-level runtimes; its
+          # --install-deps-from with --user produced empty refs on noble).
+          # flathub downloads flake; retry each install.
+          install_runtime() {
+            for i in 1 2 3; do
+              sudo flatpak install --system -y --noninteractive flathub "$@" && return 0
+              echo "retry $i for $*"
+              sleep 10
+            done
+            return 1
+          }
+          install_runtime org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08
+          for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
+            [ -f "$m" ] || continue
+            rt=$(grep -m1 -oE '"?runtime"?:?[[:space:]]*[":]?[a-z]+\.[A-Za-z.0-9]+' "$m" | grep -oE '[a-z]+\.[A-Za-z.0-9]+' | head -1)
+            rv=$(grep -m1 -oE '"?runtime-version"?:?[[:space:]]*"?[0-9.]+' "$m" | grep -oE '[0-9.]+$')
+            [ -n "$rt" ] && [ -n "$rv" ] && install_runtime "$rt//$rv" "$rt.Sdk//$rv" || true
+          done
           df -h / | tail -1
 
       - uses: dtolnay/rust-toolchain@stable
