@@ -19,12 +19,6 @@ pub fn run(manifest: &Path, work_dir: &Path, repo_dir: &Path) -> Result<BuildRep
     let mut child = Command::new("flatpak-builder")
         .arg("--force-clean")
         .arg("--disable-rofiles-fuse")
-        // Runtimes/SDKs the manifest declares get pulled by flatpak-builder
-        // itself. --user keeps dep installs in the user installation, where
-        // CI has the flathub remote and the runtime cache; the default
-        // system installation has neither.
-        .arg("--user")
-        .arg("--install-deps-from=flathub")
         .arg("--repo")
         .arg(repo_dir)
         .arg(work_dir)
