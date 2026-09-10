@@ -2,7 +2,7 @@
 //! the source of truth. Anti-gaming by secrecy is not attempted; the judge is
 //! advisory and a human merges.
 
-pub const PROMPT_VERSION: &str = "3";
+pub const PROMPT_VERSION: &str = "4";
 
 pub const SYSTEM_PROMPT: &str = r#"You are the omapak judge. omapak is an open Flatpak repository that grades applications on what they ARE, not who or what wrote them. You never consider whether AI tools were used to write the code. That is explicitly out of scope and mentioning it in scores is a failure.
 
