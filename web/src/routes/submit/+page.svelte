@@ -69,6 +69,20 @@ tags: [utility, gnome]</pre>
         Note what's <strong class="text-fg">not</strong> in there: any question about who or
         what wrote the code. We don't ask. Don't tell us; we don't care.
       </p>
+      <div class="mt-6 max-w-[var(--read-width)] rounded-sm border border-line bg-card p-5">
+        <p class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">
+          required: valid appstream metainfo
+        </p>
+        <p class="mt-3 text-sm text-muted">
+          Your <code class="font-mono text-sm text-fg">&lt;app-id&gt;.metainfo.xml</code> must
+          exist and pass <code class="font-mono text-sm text-fg">appstreamcli validate</code>
+          with no errors. This is a gate, same as the build: an app with broken or missing
+          metadata renders as a blank tile in GNOME Software, Discover, and the omapak
+          catalog, and blank tiles don't ship from here. Give it a real name, summary,
+          description, and release notes. Screenshots aren't gated, but add them; an app with
+          screenshots gets installed, an app without gets scrolled past.
+        </p>
+      </div>
     </div>
 
     <div>
