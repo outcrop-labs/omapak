@@ -12,4 +12,4 @@ bucket_name = "omapak-repo"
 
 # Must stay last: keys after this table would scope into [build].
 [build]
-command = "worker-build --release --panic-unwind"
+command = "worker-build --release"
