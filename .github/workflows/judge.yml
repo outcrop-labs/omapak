@@ -1,0 +1,185 @@
+name: judge
+
+on:
+  pull_request:
+    paths: ["apps/**"]
+  workflow_run:
+    workflows: [judge]
+    types: [completed]
+  push:
+    branches: [main]
+    paths: ["apps/**"]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  RUNTIME: org.freedesktop.Platform
+  RUNTIME_VERSION: "24.08"
+
+jobs:
+  # Phase 1 — static checks + real build. Runs on PRs and main with NO
+  # secrets, so fork PR code never executes anywhere privileged.
+  static-build:
+    if: github.event_name != 'workflow_run'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install flatpak tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder pipx
+          pipx install flatpak-builder-lint
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install runtime + SDK
+        run: |
+          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak --user install -y --noninteractive \
+            flathub org.freedesktop.Platform//$RUNTIME_VERSION org.freedesktop.Sdk//$RUNTIME_VERSION
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Changed app dirs
+        if: github.event_name == 'pull_request'
+        run: |
+          {
+            git diff --name-only "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" \
+              | grep '^apps/' | cut -d/ -f1-2 | sort -u || true
+          } | tee changed.txt
+
+      - name: Judge — static + build (no LLM keys in this job)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            APPS=$(cat changed.txt)
+          else
+            APPS=$(find apps -mindepth 1 -maxdepth 1 -type d)
+          fi
+          for app in $APPS; do
+            [ -d "$app" ] || continue
+            echo "::group::judge $app"
+            cargo run -q -p omapak-judge -- "$app" --out "out/$(basename "$app")"
+            echo "::endgroup::"
+          done
+
+      - name: Clone upstream sources for the digest
+        if: github.event_name == 'pull_request'
+        run: |
+          while read -r app; do
+            [ -f "$app/metadata.yml" ] || continue
+            repo=$(grep -m1 '^source_repo:' "$app/metadata.yml" | sed 's/^source_repo:[[:space:]]*//')
+            [ -n "$repo" ] || continue
+            git clone --depth 100 "$repo" "sources/$(basename "$app")" || echo "::warning::clone failed for $repo"
+          done < changed.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: judge-partial
+          path: |
+            out/
+            sources/
+          retention-days: 3
+          if-no-files-found: error
+
+  # Phase 2 — LLM rubric + PR comment. Triggered by workflow_run, so it runs
+  # on the default branch context and has access to secrets. The judge binary
+  # is built from MAIN (trusted); the PR head is checked out to pr-apps/ as
+  # DATA only — never built, never executed.
+  judge:
+    if: >
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out PR app data (data only — not executed)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          sparse-checkout: apps
+          path: pr-apps
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: judge-partial
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run judge stage on partial reports
+        env:
+          OMAPAK_LLM_BASE_URL: ${{ secrets.OMAPAK_LLM_BASE_URL }}
+          OMAPAK_LLM_KEY: ${{ secrets.OMAPAK_LLM_KEY }}
+          OMAPAK_LLM_MODEL: ${{ secrets.OMAPAK_LLM_MODEL }}
+        run: |
+          for partial in out/*/report.json; do
+            [ -f "$partial" ] || continue
+            name=$(basename "$(dirname "$partial")")
+            source_dir=""
+            [ -d "sources/$name" ] && source_dir="--source-dir sources/$name"
+            cargo run -q -p omapak-judge -- "pr-apps/apps/$name" --partial "$partial" $source_dir --out "final/$name"
+          done
+
+      - name: Post report comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const run = context.payload.workflow_run;
+            const prNumber = run.pull_requests[0]?.number;
+            if (!prNumber) { core.warning('no PR associated with this run'); return; }
+            for (const dir of fs.readdirSync('final')) {
+              const md = fs.readFileSync(`final/${dir}/report.md`, 'utf8');
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: md,
+              });
+            }
+
+  # Main-branch pushes have secrets: full judge run, commit reports back into
+  # apps/ so every accepted app carries its public report in-repo.
+  report:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [static-build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: judge-partial
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Full judge run for every app
+        env:
+          OMAPAK_LLM_BASE_URL: ${{ secrets.OMAPAK_LLM_BASE_URL }}
+          OMAPAK_LLM_KEY: ${{ secrets.OMAPAK_LLM_KEY }}
+          OMAPAK_LLM_MODEL: ${{ secrets.OMAPAK_LLM_MODEL }}
+        run: |
+          for app in apps/*/; do
+            name=$(basename "$app")
+            cargo run -q -p omapak-judge -- "$app" --partial "out/$name/report.json" --out "final/$name"
+            cp "final/$name/report.json" "$app/report.json"
+            cp "final/$name/report.md" "$app/report.md"
+          done
+
+      - name: Commit updated reports
+        run: |
+          git config user.name "omapak-judge"
+          git config user.email "judge@omapak.outcrop.labs"
+          git add apps/
+          git diff --cached --quiet && echo "no report changes" && exit 0
+          git commit -m "judge: refresh reports"
+          git push

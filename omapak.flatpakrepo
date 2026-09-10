@@ -1,0 +1,9 @@
+[Flatpak Repo]
+Title=omapak
+Url=https://omapak.org/repo
+Homepage=https://omapak.org
+Comment=The open Flatpak repository — grade the artifact, not the authorship
+Description=omapak accepts apps on what they are: does it work, is it built sanely, is it honest about what it does. Who or what wrote the code — human, AI, or pair — is not our business. Every submission is graded by a published rubric and every judge report is public.
+Icon=https://omapak.org/icon.svg
+Prio=5
+GPGKey=

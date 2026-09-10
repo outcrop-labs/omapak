@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.outcroplabs.OmapakFixture</id>
+  <name>omapak fixture</name>
+  <summary>Judge harness end-to-end test fixture</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>Not a real app. It exists so the omapak judge pipeline has something honest to grade: it builds fast, packages cleanly, and does nothing.</p>
+  </description>
+  <releases>
+    <release version="0.1.0" date="2026-09-09"/>
+  </releases>
+</component>

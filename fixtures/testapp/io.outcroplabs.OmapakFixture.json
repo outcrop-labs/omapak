@@ -1,0 +1,28 @@
+{
+    "app-id": "io.outcroplabs.OmapakFixture",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "24.08",
+    "sdk": "org.freedesktop.Sdk",
+    "command": "omapak-fixture",
+    "finish-args": [
+        "--share=network"
+    ],
+    "modules": [
+        {
+            "name": "omapak-fixture",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -Dm755 omapak-fixture.sh /app/bin/omapak-fixture"
+            ],
+            "sources": [
+                {
+                    "type": "script",
+                    "dest-filename": "omapak-fixture.sh",
+                    "commands": [
+                        "echo 'omapak fixture — judge harness end-to-end test'"
+                    ]
+                }
+            ]
+        }
+    ]
+}

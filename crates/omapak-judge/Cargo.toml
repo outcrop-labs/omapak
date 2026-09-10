@@ -1,0 +1,18 @@
+[package]
+name = "omapak-judge"
+description = "omapak submission judge: static checks, flatpak build, LLM rubric, report"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+omapak-core = { path = "../omapak-core" }
+clap = { version = "4", features = ["derive"] }
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+chrono = { version = "0.4", features = ["serde"] }
+reqwest = { version = "0.12", features = ["blocking", "json", "rustls-tls"], default-features = false }
+walkdir = "2"

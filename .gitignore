@@ -1,0 +1,7 @@
+/target
+omapak-out/
+.flatpak-builder/
+repo/
+sources/
+build/
+*.gpg

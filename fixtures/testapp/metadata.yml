@@ -1,0 +1,6 @@
+submitter: jon
+source_repo: https://github.com/outcrop-labs/omapak
+summary: Fixture app used to exercise the omapak judge pipeline end to end
+description: Not a real app. It exists so `cargo run -p omapak-judge -- fixtures/testapp` has something honest to grade — builds fast, packages cleanly, does nothing.
+license: MIT
+tags: [fixture, testing]
