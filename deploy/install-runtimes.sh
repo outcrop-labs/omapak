@@ -16,7 +16,7 @@ for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
   bv=$(strip "$(grep -m1 "^base-version:" "$m" | cut -d: -f2-)")
   if [ -n "$bt" ] && [ -n "$bv" ]; then
     echo "Installing base $bt//$bv"
-    sudo flatpak install --system -y --noninteractive flathub "$bt//bv" 2>&1 | tail -1
+    sudo flatpak install --system -y --noninteractive flathub "$bt//$bv" 2>&1 | tail -1
   fi
 done
 
