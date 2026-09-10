@@ -12,7 +12,7 @@
 
   const dims: { key: string; label: string; gate?: string }[] = [
     { key: "problem_clarity", label: "problem clarity" },
-    { key: "differentiation", label: "differentiation", gate: "advisory — never gates" },
+    { key: "differentiation", label: "differentiation", gate: "advisory, never gates" },
     { key: "architecture", label: "architecture" },
     { key: "code_quality", label: "code quality" },
     { key: "ui_ux", label: "ui / ux" },
@@ -49,7 +49,7 @@
       <div
         class="mt-6 rounded-sm border border-danger/40 bg-danger/10 p-4 font-mono text-sm text-danger"
       >
-        packaging gate FAILED — this build does not install. Scores below are context for
+        packaging gate FAILED. This build does not install. Scores below are context for
         fixing it.
       </div>
     {/if}
@@ -76,7 +76,7 @@
       {#if r.rubric.differentiation.better_alternatives?.length}
         <div class="mt-6 rounded-sm border border-line bg-panel p-5">
           <h2 class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">
-            better existing solutions — informational, never gates
+            better existing solutions: informational, never gates
           </h2>
           <ul class="mt-3 space-y-1.5">
             {#each r.rubric.differentiation.better_alternatives as alt}
@@ -105,7 +105,7 @@
         </div>
       {/if}
     {:else}
-      <p class="mt-6 font-mono text-sm text-muted">No rubric for this report — gates only.</p>
+      <p class="mt-6 font-mono text-sm text-muted">No rubric for this report. Gates only.</p>
     {/if}
 
     {#if r.static.advisories?.length}

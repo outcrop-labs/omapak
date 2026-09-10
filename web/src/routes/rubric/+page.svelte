@@ -5,22 +5,22 @@
     {
       name: "problem clarity",
       gates: false,
-      text: "Is it obvious what problem this solves and for whom? Common problems are fine — a to-do app can score 5. Incoherent ones cannot.",
+      text: "Is it obvious what problem this solves and for whom? Common problems are fine; a to-do app can score 5. Incoherent ones cannot.",
     },
     {
       name: "differentiation",
       gates: false,
-      text: "Does this exist already, better? The judge names the alternatives — as information for the reviewer and the user. This dimension NEVER gates. Clones are allowed; hiding that they're clones is not.",
+      text: "Does this exist already, better? The judge names the alternatives as information for the reviewer and the user. This dimension NEVER gates. Clones are allowed; hiding that they're clones is not.",
     },
     {
       name: "architecture",
       gates: false,
-      text: "Sensible structure, state handling, error paths, no gratuitous dependencies — judged at the app's scale.",
+      text: "Sensible structure, state handling, error paths, no gratuitous dependencies, judged at the app's scale.",
     },
     {
       name: "code quality",
       gates: false,
-      text: "Readability, consistency, dead code, error handling. Style differences don't score. And 'built with AI' is not a signal — that's the entire reason this repo exists. We judge slop, and slop is judgeable on its own.",
+      text: "Readability, consistency, dead code, error handling. Style differences don't score. And 'built with AI' is not a signal. That's the entire reason this repo exists. We judge slop, and slop is judgeable on its own.",
     },
     {
       name: "ui / ux",
@@ -30,18 +30,18 @@
     {
       name: "packaging hygiene",
       gates: true,
-      text: "Manifest sanity, pinned sources, runtime fit, sane finish-args, truthful appstream. Below 2/5 is a hard reject — come back when it installs clean.",
+      text: "Manifest sanity, pinned sources, runtime fit, sane finish-args, truthful appstream. Below 2/5 is a hard reject: come back when it installs clean.",
     },
     {
       name: "security flags",
       gates: true,
-      text: "Obfuscated payloads, mystery endpoints, undisclosed telemetry, miner-shaped code, harvesting beyond the stated purpose. Hard pass, pound sand. An empty list is the common case — the judge is told not to invent flags to seem thorough.",
+      text: "Obfuscated payloads, mystery endpoints, undisclosed telemetry, miner-shaped code, harvesting beyond the stated purpose. Hard pass, pound sand. An empty list is the common case; the judge is told not to invent flags to seem thorough.",
     },
   ];
 </script>
 
 <svelte:head>
-  <title>rubric — omapak</title>
+  <title>rubric · Omapak</title>
 </svelte:head>
 
 <section class="py-14">
@@ -50,7 +50,7 @@
     Every submission graded in the open.
   </h1>
   <p class="mt-5 max-w-[var(--read-width)] text-lg text-muted">
-    This is the exact prompt sent with every submission — published, versioned, in the repo.
+    This is the exact prompt sent with every submission. Published, versioned, in the repo.
     The gates are honest and boring: it builds, it's not hostile to the user, the packaging
     isn't a mess. Everything else is scored, published, and never gatekept. No vibes, no
     overzealous mods denying on a whim, everything written down. A human makes the call.

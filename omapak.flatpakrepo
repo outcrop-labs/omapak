@@ -2,8 +2,8 @@
 Title=omapak
 Url=https://omapak.org/repo
 Homepage=https://omapak.org
-Comment=The open Flatpak repository — grade the artifact, not the authorship
-Description=omapak accepts apps on what they are: does it work, is it built sanely, is it honest about what it does. Who or what wrote the code — human, AI, or pair — is not our business. Every submission is graded by a published rubric and every judge report is public.
+Comment=The open Flatpak repo. Grade the app on its own merits.
+Description=Omapak grades the app on its own merits: does it build, is it safe, is it any good. How it was built is not our business. Every submission is scored by a published rubric and every agent judge report is public.
 Icon=https://omapak.org/icon.svg
 Prio=5
 GPGKey=LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptRE1FYXFKRDJCWUpLd1lCQkFIYVJ3OEJBUWRBRXZpY0xDSXlMenl1SGZvZ3doaS9GU2ZjaThmSTRLVEUvWXc0CkRpbUtiSFcwSTI5dFlYQmhheUJ5WlhCdmMybDBiM0o1SUR4eVpYQnZRRzl0WVhCaGF5NXZjbWMraUpBRUV4WUsKQURnV0lRUlhYaENHc0NQT2Q5TkJjVVg2MWJid3ZaNlQ1d1VDYXFKRDJBSWJBd1VMQ1FnSEFnWVZDZ2tJQ3dJRQpGZ0lEQVFJZUFRSVhnQUFLQ1JENjFiYnd2WjZUNTl3SEFRQ0MyVCtsZmN5RFpldXQxRFg5SlpxMk05eXQ2RHlsCkVNd2FnVkl4REVGQUN3RUFqTlZaMlBDTG51M25wMTNMLzJOM3FBd3JxenhGcjlNclZZWnZGSGMzdmdjPQo9bSs4RwotLS0tLUVORCBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCg==

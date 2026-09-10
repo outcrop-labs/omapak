@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-  <title>Omapak — the open Flatpak repo</title>
+  <title>Omapak · the open Flatpak repo</title>
   <meta
     name="description"
     content="Omapak grades the app on its own merits. Every submission scored by an open agent judge, every report public, never gatekept."
@@ -53,7 +53,7 @@
       <div
         class="mx-auto flex w-full max-w-[var(--page-width)] flex-wrap items-center justify-between gap-3 px-6 py-5 font-mono text-xs text-ink-dim"
       >
-        <span>Omapak — every flatpak, every distro</span>
+        <span>Omapak · every flatpak, every distro</span>
         <span>normal people don't give a shit how it was built. neither do we.</span>
       </div>
     </footer>

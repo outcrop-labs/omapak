@@ -4,12 +4,12 @@ use crate::schema::{RubricScore, Severity, Verdict};
 /// reads the shape of the app before any prose does.
 pub fn render_markdown(report: &crate::schema::Report) -> String {
     let mut out = String::new();
-    out.push_str(&format!("## omapak judge — `{}`\n\n", report.app_id));
+    out.push_str(&format!("## omapak judge · `{}`\n\n", report.app_id));
 
     out.push_str(&format!("**Verdict: {}**\n\n", verdict_label(report.verdict)));
 
     if !report.build.ok {
-        out.push_str("**Packaging gate FAILED** — the flatpak did not build. ");
+        out.push_str("**Packaging gate FAILED.** The flatpak did not build. ");
         out.push_str("Everything below is advisory context for fixing it.\n\n");
     }
 
@@ -49,14 +49,14 @@ pub fn render_markdown(report: &crate::schema::Report) -> String {
             out.push('\n');
         }
     } else {
-        out.push_str("_No rubric — judge stage was skipped (no LLM endpoint configured). Gates only._\n\n");
+        out.push_str("_No rubric. Judge stage was skipped (no LLM endpoint configured). Gates only._\n\n");
     }
 
     let s = &report.static_report;
     if !s.advisories.is_empty() {
         out.push_str("**Manifest advisories**\n");
         for a in &s.advisories {
-            out.push_str(&format!("- `{}` — {}\n", a.kind, a.detail));
+            out.push_str(&format!("- `{}`: {}\n", a.kind, a.detail));
         }
         out.push('\n');
     }

@@ -1,5 +1,5 @@
 <svelte:head>
-  <title>how to submit — Omapak</title>
+  <title>how to submit · Omapak</title>
   <meta
     name="description"
     content="Submit an app to Omapak: fork, add your manifest and metadata.yml, open a PR. The agent judge grades it, a human merges. No attestation about who wrote your code."
@@ -10,7 +10,7 @@
   <p class="font-mono text-xs uppercase tracking-[0.2em] text-ink-dim">how to submit</p>
   <h1 class="mt-3 max-w-3xl text-4xl leading-tight">Open a PR. Get graded. Merge is human.</h1>
   <p class="mt-5 max-w-[var(--read-width)] text-lg text-muted">
-    No account on our side, no attestation about who or what wrote your code — that question
+    No account on our side, no attestation about who or what wrote your code. That question
     doesn't get asked here. If it builds, installs, and isn't hostile to the user, a human
     reads the judge report and makes the call. Here's the whole tutorial; it's short.
   </p>
@@ -74,13 +74,13 @@ tags: [utility, gnome]</pre>
     <div>
       <p class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">step 3 · test locally</p>
       <p class="mt-3 max-w-[var(--read-width)] text-muted">
-        Cheapest check — just build it:
+        Cheapest check: just build it.
       </p>
       <pre
         class="mt-3 max-w-full overflow-x-auto rounded-sm border border-line bg-panel p-4 font-mono text-xs leading-relaxed text-muted">flatpak-builder --force-clean --repo=/tmp/omapak-test \
   build apps/com.yourname.yourapp/com.yourname.yourapp.json</pre>
       <p class="mt-4 max-w-[var(--read-width)] text-muted">
-        If you want the full treatment (what CI will run), use the judge itself — any
+        If you want the full treatment (what CI will run), use the judge itself. Any
         OpenAI-compatible endpoint works:
       </p>
       <pre
@@ -95,7 +95,7 @@ cargo run -p omapak-judge -- apps/com.yourname.yourapp --source-dir /tmp/src</pr
       <p class="mt-3 max-w-[var(--read-width)] text-muted">
         Push your branch, open a PR against
         <code class="font-mono text-sm text-fg">outcrop-labs/omapak</code>. CI runs the judge
-        — static checks, a real build in a clean container, then the rubric — and posts the
+        (static checks, a real build in a clean container, then the rubric) and posts the
         full report as a comment on your PR. Scores are advisory; the gates are: it builds,
         it's not hostile to the user, packaging isn't a mess.
       </p>
@@ -106,7 +106,7 @@ cargo run -p omapak-judge -- apps/com.yourname.yourapp --source-dir /tmp/src</pr
         step 5 · merge and publish
       </p>
       <p class="mt-3 max-w-[var(--read-width)] text-muted">
-        A maintainer reads the report and merges — or doesn't, with written reasons, in
+        A maintainer reads the report and merges, or doesn't, with written reasons, in
         public. On merge your app is built, signed, published to the repo, and its judge
         report goes live on this site. Users install it like any flatpak:
       </p>
@@ -119,9 +119,9 @@ cargo run -p omapak-judge -- apps/com.yourname.yourapp --source-dir /tmp/src</pr
         the one ongoing rule · maintenance
       </p>
       <p class="mt-3 max-w-[var(--read-width)] text-sm text-muted">
-        Published apps have to be alive or perma-stable. Quiet or broken past the window (TBD —
+        Published apps have to be alive or perma-stable. Quiet or broken past the window (TBD;
         we'll set it as a community, in the open) and your app gets archived to
-        <code class="font-mono text-sm text-fg">omapak-unmaintained</code> — still installable,
+        <code class="font-mono text-sm text-fg">omapak-unmaintained</code>: still installable,
         clearly labeled. Quiet after that and it drops. Pretending dead software is fine does
         users no favors.
       </p>

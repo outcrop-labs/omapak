@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-  <title>mission — Omapak</title>
+  <title>mission · Omapak</title>
   <meta
     name="description"
     content="Why Omapak exists: grade the app on its own merits. Scored, published, never gatekept."

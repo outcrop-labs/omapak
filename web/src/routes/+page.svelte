@@ -19,8 +19,8 @@
     <a href="/rubric" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">agent judge</a>
     we build in the open, every report is
     <a href="/rubric" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">public</a>,
-    and a human makes the merge call. Scored, published, never gatekept — that's the
-    difference between a store and a gatekeeper.
+    and a human makes the merge call. Scored, published, never gatekept. That's
+    the difference between a store and a gatekeeper.
   </p>
   <div class="mt-8 flex flex-wrap items-center gap-3">
     <a
@@ -55,7 +55,7 @@
     <p class="mt-8 font-mono text-sm text-danger">catalog failed to load</p>
   {:else if entries.length === 0}
     <p class="mt-8 max-w-[var(--read-width)] text-muted">
-      Nothing published yet. The queue is open — <a href="/submit" class="text-accent">be the first</a>.
+      Nothing published yet. The queue is open. <a href="/submit" class="text-accent">Be the first</a>.
     </p>
   {:else}
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
