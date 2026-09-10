@@ -118,7 +118,7 @@
         >
           <div class="flex items-start justify-between gap-3">
             <code class="font-mono text-sm text-fg group-hover:text-accent"
-              >{entry.app_id}</code
+              >{entry.name || entry.app_id}</code
             >
             <VerdictBadge verdict={entry.verdict} certified={entry.certified} />
           </div>
