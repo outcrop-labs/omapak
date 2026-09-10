@@ -1,0 +1,63 @@
+name: merge-summary
+
+# Daily: merge flathub's refs into omapak's signed summary so ONE remote
+# covers their whole catalog. Objects are never pre-mirrored; the repo
+# proxy worker caches them from dl.flathub.org on first request. Objects
+# are content-addressed and immutable, so cached can never mean stale:
+# a new release is new object paths, which miss and fetch fresh.
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore repo state from the repo branch
+        run: |
+          mkdir repo
+          if git ls-remote --heads https://github.com/${{ github.repository }}.git repo | grep -q repo; then
+            git clone --depth 1 --branch repo https://github.com/${{ github.repository }}.git wt
+            mv wt/repo/. ./repo/ 2>/dev/null || mv wt/. ./repo/
+            rm -rf wt
+          fi
+
+      - name: Install tooling
+        run: sudo apt-get update && sudo apt-get install -y flatpak ostree rclone
+
+      - name: Metadata-mirror every flathub ref (commit objects only)
+        run: |
+          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak --user remote-ls --columns=ref flathub | grep -E '^(app|runtime)/' > refs.txt
+          wc -l refs.txt
+          # Commit-metadata-only: summary entries without the filesystem
+          # payloads, which the proxy worker serves on demand.
+          xargs -a refs.txt -n 50 ostree pull --repo=repo --mirror \
+            --commit-metadata-only --remote=flathub
+
+      - name: Re-sign the merged summary
+        env:
+          OMAPAK_GPG_KEY: ${{ secrets.OMAPAK_GPG_KEY }}
+        run: |
+          echo "$OMAPAK_GPG_KEY" | gpg --import
+          keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
+          flatpak build-update-repo --gpg-sign="$keyid" repo
+
+      - name: Publish summary to R2 (never delete cached objects)
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
+        run: |
+          rclone copy repo/ ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
+            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
+            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
+            --s3-no-check-bucket \
+            --include "summary*" \
+            --include "config" \
+            --include "ostree-metadata" \
+            --include "refs/**"
