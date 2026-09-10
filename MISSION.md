@@ -1,56 +1,57 @@
 # Why omapak exists
 
-In May 2026, Flathub decided that new apps are banned if any part of them — code, docs, a
-commit, whatever — was written with AI assistance. Even one AI-touched commit disqualifies a
-submission. Their house, their rules, fine. But it's a dumb rule, and I think we can do better
-than dumb rules.
+In May 2026 Flathub decided new apps are banned if AI had anything to do with
+them — a commit, some docs, whatever. Even one AI-touched commit disqualifies a
+submission. Their house, their rules. But it's a dumb rule, and I'd rather build
+the alternative than argue about it.
 
-Here's the thing the policy gets exactly backwards: **authorship was never the signal. The
-artifact is.** A crap app hand-typed by a saint is still a crap app. A great app vibe-coded in
-a weekend by someone who barely knows Rust is still a great app. Users don't install a commit
-history; they install software. "Who wrote it" is identity politics for package managers.
-"What does it do, does it work, is it honest" is the whole job.
+Here's what that policy gets backwards: **authorship was never the signal. The
+artifact is.** A crap app hand-typed by a saint is still a crap app. A great app
+vibe-coded over a weekend is still a great app. Nobody installs a commit
+history. "Who wrote it" is identity politics for package managers; "what does
+it do, does it work, is it honest" is the whole job.
 
-So omapak flips it: **grade the artifact, not the authorship.** We don't ask, we don't care,
-and we don't want to know how the sausage was made. We care about:
+So omapak flips it: **grade the artifact, not the authorship.** We don't ask how
+the sausage got made. We check exactly three things as gates:
 
-1. **Does it build and install.** Hard gate. Non-negotiable.
-2. **Is it safe to hand to users.** Obfuscated payloads, mystery endpoints, undisclosed
-   telemetry, miner-shaped code — flagged, and critical flags are a hard reject.
-3. **Is it any good.** Scored, in the open, by a published rubric — problem clarity,
-   architecture, code quality, UI/UX, packaging. Advisory, not gatekeeping. If your app is a
-   clone of something better, the report says so and the user decides. We don't decide for
-   them. That's the difference between a store and a gatekeeper.
+1. **It builds and installs.** Hard gate. Non-negotiable.
+2. **It's not hostile to the user.** Obfuscated payloads, mystery endpoints,
+   undisclosed telemetry, miner-shaped code — critical flags are a hard reject.
+3. **The packaging isn't a mess.** Below 2/5 on packaging hygiene, come back
+   when it installs clean.
 
-Every judge report is public. Every prompt is public, versioned, in the repo. You can read
-exactly why any app got in or didn't. No vibes-based moderation, no interminable
-"moderation team" queues, no asking you embarrassing questions about your git history. An LLM
-does the triage against a rubric you can read; a human reads its report and merges — or
-doesn't, with public reasons.
+Everything else — problem clarity, architecture, code quality, UI/UX, and yes,
+"is this just a worse clone of something that already exists" — gets **scored,
+published, and never gatekept.** If your app is a clone, the report says so and
+the user decides. Not us. That's the difference between a store and a
+gatekeeper.
 
-That last bit matters: I'm not anti-Flathub, and I'm not anti-human-review. I'm anti-*_scaling
-moderation on vibes* and anti-*interrogating developers about their tools*. The rubric does
-the triage so a small maintainer team can run a big repo honestly. Judge output is advisory;
-humans decide; everything is written down.
+And it's all in the open: every judge report is public, every prompt is
+[public and versioned](https://omapak.org/rubric), every accept or reject comes
+with written reasons. No vibes-based moderation queue, no interrogating
+developers about their tools. An LLM does the triage against a rubric you can
+read; a human makes the call. The rubric does the boring work so a couple of
+maintainers can run this honestly.
+
+To be clear, I'm not anti-Flathub and I'm not anti-human-review. I'm anti
+*scaling moderation on vibes*, and anti *treating "used an LLM" as a character
+flaw*. omapak is not a slop repository either — that's the whole point. "AI-made"
+and "slop" are different axes, and slop is the one we judge. By what the app
+does. Not by which tools made it.
 
 ## The other rules
 
-- **Maintenance.** Published apps must be actively maintained. Go quiet past the window (TBD —
-  we'll set it by community consensus, in the open), and your app gets archived to
-  `omapak-unmaintained` — still installable, clearly labeled. Stay quiet after that and it
-  drops from the repo and the servers. Software rot is real and pretending otherwise does
-  users no favors.
-- **Everything flatpak.** omapak is born in the Omarchy community, but it's a standard flatpak
-  repo — every distro is welcome, and we'll happily host the app IDs other repos deplatform.
-- **Flathub content.** We don't mirror or proxy Flathub's apps; our catalog links through.
-  If that ever gets blocked, we'll mirror overnight and keep going. Not because we want to —
-  because the architecture doesn't depend on anyone's permission, and neither should your
-  app store.
-
-## What omapak is not
-
-Not a slop repository. The whole point is that "AI-made" and "slop" are different axes. Slop
-is judged here — by what the app does, not by which tools made it. If that distinction is too
-subtle for your policy, that's a you problem.
+- **Maintenance.** Apps here have to be alive. Quiet past the window (TBD —
+  we'll set it as a community, in the open) and your app gets archived to
+  `omapak-unmaintained`, still installable, clearly labeled. Quiet after that
+  and it drops from the repo and the servers. Pretending dead software is fine
+  does users no favors.
+- **Every distro.** Born in Omarchy, but it's a standard flatpak repo — if
+  you're on Fedora or Nix or whatever, come on in. And if another repo
+  deplatforms an app ID, we'll happily host the continuation.
+- **Flathub's apps.** We don't mirror or proxy them; the catalog links through.
+  If that ever gets blocked, we'll mirror overnight and keep going. Not because
+  I want to — because your app store shouldn't depend on anyone's permission,
+  and neither does this architecture.
 
 — jon, Outcrop Labs, September 2026
