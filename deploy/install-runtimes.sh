@@ -11,4 +11,15 @@ for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
     sudo flatpak install --system -y --noninteractive flathub "$rt//$rv" "$sdk//$rv" 2>&1 | tail -1
   fi
 done
+# Also install BaseApps (base: + base-version: in manifests)
+for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
+  [ -f "$m" ] || continue
+  bt=$(grep -m1 "^base:" "$m" | sed 's/base:[[:space:]]*//; s/["']//g' | tr -d ' ')
+  bv=$(grep -m1 "^base-version:" "$m" | sed 's/base-version:[[:space:]]*//; s/["']//g' | tr -d ' ')
+  if [ -n "$bt" ] && [ -n "$bv" ]; then
+    echo "Installing base $bt//$bv"
+    sudo flatpak install --system -y --noninteractive flathub "$bt//$bv" 2>&1 | tail -1
+  fi
+done
+
 sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 2>/dev/null | tail -1
