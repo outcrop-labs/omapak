@@ -27,8 +27,7 @@ and a gatekeeper.
 
 Omapak will be governed in the open: every agent judge report is public, every prompt is
 [public and versioned](https://omapak.org/rubric), every accept or reject comes with 
-written reasons. No overzealous mods denying on a whim, no interrogating developers about 
-their chosen tooling. An agent that we build in the open does the triage against a rubric
+written reasons. An agent that we build in the open does the triage against a rubric
 you can read (and the community guides); a human makes the call. The rubric does the 
 boring work so a small team of maintainers can reasonably run this repo.
 
