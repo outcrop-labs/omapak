@@ -95,9 +95,10 @@ impl Rubric {
 }
 
 /// The entire gate logic of omapak, in one pure function. The judge's rubric
-/// informs; these rules decide.
-pub fn compute_verdict(rubric: &Rubric, build_ok: bool) -> Verdict {
-    if !build_ok {
+/// informs; these rules decide. `gates_ok` is the deterministic packaging
+/// gate: build succeeded, appstream is valid, metadata is present.
+pub fn compute_verdict(rubric: &Rubric, gates_ok: bool) -> Verdict {
+    if !gates_ok {
         return Verdict::RejectRecommended;
     }
     if rubric
@@ -114,6 +115,26 @@ pub fn compute_verdict(rubric: &Rubric, build_ok: bool) -> Verdict {
         return Verdict::AcceptRecommended;
     }
     Verdict::NeedsHuman
+}
+
+/// Store-presence gate: appstream metainfo must exist and carry no
+/// validation errors. Warnings are fine; apps that would render as blank
+/// tiles in GNOME Software / Discover don't ship here.
+pub fn appstream_clean(static_report: &StaticReport) -> bool {
+    if !static_report.appstream_present {
+        return false;
+    }
+    for run in &static_report.linters {
+        if run.status == LinterStatus::Failed
+            && run
+                .findings
+                .iter()
+                .any(|f| f.contains(" E:") || f.contains("Validation failed"))
+        {
+            return false;
+        }
+    }
+    true
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -273,6 +294,30 @@ mod tests {
             compute_verdict(&rubric_with(5, 5, vec![warning]), true),
             Verdict::NeedsHuman
         );
+    }
+
+    #[test]
+    fn appstream_gate() {
+        let mut s = StaticReport {
+            appstream_present: true,
+            ..Default::default()
+        };
+        assert!(appstream_clean(&s));
+        s.appstream_present = false;
+        assert!(!appstream_clean(&s));
+        s.appstream_present = true;
+        s.linters = vec![LinterRun {
+            tool: "appstreamcli".into(),
+            status: LinterStatus::Failed,
+            findings: vec![
+                "W: com.example.App:~: url-homepage-missing".into(),
+                "E: com.example.App:~: desktop-app-launchable-missing".into(),
+                "✘ Validation failed: errors: 1".into(),
+            ],
+        }];
+        assert!(!appstream_clean(&s));
+        s.linters[0].findings = vec!["W: com.example.App:~: url-homepage-missing".into()];
+        assert!(appstream_clean(&s));
     }
 
     #[test]

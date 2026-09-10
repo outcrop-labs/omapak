@@ -100,9 +100,16 @@ fn main() -> Result<()> {
     let (rubric, judge_info, build_report) =
         finish_judging(&cli, &static_report, build_ok, config.as_ref())?;
 
+    // Deterministic gates: build passed, appstream valid, submitter metadata
+    // present. Store-presence matters; blank tiles in software stores don't
+    // ship from here.
+    let gates_ok = build_ok
+        && omapak_core::appstream_clean(&static_report)
+        && static_report.metadata_present;
+
     let verdict = match &rubric {
-        Some(r) => compute_verdict(r, build_report.as_ref().map(|b| b.ok).unwrap_or(build_ok)),
-        None => gates_only_verdict(&static_report, build_ok),
+        Some(r) => compute_verdict(r, gates_ok),
+        None => gates_only_verdict(&static_report, gates_ok),
     };
 
     let app_id = static_report
@@ -199,9 +206,9 @@ fn finish_judging(
     Ok((Some(rubric), Some(judge_info), build_report))
 }
 
-/// Without an LLM there is no rubric; only the deterministic gates speak.
-fn gates_only_verdict(static_report: &StaticReport, build_ok: bool) -> Verdict {
-    if !build_ok {
+/// Without an agent rubric; only the deterministic gates speak.
+fn gates_only_verdict(static_report: &StaticReport, gates_ok: bool) -> Verdict {
+    if !gates_ok || static_report.manifest.is_none() {
         return Verdict::RejectRecommended;
     }
     let hard_lint_fail = static_report.linters.iter().any(|l| {
@@ -210,9 +217,6 @@ fn gates_only_verdict(static_report: &StaticReport, build_ok: bool) -> Verdict {
             && l.findings.iter().any(|f| f.contains("error"))
     });
     if hard_lint_fail {
-        return Verdict::RejectRecommended;
-    }
-    if !static_report.metadata_present || static_report.manifest.is_none() {
         return Verdict::RejectRecommended;
     }
     Verdict::NeedsHuman
