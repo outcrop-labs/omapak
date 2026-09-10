@@ -77,7 +77,7 @@ tags: [utility, gnome]</pre>
         what wrote the code. We don't ask. Don't tell us; we don't care.
       </p>
       <div class="mt-6 max-w-[var(--read-width)] rounded-sm border border-warning/40 bg-card p-5">
-        <p class="font-mono t          <p class="font-mono text-xs uppercase tracking-[0.15em] text-warning">
+        <p class="font-mono text-xs uppercase tracking-[0.15em] text-warning">
           private repo or closed source?
         </p>
         <p class="mt-3 text-sm text-muted">
