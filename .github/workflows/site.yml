@@ -3,7 +3,6 @@ name: site
 on:
   push:
     branches: [main]
-    paths: ["web/**", "MISSION.md"]
   workflow_dispatch:
   workflow_run:
     workflows: [judge]
