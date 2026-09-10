@@ -51,5 +51,4 @@ either. That's the whole point. "Built it using AI/agents" and "slop" are differ
 
 Let's just support people who want to make things, and do it in the open.
 
-- Jon 
-Outcrop Labs, September 2026
+Jon, September 2026
