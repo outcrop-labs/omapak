@@ -37,8 +37,8 @@ modules:
       - install -Dm644 icons/icon-512.png /app/share/icons/hicolor/512x512/apps/com.macrotrainer.MacroTrainer.png
     sources:
       - type: archive
-        url: https://github.com/NickHirras/macrotrainer-releases/releases/download/v1.5.6/macrotrainer-linux-x64.tar.gz
-        sha256: 9d87f5237366bcd8b652830c7debf9c5c5e5bd09fd85c62d0c23652951062ee5
+        url: https://github.com/NickHirras/macrotrainer-releases/releases/download/v1.11.3/macrotrainer-linux-x64.tar.gz
+        sha256: 94273c8409a97b556abeb772682025615bd90dd6987c35b482f0be59d0d191d8
         dest: bundle
         x-checker-data:
           type: json

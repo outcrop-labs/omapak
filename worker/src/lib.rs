@@ -24,6 +24,8 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         return Response::error("not found", 404);
     }
 
+
+
     // R2 first (omapak's own objects, plus everything previously cached).
     if let Some(obj) = bucket.get(&path).execute().await? {
         let is_summary = path.starts_with("summary");
@@ -37,6 +39,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         headers.set("X-Omapak-Origin", if is_summary { "omapak" } else { "cached" })?;
         // worker 0.8: body() is Option<ObjectBody>; response_body() hands
         // the stream to the runtime without buffering it in the worker.
+        let _ = headers.set("Access-Control-Allow-Origin", "*");
         let body = obj.body().ok_or_else(|| Error::RustError("object body consumed".into()))?;
         return Ok(Response::from_body(body.response_body()?)?.with_headers(headers));
     }
@@ -69,12 +72,14 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
             .and_then(|v| v.parse().ok());
         let huge = path.starts_with("deltas/") || content_length.is_some_and(|n| n > 8 * 1024 * 1024);
         if huge {
+            let _ = headers.set("Access-Control-Allow-Origin", "*");
             headers.set("X-Omapak-Origin", "flathub-stream")?;
             return Ok(resp.with_headers(headers));
         }
 
         let bytes = resp.bytes().await?;
         let _ = bucket.put(path, bytes.clone()).execute().await;
+        let _ = headers.set("Access-Control-Allow-Origin", "*");
         headers.set("X-Omapak-Origin", "flathub-pass-through")?;
         Ok(Response::from_bytes(bytes)?.with_headers(headers))
     }
