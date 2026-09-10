@@ -29,7 +29,10 @@ jobs:
       - name: Install flatpak tooling
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder pipx
+          # libcairo/girepository headers: PyGObject (a flatpak-builder-lint
+          # dependency) compiles from source on noble.
+          sudo apt-get install -y flatpak flatpak-builder pipx \
+            pkg-config libcairo2-dev libgirepository1.0-dev libglib2.0-dev
           # Not on PyPI under this name; install from the flathub git repo.
           pipx install git+https://github.com/flathub/flatpak-builder-lint.git
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"

@@ -30,7 +30,7 @@
     {
       name: "packaging hygiene",
       gates: true,
-      text: "Manifest sanity, pinned sources, runtime fit, sane finish-args, truthful appstream. Below 2/5 is a hard reject: come back when it installs clean.",
+      text: "Manifest sanity, pinned sources, runtime fit, sane finish-args, truthful appstream. Below 2/5 is a hard reject: come back when it installs clean. Valid appstream metainfo is also a deterministic gate: if appstreamcli reports errors, the verdict is reject before the agent ever scores a thing.",
     },
     {
       name: "security flags",
