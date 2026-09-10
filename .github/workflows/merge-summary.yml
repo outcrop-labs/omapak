@@ -88,3 +88,11 @@ jobs:
             --include "config" \
             --include "ostree-metadata" \
             --include "refs/**"
+          # A stale summary.idx advertises an outdated (or empty) summary
+          # and flatpak prefers it; the merged repo publishes plain
+          # summary+sig only, so any idx in the bucket must die.
+          rclone delete ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
+            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
+            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
+            --s3-no-check-bucket \
+            --include "summary.idx*"
