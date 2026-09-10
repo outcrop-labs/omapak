@@ -1,0 +1,14 @@
+submitter: jon
+source_repo: https://github.com/libredb/libredb-studio
+summary: LibreDB Studio, the open-source database IDE
+description: >-
+  Continuity submission. LibreDB Studio (557 stars, MIT, pushed the day
+  of this submission) had its Flathub submission (flathub/flathub#9538)
+  closed by its own author, with honor, after asking directly whether
+  using an AI code-assistant during development conflicted with the
+  policy. The moderator's answer: "yes. It is vibecoded as he[ll]."
+  The author thanked him for the direct answer, kept his word, and
+  closed the PR himself. omapak's answer to the same question is no.
+license: MIT
+homepage: https://libredb.org
+tags: [development, database]
