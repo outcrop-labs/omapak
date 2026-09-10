@@ -11,5 +11,8 @@ binding = "OMAPAK_REPO"
 bucket_name = "omapak-repo"
 
 # Must stay last: keys after this table would scope into [build].
+# --no-panic-recovery: wasm-bindgen's catch wrappers require an externref
+# table worker-build can't produce; abort-on-panic is a fine trade for a
+# 60-line proxy. Builds locally and in CI with the pinned toolchain.
 [build]
-command = "worker-build --release"
+command = "worker-build --release --no-panic-recovery"
