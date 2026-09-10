@@ -108,6 +108,38 @@
       <p class="mt-6 font-mono text-sm text-muted">No rubric for this report. Gates only.</p>
     {/if}
 
+    {#if r.legitimacy}
+      <div class="mt-6 rounded-sm border border-line bg-panel p-5">
+        <h2 class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">
+          web legitimacy check · proprietary
+        </h2>
+        <p class="mt-3 text-sm text-muted">{r.legitimacy.summary}</p>
+        <p class="mt-2 font-mono text-xs text-ink-dim">
+          confidence {r.legitimacy.confidence}/100 · checked by {r.legitimacy.model}
+        </p>
+        {#if r.legitimacy.findings.length}
+          <ul class="mt-3 space-y-1.5">
+            {#each r.legitimacy.findings as f}
+              <li class="text-sm text-muted"
+                ><span
+                  class="mr-2 font-mono text-xs uppercase {f.severity === 'critical'
+                    ? 'text-danger'
+                    : f.severity === 'warning'
+                      ? 'text-warning'
+                      : 'text-success'}">{f.severity}</span
+                >{f.detail}{#if f.source}
+                  <a
+                    href={f.source}
+                    class="ml-2 font-mono text-xs text-accent underline decoration-accent/40 underline-offset-4"
+                    >source</a
+                  >{/if}</li
+              >
+            {/each}
+          </ul>
+        {/if}
+      </div>
+    {/if}
+
     {#if r.static.advisories?.length}
       <div class="mt-6 rounded-sm border border-line bg-panel p-5">
         <h2 class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">
