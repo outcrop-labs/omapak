@@ -76,14 +76,3 @@ jobs:
             --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
             --s3-no-check-bucket
 
-      - name: Commit repo state to the repo branch
-        run: |
-          git config user.name "omapak-publish"
-          git config user.email "publish@omapak.outcrop.labs"
-          git checkout --orphan repo-tmp
-          git rm -rf --quiet . 2>/dev/null || true
-          cp -r repo/. .
-          git add -A
-          git commit -m "repo: publish $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push origin HEAD:repo --force || echo '::warning::repo branch push failed (repo may be too large for git; R2 is source of truth)'
-
