@@ -25,9 +25,22 @@ jobs:
             mv wt/repo/. ./repo/ 2>/dev/null || mv wt/. ./repo/
             rm -rf wt
           fi
+          printf '[core]\nrepo_version=1\nmode=archive-z2\n' > repo/config
+          mkdir -p repo/objects repo/refs/heads repo/refs/remotes repo/refs/mirrors repo/extensions
 
       - name: Install tooling
-        run: sudo apt-get update && sudo apt-get install -y flatpak ostree rclone
+        run: sudo apt-get update && sudo apt-get install -y flatpak ostree rclone python3
+
+      - name: Add flathub remote with their key (mirror pulls verify commits)
+        run: |
+          curl -sO https://dl.flathub.org/repo/flathub.flatpakrepo
+          python3 - <<'EOF'
+          import base64, re
+          key = re.search(r"^GPGKey=(.+)$", open("flathub.flatpakrepo").read(), re.M).group(1)
+          open("flathub-keyring.gpg", "wb").write(base64.b64decode(key))
+          EOF
+          ostree remote add --repo=repo --gpg-import=flathub-keyring.gpg \
+            flathub https://dl.flathub.org/repo/
 
       - name: Metadata-mirror every flathub ref (commit objects only)
         run: |
@@ -35,9 +48,19 @@ jobs:
           flatpak --user remote-ls --columns=ref flathub | grep -E '^(app|runtime)/' > refs.txt
           wc -l refs.txt
           # Commit-metadata-only: summary entries without the filesystem
-          # payloads, which the proxy worker serves on demand.
+          # payloads, which the proxy worker serves on demand. The remote
+          # is positional; --remote= is not a valid pull option.
           xargs -a refs.txt -n 50 ostree pull --repo=repo --mirror \
-            --commit-metadata-only --remote=flathub
+            --commit-metadata-only flathub
+
+      - name: Promote mirrored refs into refs/heads (summaries ignore refs/mirrors)
+        run: |
+          cd repo
+          find refs/mirrors -type f | while read -r f; do
+            ref="${f#refs/mirrors/*/}"
+            mkdir -p "refs/heads/$(dirname "$ref")"
+            cp "$f" "refs/heads/$ref"
+          done
 
       - name: Re-sign the merged summary
         env:
@@ -45,7 +68,11 @@ jobs:
         run: |
           echo "$OMAPAK_GPG_KEY" | gpg --import
           keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
-          flatpak build-update-repo --gpg-sign="$keyid" repo
+          rm -f repo/summary repo/summary.sig repo/summary.idx repo/summary.idx.sig
+          # flatpak build-update-repo dereferences trees (appstream, delta
+          # metadata) that commit-metadata-only pulls don't have; ostree
+          # summary signs the refs directly.
+          ostree summary --update --repo=repo --gpg-sign="$keyid"
 
       - name: Publish summary to R2 (never delete cached objects)
         env:
