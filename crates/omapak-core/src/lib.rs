@@ -12,7 +12,7 @@ pub use manifest::{find_manifest, parse_manifest, risky_finish_args, ManifestInf
 pub use markdown::render_markdown;
 pub use metadata::{load_from_dir as load_metadata, Metadata, SourceAccess};
 pub use schema::{
-    appstream_clean, compute_verdict, BuildReport, LegitimacyFinding, LegitimacyReport, Differentiation, DynamicReport, FileStat,
+    appstream_clean, compute_verdict, is_certified, BuildReport, LegitimacyFinding, LegitimacyReport, Differentiation, DynamicReport, FileStat,
     JudgeInfo, LinterRun, LinterStatus, Report, Rubric, RubricScore, SecurityFlag, Severity,
     SourceStats, StaticAdvisory, StaticReport, Verdict, GATE_MIN_PACKAGING_HYGIENE,
     REPORT_SCHEMA_VERSION,

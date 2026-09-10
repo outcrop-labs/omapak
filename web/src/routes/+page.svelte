@@ -120,7 +120,7 @@
             <code class="font-mono text-sm text-fg group-hover:text-accent"
               >{entry.app_id}</code
             >
-            <VerdictBadge verdict={entry.verdict} />
+            <VerdictBadge verdict={entry.verdict} certified={entry.certified} />
           </div>
           <p class="mt-2 line-clamp-2 text-sm text-muted">{entry.summary}</p>
           <div class="mt-4 flex items-center justify-between font-mono text-xs text-ink-dim">

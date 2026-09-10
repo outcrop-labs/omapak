@@ -2,7 +2,7 @@
 // Drift here is caught by the catalog build script, which validates each
 // report against these types at build time.
 
-export type Verdict = "accept_recommended" | "needs_human" | "reject_recommended";
+export type Verdict = "published" | "build_failed";
 
 export type Severity = "info" | "warning" | "critical";
 
@@ -89,6 +89,7 @@ export interface CatalogEntry {
   homepage?: string;
   tags: string[];
   verdict: Verdict | "unpublished";
+  certified: boolean;
   advisory_average?: number;
   last_commit_date?: string;
   report_available: boolean;
@@ -114,9 +115,8 @@ export interface FlathubIndex {
 }
 
 export const VERDICT_LABEL: Record<Verdict, string> = {
-  accept_recommended: "accepted",
-  needs_human: "needs human",
-  reject_recommended: "rejected",
+  published: "published",
+  build_failed: "build failed",
 };
 
 export function advisoryAverage(rubric: Rubric): number {
