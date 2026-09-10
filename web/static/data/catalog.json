@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T04:15:40.103Z",
+  "generated_at": "2026-09-10T07:27:42.449Z",
   "entries": [
     {
       "app_id": "io.outcroplabs.OmapakFixture",
@@ -12,6 +12,7 @@
         "fixture",
         "testing"
       ],
+      "source_access": "public",
       "verdict": "reject_recommended",
       "advisory_average": 1.4,
       "last_commit_date": "2026-09-09T21:39:41-06:00",

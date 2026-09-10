@@ -69,6 +69,27 @@ tags: [utility, gnome]</pre>
         Note what's <strong class="text-fg">not</strong> in there: any question about who or
         what wrote the code. We don't ask. Don't tell us; we don't care.
       </p>
+      <div class="mt-6 max-w-[var(--read-width)] rounded-sm border border-warning/40 bg-card p-5">
+        <p class="font-mono text-xs uppercase tracking-[0.15em] text-warning">
+          private repo or closed source?
+        </p>
+        <p class="mt-3 text-sm text-muted">
+          We ship it, but never unaudited. Set
+          <code class="font-mono text-sm text-fg">source_access: private-assisted</code> in
+          metadata.yml and point your manifest at your own release assets with pinned sha256
+          checksums. Then: grant a maintainer scoped read access to the repo (a fine-grained
+          GitHub token, read-only, single repo, expiring). The maintainer runs the same judge
+          against your real source locally, the report is published, and the token is deleted.
+          Your code never lands in omapak and never leaves the maintainer's machine; only the
+          verdict does.
+        </p>
+        <p class="mt-3 text-sm text-muted">
+          Until that source review happens, the submission is capped at "needs human": no
+          amount of good scores merges a closed-source app that nobody read. And no, we won't
+          relax this. An app store that ships binaries it can't read is a malware vector with
+          extra steps.
+        </p>
+      </div>
       <div class="mt-6 max-w-[var(--read-width)] rounded-sm border border-line bg-card p-5">
         <p class="font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">
           required: valid appstream metainfo

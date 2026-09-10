@@ -107,10 +107,20 @@ fn main() -> Result<()> {
         && omapak_core::appstream_clean(&static_report)
         && static_report.metadata_present;
 
-    let verdict = match &rubric {
+    // Closed source ships only through owner-assisted review: until a
+    // maintainer runs the judge against the real source, the verdict can
+    // not exceed needs-human, no matter what the rubric says.
+    let assisted_pending = metadata_source_access(&cli.app_dir)
+        == Some(omapak_core::SourceAccess::PrivateAssisted)
+        && cli.source_dir.is_none();
+
+    let mut verdict = match &rubric {
         Some(r) => compute_verdict(r, gates_ok),
         None => gates_only_verdict(&static_report, gates_ok),
     };
+    if assisted_pending && verdict == Verdict::AcceptRecommended {
+        verdict = Verdict::NeedsHuman;
+    }
 
     let app_id = static_report
         .manifest
@@ -204,6 +214,10 @@ fn finish_judging(
 
     let (rubric, judge_info) = judge_stage::run(config, &inputs)?;
     Ok((Some(rubric), Some(judge_info), build_report))
+}
+
+fn metadata_source_access(app_dir: &std::path::Path) -> Option<omapak_core::SourceAccess> {
+    omapak_core::load_metadata(app_dir).map(|m| m.source_access)
 }
 
 /// Without an agent rubric; only the deterministic gates speak.

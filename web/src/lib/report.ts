@@ -70,12 +70,15 @@ export interface Report {
   judge?: { model: string; base_url: string; prompt_version: string; duration_secs: number };
 }
 
+export type SourceAccess = "public" | "private-assisted";
+
 export interface CatalogEntry {
   app_id: string;
   summary: string;
   description?: string;
   submitter: string;
   source_repo: string;
+  source_access?: SourceAccess;
   license?: string;
   homepage?: string;
   tags: string[];

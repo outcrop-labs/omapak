@@ -10,7 +10,7 @@ mod schema;
 
 pub use manifest::{find_manifest, parse_manifest, risky_finish_args, ManifestInfo, ModuleInfo, SourceRef};
 pub use markdown::render_markdown;
-pub use metadata::{load_from_dir as load_metadata, Metadata};
+pub use metadata::{load_from_dir as load_metadata, Metadata, SourceAccess};
 pub use schema::{
     appstream_clean, compute_verdict, BuildReport, Differentiation, DynamicReport, FileStat,
     JudgeInfo, LinterRun, LinterStatus, Report, Rubric, RubricScore, SecurityFlag, Severity,
