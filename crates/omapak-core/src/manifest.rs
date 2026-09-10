@@ -84,7 +84,7 @@ pub fn parse_manifest(text: &str) -> anyhow::Result<ManifestInfo> {
                         .map(|ss| {
                             ss.iter()
                                 .filter_map(|s| {
-                                    let pinned = ["tag", "commit"]
+                                    let pinned = ["sha256", "tag", "commit"]
                                         .iter()
                                         .find_map(|k| s.get(*k).and_then(|v| v.as_str()))
                                         .map(String::from);
