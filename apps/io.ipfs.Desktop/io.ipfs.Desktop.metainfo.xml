@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.ipfs.Desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>IPFS Desktop</name>
+  <summary>An unobtrusive and user-friendly desktop application for IPFS</summary>
+  <developer id="io.ipfs">
+    <name>Interplanetary Shipyard</name>
+  </developer>
+  <description>
+    <p>
+      IPFS Desktop gives you all the power of IPFS in a convenient desktop app:
+      a complete IPFS node, plus handy OS menubar/taskbar shortcuts and an all-in-one
+      file manager, peer map, and content explorer.
+    </p>
+    <p>
+      Use IPFS Desktop to get acquainted with IPFS without needing to touch the
+      terminal — or, if you're already experienced, use the powerful menubar/taskbar
+      shortcuts alongside the command line to make your IPFS workflow faster.
+    </p>
+    <p>Features include:</p>
+    <ul>
+      <li>Start your node at system startup and control it from your OS system tray</li>
+      <li>Quickly import files, folders, and screenshots to IPFS</li>
+      <li>Easily manage the contents of your node (pin, preview, rename, and share)</li>
+      <li>Visualize your IPFS peers worldwide on an interactive world map</li>
+      <li>Explore the "Merkle Forest" of IPFS files and content-addressed data</li>
+      <li>OS-wide protocol handler support for ipfs:// and ipns:// links</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.ipfs.Desktop.desktop</launchable>
+  <provides>
+    <id>ipfs-desktop.desktop</id>
+  </provides>
+  <url type="homepage">https://ipfs.tech/</url>
+  <url type="bugtracker">https://github.com/ipfs/ipfs-desktop/issues</url>
+  <url type="vcs-browser">https://github.com/ipfs/ipfs-desktop</url>
+  <url type="help">https://discuss.ipfs.tech/</url>
+  <url type="faq">https://docs.ipfs.tech/</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-status.png</image>
+      <caption>Status screen showing node bandwidth, peer count, and repo stats</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-files.png</image>
+      <caption>Files screen to inspect, pin, and manage files on IPFS</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-explore.png</image>
+      <caption>Explore IPLD data structures and content identifiers</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-peers.png</image>
+      <caption>Peers screen visualizing connected IPFS nodes worldwide</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/ipfs/ipfs-webui/v4.13.0/docs/screenshots/ipfs-webui-settings.png</image>
+      <caption>Settings screen to configure node behavior and services</caption>
+    </screenshot>
+  </screenshots>
+  <branding>
+    <color type="primary" scheme_preference="light">#041727</color>
+    <color type="primary" scheme_preference="dark">#041727</color>
+  </branding>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="0.50.0" date="2026-08-03">
+      <url type="details">https://github.com/ipfs/ipfs-desktop/releases/tag/v0.50.0</url>
+      <description>
+        <p>Update bundled Kubo to v0.43.0 and Electron to v43.</p>
+        <ul>
+          <li>Files screen no longer freezes during garbage collection</li>
+          <li>Kubo security updates and memory optimizations</li>
+          <li>Default provide strategy now prioritizes pinned and MFS files</li>
+          <li>New repositories initialize with CIDv1 by default (IPIP-499)</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.49.1" date="2026-06-09">
+      <url type="details">https://github.com/ipfs/ipfs-desktop/releases/tag/v0.49.1</url>
+      <description>
+        <p>Bug fixes and maintenance update.</p>
+      </description>
+    </release>
+    <release version="0.49.0" date="2026-04-28">
+      <url type="details">https://github.com/ipfs/ipfs-desktop/releases/tag/v0.49.0</url>
+      <description>
+        <p>Update bundled Kubo to v0.42.0 and Electron to v42.</p>
+      </description>
+    </release>
+  </releases>
+</component>
