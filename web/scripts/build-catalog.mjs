@@ -29,6 +29,13 @@ for (const { dir, published } of sources) {
     let meta;
     try {
       meta = parseYaml(readFileSync(metaPath, "utf8"));
+      // Extract nice name from the metainfo XML
+      const metainfoPath = join(appDir, `${appId}.metainfo.xml`);
+      if (existsSync(metainfoPath)) {
+        const xml = readFileSync(metainfoPath, "utf8");
+        const nameMatch = xml.match(/<name>([^<]+)<\/name>/);
+        if (nameMatch) meta.name = nameMatch[1].trim();
+      }
     } catch (e) {
       console.warn(`! ${name}: metadata.yml unreadable: ${e.message}`);
       continue;
