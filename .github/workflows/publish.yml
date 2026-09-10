@@ -26,13 +26,16 @@ jobs:
 
       - name: Restore OSTree repo from the repo branch
         run: |
+          mkdir -p repo
           if git ls-remote --heads origin repo | grep -q repo; then
             git fetch origin repo --depth=1
             git worktree add wt origin/repo
-            mv wt/repo ./repo
-          else
-            mkdir repo
+            cp -r wt/repo/. ./repo/ || true
+            rm -rf wt
           fi
+          # Ensure a valid archive-z2 OSTree repo even on first publish
+          printf '[core]\nrepo_version=1\nmode=archive-z2\n' > repo/config
+          mkdir -p repo/objects repo/refs/heads repo/refs/remotes repo/extensions
 
       - name: Install flatpak tooling
         run: |
