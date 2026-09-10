@@ -30,7 +30,7 @@ for (const { dir, published } of sources) {
     try {
       meta = parseYaml(readFileSync(metaPath, "utf8"));
       // Extract nice name from the metainfo XML
-      const metainfoPath = join(appDir, `${appId}.metainfo.xml`);
+      const metainfoPath = join(appDir, `${name}.metainfo.xml`);
       if (existsSync(metainfoPath)) {
         const xml = readFileSync(metainfoPath, "utf8");
         const nameMatch = xml.match(/<name>([^<]+)<\/name>/);
