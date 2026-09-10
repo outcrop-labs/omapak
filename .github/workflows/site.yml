@@ -71,6 +71,7 @@ jobs:
         run: |
           bun install --frozen-lockfile
           bun run sync-rubric
+          # apps/ only: the fixture never appears on the public catalog
           bun run build-catalog
           bun run build
 
