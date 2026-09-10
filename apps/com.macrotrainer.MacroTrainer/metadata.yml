@@ -1,4 +1,5 @@
 submitter: jon
+source_access: binaries-only
 source_repo: https://github.com/NickHirras/macrotrainer-releases
 summary: Privacy-first macro and nutrition tracker for the desktop (Flutter)
 description: >-
