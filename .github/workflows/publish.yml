@@ -1,25 +1,18 @@
 name: publish
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: [judge]
-    types: [completed]
+  push:
     branches: [main]
+    paths: ["apps/**"]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
-env:
-  RUNTIME: org.freedesktop.Platform
-  RUNTIME_VERSION: "24.08"
-
 jobs:
   publish:
     # Only after the report job has landed fresh reports on main.
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -46,17 +39,19 @@ jobs:
           pipx install git+https://github.com/flathub/flatpak-builder-lint.git
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Install runtime + SDK
+      - name: Install runtimes
         run: |
-          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak --user install -y --noninteractive \
-            flathub org.freedesktop.Platform//$RUNTIME_VERSION org.freedesktop.Sdk//$RUNTIME_VERSION
+          sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
+          grep -rh "runtime:" apps/ 2>/dev/null | grep -oE "[a-z]+\.[A-Za-z]+\.[A-Za-z]+" | sort -u | while read rt; do
+            sudo flatpak install --system -y --noninteractive flathub "$rt" 2>&1 | tail -1 || true
+          done
+          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 2>&1 | tail -1 || true
 
-      - name: Build every accepted app into the OSTree repo
+      - name: Build every app on main
         run: |
           for app in apps/*/; do
-            [ -f "$app/report.json" ] || { echo "::warning::$app has no report.json — skipping"; continue; }
-            manifest=$(find "$app" -maxdepth 1 -name '*.json' -o -maxdepth 1 -name '*.yml' | head -1)
+            [ -d "$app" ] || continue
+            manifest=$(find "$app" -maxdepth 1 -name '*.json' -o -maxdepth 1 -name '*.yml' -o -maxdepth 1 -name '*.yaml' 2>/dev/null | grep -v flathub.json | head -1)
             [ -n "$manifest" ] || { echo "::warning::$app has no manifest — skipping"; continue; }
             echo "::group::build $app"
             flatpak-builder --force-clean --disable-rofiles-fuse --repo=repo "build/$(basename "$app")" "$manifest"
