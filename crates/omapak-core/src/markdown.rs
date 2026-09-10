@@ -52,7 +52,7 @@ pub fn render_markdown(report: &crate::schema::Report) -> String {
         ));
         out.push('\n');
         if !rubric.differentiation.better_alternatives.is_empty() {
-            out.push_str("**Better existing solutions** (informational, does not gate):\n");
+            out.push_str("**Existing solutions** (informational, does not gate):\n");
             for alt in &rubric.differentiation.better_alternatives {
                 out.push_str(&format!("- {alt}\n"));
             }
