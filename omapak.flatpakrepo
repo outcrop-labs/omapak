@@ -1,6 +1,6 @@
 [Flatpak Repo]
 Title=omapak
-Url=https://omapak.org/repo
+Url=https://repo.omapak.org/
 Homepage=https://omapak.org
 Comment=The open Flatpak repo. Grade the app on its own merits.
 Description=Omapak grades the app on its own merits: does it build, is it safe, is it any good. How it was built is not our business. Every submission is scored by a published rubric and every agent judge report is public.
