@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = ["crates/omapak-core", "crates/omapak-judge"]
+exclude = ["worker"]
 
 [workspace.package]
 version = "0.1.0"

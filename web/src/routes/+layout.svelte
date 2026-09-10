@@ -51,7 +51,7 @@
         class="mx-auto flex w-full max-w-[var(--page-width)] flex-wrap items-center justify-between gap-3 px-6 py-5 font-mono text-xs text-ink-dim"
       >
         <span>Omapak · every flatpak, every distro</span>
-        <span>normal people don't give a shit how it was built. neither do we.</span>
+        <span>one remote · every app · normal people don't give a shit how it was built, neither do we</span>
       </div>
     </footer>
   </div>
