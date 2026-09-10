@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/Juwan-Hwang/Zephyr
+summary: A modern, lightweight Mihomo / Clash Meta GUI client built with Tauri and Rust
+description: >-
+  Continuity submission. Zephyr's Flathub submission PR (flathub/flathub#9810)
+  was closed; omapak picked it up. Original app by Juwan-Hwang (MIT, 700+
+  stars, actively maintained). Manifest adapted from the Flathub submission
+  with sources still pinned to upstream release v2.4.3.
+license: MIT
+homepage: https://github.com/Juwan-Hwang/Zephyr
+tags: [network, proxy, clash, utility]
