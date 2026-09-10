@@ -108,7 +108,7 @@
 
   {#if filter !== "flathub" && omapakFiltered.length > 0}
     <p class="mt-8 font-mono text-xs uppercase tracking-[0.15em] text-ink-dim">
-      omapak hosted · judged
+      omapak hosted
     </p>
     <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {#each omapakFiltered as entry (entry.app_id)}
@@ -117,10 +117,12 @@
           class="group rounded-sm border border-line bg-card p-5 shadow-[var(--theme-shadow-1)] transition-colors hover:border-line-strong hover:bg-hover"
         >
           <div class="flex items-start justify-between gap-3">
-            <code class="font-mono text-sm text-fg group-hover:text-accent"
+          <div class="flex items-start justify-between gap-3">
+            <code class="min-w-0 flex-1 truncate font-mono text-sm text-fg group-hover:text-accent"
               >{entry.name || entry.app_id}</code
             >
-            <VerdictBadge verdict={entry.verdict} certified={entry.certified} />
+          </div>
+          <VerdictBadge verdict={entry.verdict} certified={entry.certified} />
           </div>
           <p class="mt-2 line-clamp-2 text-sm text-muted">{entry.summary}</p>
           <div class="mt-4 flex items-center justify-between font-mono text-xs text-ink-dim">
