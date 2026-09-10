@@ -42,10 +42,18 @@ jobs:
       - name: Install runtimes
         run: |
           sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
-          grep -rh "runtime:" apps/ 2>/dev/null | grep -oE "[a-z]+\.[A-Za-z]+\.[A-Za-z]+" | sort -u | while read rt; do
-            sudo flatpak install --system -y --noninteractive flathub "$rt" 2>&1 | tail -1 || true
+          # Extract runtime + version from every manifest, install Platform and SDK
+          for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
+            [ -f "$m" ] || continue
+            rt=$(grep -m1 -oE '"?runtime"?:?[[:space:]]*"?((org|com|io|net)\.[a-z]+\.[A-Za-z]+)' "$m" | grep -oE '(org|com|io|net)\.[a-z]+\.[A-Za-z]+' | head -1)
+            rv=$(grep -m1 -oE '"?runtime-version"?:?[[:space:]]*"?([0-9]+\.[0-9]+)' "$m" | grep -oE '[0-9]+\.[0-9]+')
+            if [ -n "$rt" ] && [ -n "$rv" ]; then
+              echo "installing $rt//$rv"
+              sudo flatpak install --system -y --noninteractive flathub "$rt//$rv" "$rt.Sdk//$rv" || echo "::warning::$rt//$rv failed"
+            fi
           done
-          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 2>&1 | tail -1 || true
+          echo "installing base freedesktop"
+          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 || true
 
       - name: Build every app on main
         run: |
