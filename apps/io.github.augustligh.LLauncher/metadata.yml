@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/augustligh/lLauncher
+summary: LLauncher, a media and manga launcher for Linux
+description: >-
+  Continuity submission. LLauncher (95 stars, MIT, pushed the day of this
+  submission) had its Flathub submission (flathub/flathub#10044) closed over
+  a checklist error; the author apologized, completed the checklist, and
+  asked to reopen. The entire maintainer reply: "Theres no point." omapak
+  picked it up: full build-from-source Rust+Node packaging from that PR.
+license: MIT
+homepage: https://github.com/augustligh/lLauncher
+tags: [game, utility, launcher]
