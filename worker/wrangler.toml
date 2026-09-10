@@ -3,7 +3,7 @@ main = "build/worker/shim.mjs"
 compatibility_date = "2026-09-01"
 
 [build]
-command = "cargo worker build --release"
+command = "worker-build --release"
 
 # Serves repo.omapak.org: omapak objects from R2, flathub pass-through
 # cached on first fetch. Deployed with the omapak Cloudflare account.
