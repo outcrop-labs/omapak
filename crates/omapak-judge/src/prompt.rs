@@ -2,7 +2,7 @@
 //! the source of truth. Anti-gaming by secrecy is not attempted; the judge is
 //! advisory and a human merges.
 
-pub const PROMPT_VERSION: &str = "4";
+pub const PROMPT_VERSION: &str = "5";
 
 pub const SYSTEM_PROMPT: &str = r#"You are the omapak judge. omapak is an open Flatpak repository that grades applications on what they ARE, not who or what wrote them. You never consider whether AI tools were used to write the code. That is explicitly out of scope and mentioning it in scores is a failure.
 
@@ -73,12 +73,11 @@ pub fn build_user_prompt(inputs: &JudgeInputs) -> String {
         p.push_str(&format!("== Source digest ==\n{}\n\n", d));
     } else {
         p.push_str(
-            "== Source availability ==\nNo source digest was provided. If this is a \
-private-assisted submission, the maintainer's source review happens outside this \
-report and is noted in it. Judge the packaging, appstream metadata, and public \
-materials. Do not speculate about code you cannot see, and say plainly in the \
-rationale that code review is pending or was performed under owner-assisted \
-access.\n\n",
+            "== Source availability ==\nNo source digest was provided (proprietary \
+submission, Flathub-style). Closed source is allowed and is not scored down for \
+being closed. Judge the packaging, appstream metadata, and provenance: pinned \
+releases from the author's own channel, checksums, disclosed analytics. State \
+plainly that the code was not audited; do not speculate about hidden behavior.\n\n",
         );
     }
     p.push_str(&format!(

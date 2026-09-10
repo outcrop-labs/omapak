@@ -77,11 +77,11 @@
               {#each entry.tags.slice(0, 3) as tag}
                 <span class="rounded-sm border border-line-subtle px-1.5 py-0.5">{tag}</span>
               {/each}
-              {#if entry.source_access === "private-assisted"}
+              {#if entry.source_access === "proprietary"}
                 <span
                   class="rounded-sm border border-warning/40 px-1.5 py-0.5 text-warning"
-                  title="Closed source; reviewed with the owner's cooperation, report public"
-                  >closed source</span
+                  title="Closed source, distributed with owner permission; code not audited"
+                  >proprietary</span
                 >
               {/if}
             </span>

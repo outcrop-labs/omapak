@@ -117,20 +117,14 @@ fn main() -> Result<()> {
         && omapak_core::appstream_clean(&static_report)
         && static_report.metadata_present;
 
-    // Closed source ships only through owner-assisted review: until a
-    // maintainer runs the judge against the real source, the verdict can
-    // not exceed needs-human, no matter what the rubric says.
-    let assisted_pending = metadata_source_access(&cli.app_dir)
-        == Some(omapak_core::SourceAccess::PrivateAssisted)
-        && cli.source_dir.is_none();
+    // Proprietary apps (flathub model): owner permission is a merge-time
+    // human check, not a verdict cap. The report labels them honestly.
+    let _ = metadata_source_access(&cli.app_dir);
 
     let mut verdict = match &rubric {
         Some(r) => compute_verdict(r, gates_ok),
         None => gates_only_verdict(&static_report, gates_ok),
     };
-    if assisted_pending && verdict == Verdict::AcceptRecommended {
-        verdict = Verdict::NeedsHuman;
-    }
 
     let app_id = static_report
         .manifest
