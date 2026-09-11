@@ -77,23 +77,6 @@ jobs:
               --data-binary "@$icon" || echo "  icon push failed for $name"
           done
 
-      - name: Pull flathub ref metadata
-        run: |
-          curl -sO https://dl.flathub.org/repo/flathub.flatpakrepo
-          grep '^GPGKey=' flathub.flatpakrepo | cut -d= -f2 | base64 -d > flathub-keyring.gpg
-          ostree remote add --repo=repo --gpg-import=flathub-keyring.gpg \
-            flathub https://dl.flathub.org/repo/ 2>/dev/null || true
-          flatpak --user remote-add --if-not-exists flathub https://dl.flubhub.org/repo/flathub.flatpakrepo 2>/dev/null || true
-          flatpak --user remote-ls --columns=ref flathub 2>/dev/null | grep -E '^(app|runtime)/' > /tmp/refs.txt || true
-          xargs -a /tmp/refs.txt -n 50 ostree pull --repo=repo --mirror \
-            --commit-metadata-only flathub 2>/dev/null || true
-          cd repo
-          find refs/mirrors -type f 2>/dev/null | while read -r f; do
-            ref="${f#refs/mirrors/*/}"
-            mkdir -p "refs/heads/$(dirname "$ref")"
-            cp "$f" "refs/heads/$ref"
-          done
-          cd ..
 
       - name: Sign combined summary
         env:
