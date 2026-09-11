@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/Tyrrrz/DiscordChatExporter
+summary: DiscordChatExporter, export Discord chat logs to HTML, TXT, CSV and JSON
+license: MIT
+tags: [utility]
+description: >-
+  Continuity submission. %s (%s stars, actively maintained) had its Flathub
+  submission (flathub/flathub#%s) closed. omapak picked it up; manifest
+  from that PR. DiscordChatExporter, export Discord chat logs to HTML, TXT, CSV and JSON 11976 8171
