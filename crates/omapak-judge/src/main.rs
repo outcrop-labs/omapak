@@ -227,7 +227,7 @@ fn finish_judging(
     });
     // The full static report, not just linters: the agent needs to see
     // appstream presence, advisories, and source stats to judge honestly.
-    let static_findings = serde_json::to_string_pretty(static_report).ok();
+    let mut stripped = static_report.clone(); stripped.linters = vec![]; let static_findings = serde_json::to_string_pretty(&stripped).ok();
 
     let inputs = prompt::JudgeInputs {
         app_id: static_report
