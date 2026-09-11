@@ -12,9 +12,9 @@ const config = {
       // Fully prerendered static catalog — deployed to R2 / any static host.
       pages: "build",
       assets: "build",
-      fallback: undefined,
+      fallback: 'index.html',
       precompress: true,
-      strict: true,
+      strict: false,
     }),
   },
 };
