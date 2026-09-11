@@ -1,10 +1,8 @@
 name: merge-summary
 
-# Daily: merge flathub's refs into omapak's signed summary so ONE remote
-# covers their whole catalog. Objects are never pre-mirrored; the repo
-# proxy worker caches them from dl.flathub.org on first request. Objects
-# are content-addressed and immutable, so cached can never mean stale:
-# a new release is new object paths, which miss and fetch fresh.
+# Daily flathub metadata refresh. ZERO builds — pulls the existing
+# summary from R2 (which already has omapak app refs from publish),
+# refreshes only the flathub refs, re-signs, pushes back.
 on:
   schedule:
     - cron: "41 5 * * *"
@@ -17,82 +15,79 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Restore repo state from the repo branch
+      - uses: actions/checkout@v4
+
+      - name: Restore repo from R2
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: |
-          mkdir repo
-          if git ls-remote --heads https://github.com/${{ github.repository }}.git repo | grep -q repo; then
-            git clone --depth 1 --branch repo https://github.com/${{ github.repository }}.git wt
-            mv wt/repo/. ./repo/ 2>/dev/null || mv wt/. ./repo/
-            rm -rf wt
-          fi
+          mkdir -p repo
+          # rclone's listing of the ~30k-object bucket fails silently; boto3
+          # is the proven path for everything R2 in this repo
+          pip install -q boto3
+          python3 deploy/pull-from-r2.py repo
           printf '[core]\nrepo_version=1\nmode=archive-z2\n' > repo/config
-          mkdir -p repo/objects repo/refs/heads repo/refs/remotes repo/refs/mirrors repo/extensions
+          mkdir -p repo/objects repo/extensions repo/refs/heads repo/refs/remotes repo/refs/mirrors
+          echo "omapak refs preserved:"
+          ls repo/refs/heads/app/ 2>/dev/null || echo "(none)"
+          # Wipe guard: re-signing without the omapak refs would remove
+          # every omapak app from the live summary.
+          [ -n "$(ls repo/refs/heads/app/ 2>/dev/null)" ] || { echo "::error::omapak app refs missing after restore"; exit 1; }
 
       - name: Install tooling
-        run: sudo apt-get update && sudo apt-get install -y flatpak ostree rclone python3
+        run: sudo apt-get update && sudo apt-get install -y flatpak ostree rclone
 
-      - name: Add flathub remote with their key (mirror pulls verify commits)
+      - name: Refresh flathub refs
         run: |
           curl -sO https://dl.flathub.org/repo/flathub.flatpakrepo
-          python3 - <<'EOF'
-          import base64, re
-          key = re.search(r"^GPGKey=(.+)$", open("flathub.flatpakrepo").read(), re.M).group(1)
-          open("flathub-keyring.gpg", "wb").write(base64.b64decode(key))
-          EOF
+          grep '^GPGKey=' flathub.flatpakrepo | cut -d= -f2- | base64 -d > flathub-keyring.gpg
           ostree remote add --repo=repo --gpg-import=flathub-keyring.gpg \
-            flathub https://dl.flathub.org/repo/
-
-      - name: Metadata-mirror every flathub ref (commit objects only)
-        run: |
-          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak --user remote-ls --columns=ref flathub | grep -E '^(app|runtime)/' > refs.txt
-          wc -l refs.txt
-          # Commit-metadata-only: summary entries without the filesystem
-          # payloads, which the proxy worker serves on demand. The remote
-          # is positional; --remote= is not a valid pull option.
-          xargs -a refs.txt -n 50 ostree pull --repo=repo --mirror \
-            --commit-metadata-only flathub
-
-      - name: Promote mirrored refs into refs/heads (summaries ignore refs/mirrors)
-        run: |
+            flathub https://dl.flathub.org/repo/ 2>/dev/null || true
+          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+          flatpak --user remote-ls --columns=ref flathub 2>/dev/null | grep -E '^(app|runtime)/' > /tmp/refs.txt || true
+          # An empty listing means every flathub ref would silently vanish
+          # from the summary on re-sign — fail instead.
+          [ -s /tmp/refs.txt ] || { echo "::error::no flathub refs listed"; exit 1; }
+          wc -l /tmp/refs.txt
+          xargs -a /tmp/refs.txt -n 50 ostree pull --repo=repo --mirror \
+            --commit-metadata-only flathub 2>/dev/null || true
           cd repo
-          find refs/mirrors -type f | while read -r f; do
+          find refs/mirrors -type f 2>/dev/null | while read -r f; do
             ref="${f#refs/mirrors/*/}"
             mkdir -p "refs/heads/$(dirname "$ref")"
             cp "$f" "refs/heads/$ref"
           done
+          cd ..
+          echo "refs in merged repo: $(find repo/refs/heads -type f | wc -l)"
 
-      - name: Re-sign the merged summary
+      - name: Re-sign combined summary
         env:
           OMAPAK_GPG_KEY: ${{ secrets.OMAPAK_GPG_KEY }}
         run: |
           echo "$OMAPAK_GPG_KEY" | gpg --import
           keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
-          rm -f repo/summary repo/summary.sig repo/summary.idx repo/summary.idx.sig
-          # flatpak build-update-repo dereferences trees (appstream, delta
-          # metadata) that commit-metadata-only pulls don't have; ostree
-          # summary signs the refs directly.
-          ostree summary --update --repo=repo --gpg-sign="$keyid"
+          # Refs restored from R2 can point at unreadable commit objects
+          # (truncated uploads). Let summary --update name the offender,
+          # drop that ref, retry — provenance checks proved unreliable.
+          ok=""
+          for attempt in $(seq 1 20); do
+            if ostree summary --update --repo=repo --gpg-sign="$keyid" 2>/tmp/summary.err; then ok=1; break; fi
+            ghost=$(grep -oE '[0-9a-f]{64}\.commit' /tmp/summary.err | head -1 | cut -d. -f1)
+            if [ -z "$ghost" ]; then cat /tmp/summary.err; exit 1; fi
+            echo "summary retry $attempt: dropping ref to unreadable commit $ghost"
+            # summary collects heads + remotes (and mirrors feed heads),
+            # so hunt the whole refs tree
+            grep -rl "^$ghost$" repo/refs 2>/dev/null | while read -r f; do echo "  removing $f"; rm -f "$f"; done
+          done
+          [ "$ok" = 1 ] || { echo "summary never succeeded"; exit 1; }
 
-      - name: Publish summary to R2 (never delete cached objects)
+      # rclone's S3 uploads fail against R2 (NotImplemented) — this repo
+      # learned that in publish.yml already; boto3 PUT is the supported path.
+      - name: Push merged repo to R2
         env:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
         run: |
-          rclone copy repo/ ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
-            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
-            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
-            --s3-no-check-bucket \
-            --include "summary*" \
-            --include "config" \
-            --include "ostree-metadata" \
-            --include "refs/**"
-          # A stale summary.idx advertises an outdated (or empty) summary
-          # and flatpak prefers it; the merged repo publishes plain
-          # summary+sig only, so any idx in the bucket must die.
-          rclone delete ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
-            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
-            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
-            --s3-no-check-bucket \
-            --include "summary.idx*"
+          pip install -q boto3
+          python3 deploy/push-to-r2.py repo

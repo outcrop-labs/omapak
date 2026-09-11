@@ -10,7 +10,7 @@ async function fetchJson<T>(url: string): Promise<T> {
 export function useCatalog() {
   return createQuery({
     queryKey: ["catalog"],
-    queryFn: () => fetchJson<Catalog>("/data/catalog.json"),
+    queryFn: () => fetchJson<Catalog>("https://repo.omapak.org/data/catalog.json").catch(() => fetchJson<Catalog>("/data/catalog.json")),
     staleTime: Infinity,
   });
 }
