@@ -75,10 +75,24 @@ pub fn run(manifest: &Path, work_dir: &Path, repo_dir: &Path) -> Result<BuildRep
     let err_bytes = err_handle.join().unwrap_or_default();
     let stdout = String::from_utf8_lossy(&out_bytes);
     let stderr = String::from_utf8_lossy(&err_bytes);
+    // A single enormous line (flatpak-builder dumps whole files in
+    // "Can't parse" errors — one was 215KB) makes GitHub's log
+    // ingestion silently drop everything after it, so the step looks
+    // like it died without a verdict. Cap each line; the head of the
+    // error is what matters for triage.
+    const MAX_LINE: usize = 2000;
     let mut log_tail: Vec<String> = stdout
         .lines()
         .chain(stderr.lines())
-        .map(String::from)
+        .map(|l| {
+            let count = l.chars().count();
+            if count > MAX_LINE {
+                let head: String = l.chars().take(MAX_LINE).collect();
+                format!("{head}…(truncated {} chars)", count - MAX_LINE)
+            } else {
+                l.to_string()
+            }
+        })
         .collect();
     let tail = log_tail.len().saturating_sub(40);
     log_tail.drain(0..tail);
