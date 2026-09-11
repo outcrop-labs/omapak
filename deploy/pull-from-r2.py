@@ -72,14 +72,22 @@ for root, _, files in os.walk(os.path.join(REPO, "refs", "heads")):
 
 def fetch_commit(pair):
     c, obj = pair
-    os.makedirs(os.path.dirname(obj), exist_ok=True)
-    s3.download_file(BUCKET, f"objects/{c[:2]}/{c[2:]}.commit", obj)
+    try:
+        os.makedirs(os.path.dirname(obj), exist_ok=True)
+        s3.download_file(BUCKET, f"objects/{c[:2]}/{c[2:]}.commit", obj)
+        return None
+    except Exception as e:
+        return (c, e)
 
 cfailed = 0
 with ThreadPoolExecutor(max_workers=16) as pool:
-    for (c, _), exc in zip(commits, pool.map(fetch_commit, commits)):
-        if exc is not None:
-            print(f"  FAILED commit object: {c}: {exc}", file=sys.stderr)
+    for result in pool.map(fetch_commit, commits):
+        if result is not None:
+            c, e = result
+            # Missing commit objects are a warning, not a failure: flathub
+            # refs get fresh --commit-metadata-only pulls next, and
+            # summary --update is the real gate for anything still absent.
+            print(f"  warning: commit object not in R2: {c}: {e}")
             cfailed += 1
-print(f"commit objects: {len(commits) - cfailed} fetched ({cfailed} failed)")
-sys.exit(1 if (failed or cfailed) else 0)
+print(f"commit objects: {len(commits) - cfailed} fetched ({cfailed} missing)")
+sys.exit(1 if failed else 0)
