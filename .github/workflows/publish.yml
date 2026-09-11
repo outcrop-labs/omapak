@@ -47,9 +47,17 @@ jobs:
       - name: Install runtimes
         run: ./deploy/install-runtimes.sh
 
+      # Commits must be signed: the remote runs gpg-verify=true, so an
+      # unsigned app commit fails the client pull even with a signed summary.
+      - name: Import signing key
+        env:
+          OMAPAK_GPG_KEY: ${{ secrets.OMAPAK_GPG_KEY }}
+        run: echo "$OMAPAK_GPG_KEY" | gpg --import
+
       - name: Build all apps (cached, unchanged skip compile)
         id: build
         run: |
+          keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
           failed=""
           for app in apps/*/; do
             name=$(basename "$app")
@@ -57,6 +65,7 @@ jobs:
             [ -n "$manifest" ] || continue
             echo "::group::build $name"
             if flatpak-builder --force-clean --disable-rofiles-fuse --user \
+                --gpg-sign="$keyid" \
                 --repo=repo ".flatpak-builder/$name" "$manifest" >"/tmp/build-$name.log" 2>&1; then
               tail -5 "/tmp/build-$name.log"
             else
