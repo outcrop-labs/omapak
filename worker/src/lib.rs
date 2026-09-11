@@ -12,6 +12,22 @@ use worker::*;
 
 const UPSTREAM: &str = "https://dl.flathub.org/repo";
 
+// R2 throws transient errors under load; a repo server retries before
+// giving the client a 500 (flatpak treats one failed object as fatal).
+async fn r2_get(bucket: &worker::Bucket, path: &str) -> Result<Option<Object>> {
+    let mut last_err = None;
+    for attempt in 1..=3 {
+        match bucket.get(path).execute().await {
+            Ok(obj) => return Ok(obj),
+            Err(e) => {
+                console_debug!("r2 get {path} attempt {attempt} failed: {e:#}");
+                last_err = Some(e);
+            }
+        }
+    }
+    Err(last_err.expect("at least one attempt"))
+}
+
 #[event(fetch)]
 async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     if req.method() != Method::Get && req.method() != Method::Head {
@@ -27,7 +43,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
 
 
     // R2 first (omapak's own objects, plus everything previously cached).
-    if let Some(obj) = bucket.get(&path).execute().await? {
+    if let Some(obj) = r2_get(&bucket, &path).await? {
         let is_summary = path.starts_with("summary");
         let mut headers = Headers::new();
         headers.set("Content-Type", "application/octet-stream")?;
