@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/wmahfoudh/oryx
+summary: Oryx, a Linux system monitoring tool
+description: >-
+  Continuity submission. Oryx (20 stars, GPL-3.0, active) was told by a
+  Flathub moderator: "no software made using it can ever justify it
+  morally to anyone but a sociopath or someone very wilfully ignorant."
+  The author thanked him and withdrew. omapak's position is that grading
+  an app's merits does not require insulting its author.
+license: GPL-3.0
+homepage: https://github.com/wmahfoudh/oryx
+tags: [utility, system]
