@@ -58,19 +58,6 @@ jobs:
             mkdir -p "refs/heads/$(dirname "$ref")"
             cp "$f" "refs/heads/$ref"
           done
-          # Refs restored from R2 can point at corrupt commit objects
-          # (truncated uploads) — existence isn't enough, summary --update
-          # can't sign what ostree can't read. Fresh flathub pulls are
-          # trusted; omapak's own refs get validated.
-          find refs/heads -type f | sed 's|^refs/heads/||' | sort > /tmp/have-refs
-          comm -23 /tmp/have-refs <(sort /tmp/refs.txt) | while read -r ref; do
-            f="refs/heads/$ref"
-            c=$(cat "$f")
-            if [ ! -f "objects/${c:0:2}/${c:2}.commit" ] || ! ostree show --repo=. "$c" >/dev/null 2>&1; then
-              echo "dropping unreadable ref: $f"
-              rm -f "$f"
-            fi
-          done
           cd ..
           echo "refs in merged repo: $(find repo/refs/heads -type f | wc -l)"
 
@@ -80,7 +67,18 @@ jobs:
         run: |
           echo "$OMAPAK_GPG_KEY" | gpg --import
           keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
-          ostree summary --update --repo=repo --gpg-sign="$keyid"
+          # Refs restored from R2 can point at unreadable commit objects
+          # (truncated uploads). Let summary --update name the offender,
+          # drop that ref, retry — provenance checks proved unreliable.
+          ok=""
+          for attempt in $(seq 1 20); do
+            if ostree summary --update --repo=repo --gpg-sign="$keyid" 2>/tmp/summary.err; then ok=1; break; fi
+            ghost=$(grep -oE '[0-9a-f]{64}\.commit' /tmp/summary.err | head -1 | cut -d. -f1)
+            if [ -z "$ghost" ]; then cat /tmp/summary.err; exit 1; fi
+            echo "summary retry $attempt: dropping ref to unreadable commit $ghost"
+            grep -rl "^$ghost$" repo/refs/heads 2>/dev/null | while read -r f; do echo "  removing $f"; rm -f "$f"; done
+          done
+          [ "$ok" = 1 ] || { echo "summary never succeeded"; exit 1; }
 
       # rclone's S3 uploads fail against R2 (NotImplemented) — this repo
       # learned that in publish.yml already; boto3 PUT is the supported path.
