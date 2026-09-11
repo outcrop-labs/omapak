@@ -5,7 +5,10 @@
 #
 # What it does:
 #   1. adds the omapak remote (omapak apps + the whole flathub catalog,
-#      cached and served by us, updates included)
+#      cached and served by us, updates included) and refreshes its
+#      signing key — remote-add --if-not-exists never updates the keyring
+#      of an existing remote, so re-running this after a key rollover
+#      heals the install
 #   2. if you have a flathub remote, moves your installed apps to omapak
 #      origin (no re-downloads) and removes the flathub remote
 #   3. prints where you stand
@@ -45,12 +48,24 @@ run() {
 have_sudo() { command -v sudo >/dev/null 2>&1; }
 
 # --- 1. add the omapak remote -------------------------------------------------
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+curl -fsSL "$FLATPAKREPO" -o "$tmpdir/omapak.flatpakrepo"
+# -f2- keeps any '=' padding inside the base64 blob intact
+grep '^GPGKey=' "$tmpdir/omapak.flatpakrepo" | cut -d= -f2- | base64 -d > "$tmpdir/key.gpg"
+REMOTE_URL=$(grep '^Url=' "$tmpdir/omapak.flatpakrepo" | cut -d= -f2-)
+
 say "adding the $REMOTE remote"
-run flatpak remote-add --user --if-not-exists "$REMOTE" "$FLATPAKREPO"
+run flatpak remote-add --user --if-not-exists "$REMOTE" "$tmpdir/omapak.flatpakrepo"
+# Key refresh for remotes added before a signing-key rollover, and URL
+# correction for remotes pointing somewhere else (e.g. dl.flathub.org).
+run flatpak remote-modify --user --gpg-import="$tmpdir/key.gpg" --url="$REMOTE_URL" "$REMOTE"
 if [ "$(id -u)" = 0 ]; then
-  run flatpak remote-add --system --if-not-exists "$REMOTE" "$FLATPAKREPO"
+  run flatpak remote-add --system --if-not-exists "$REMOTE" "$tmpdir/omapak.flatpakrepo"
+  run flatpak remote-modify --system --gpg-import="$tmpdir/key.gpg" --url="$REMOTE_URL" "$REMOTE"
 elif have_sudo; then
-  run sudo flatpak remote-add --system --if-not-exists "$REMOTE" "$FLATPAKREPO"
+  run sudo flatpak remote-add --system --if-not-exists "$REMOTE" "$tmpdir/omapak.flatpakrepo"
+  run sudo flatpak remote-modify --system --gpg-import="$tmpdir/key.gpg" --url="$REMOTE_URL" "$REMOTE"
 else
   echo "  (no sudo: added for your user only; system installs will need it later)"
 fi

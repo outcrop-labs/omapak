@@ -1,6 +1,8 @@
 app-id: io.ipfs.Desktop
 runtime: org.freedesktop.Platform
-runtime-version: '26.08'
+# 25.08 to match the Electron2.BaseApp; 26.08 blocked on flathub's CDN
+# truncating the SDK object (revert once that heals)
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 base: org.electronjs.Electron2.BaseApp
 base-version: '25.08'

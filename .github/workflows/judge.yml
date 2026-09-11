@@ -41,13 +41,7 @@ jobs:
           restore-keys: flatpak-runtimes-
 
       - name: Install runtimes
-        run: |
-          sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
-          grep -rh "runtime:" apps/ 2>/dev/null | grep -oE "[a-z]+\.[A-Za-z]+\.[A-Za-z]+" | sort -u | while read rt; do
-            echo "installing $rt"
-            sudo flatpak install --system -y --noninteractive flathub "$rt" 2>&1 | tail -2 || true
-          done
-          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 2>&1 | tail -2 || true
+        run: ./deploy/install-runtimes.sh
 
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
