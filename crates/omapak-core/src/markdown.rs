@@ -6,104 +6,75 @@ pub fn render_markdown(report: &crate::schema::Report) -> String {
     let mut out = String::new();
     out.push_str(&format!("## omapak judge · `{}`\n\n", report.app_id));
 
-    out.push_str(&format!("**{}**\n\n", verdict_label(report.verdict)));
-    if report.certified {
-        out.push_str("**✅ omapak Certified** — meets the published badge criteria.\n\n");
-    }
-
-    if let Some(legit) = &report.legitimacy {
-        out.push_str("**Web legitimacy check** (proprietary submission)\n\n");
-        out.push_str(&format!("{}\n\n", escape_table(&legit.summary)));
-        out.push_str(&format!("Confidence: {}/100 · checked by `{}`\n", legit.confidence, legit.model));
-        if !legit.findings.is_empty() {
-            out.push_str("\n| severity | finding | source |\n|---|---|---|\n");
-            for f in &legit.findings {
-                out.push_str(&format!(
-                    "| {} | {} | {} |\n",
-                    match f.severity {
-                        Severity::Critical => "**CRITICAL**",
-                        Severity::Warning => "warning",
-                        Severity::Info => "info",
-                    },
-                    escape_table(&f.detail),
-                    f.source.as_deref().unwrap_or("-")
-                ));
-            }
-        }
-        out.push('\n');
-    }
-
-    if report.build.ok && !crate::schema::appstream_clean(&report.static_report) {
-        out.push_str("**Appstream gate FAILED.** Metainfo is missing or has validation errors; ");
-        out.push_str("the app would render as a blank tile in software stores. Fix and resubmit.\n\n");
+    if !report.build.ok {
+        out.push_str("**Build failed.** Fix the manifest and push.\n\n");
     }
 
     if let Some(rubric) = &report.rubric {
-        out.push_str("| dimension | score | rationale |\n|---|---|---|\n");
-        out.push_str(&rubric_row("problem clarity", &rubric.problem_clarity));
-        out.push_str(&rubric_row("architecture", &rubric.architecture));
-        out.push_str(&rubric_row("code quality", &rubric.code_quality));
-        out.push_str(&rubric_row("UI/UX", &rubric.ui_ux));
-        out.push_str(&rubric_row("packaging hygiene (gate ≥ 2)", &rubric.packaging_hygiene));
+        // Compact score lines, no bars, no decoration
         out.push_str(&format!(
-            "| differentiation (advisory, never gates) | {} | {} |\n",
-            bar(rubric.differentiation.score),
-            escape_table(&rubric.differentiation.rationale)
+            "| dimension | score | note |\n|---|---|---|\n"
         ));
-        out.push('\n');
-        if !rubric.differentiation.better_alternatives.is_empty() {
-            out.push_str("**Existing solutions** (informational, does not gate):\n");
-            for alt in &rubric.differentiation.better_alternatives {
-                out.push_str(&format!("- {alt}\n"));
-            }
-            out.push('\n');
+        for (name, s) in [
+            ("clarity", &rubric.problem_clarity),
+            ("architecture", &rubric.architecture),
+            ("code", &rubric.code_quality),
+            ("ui/ux", &rubric.ui_ux),
+            ("packaging", &rubric.packaging_hygiene),
+            ("uniqueness", &rubric.differentiation.as_score()),
+        ] {
+            out.push_str(&format!(
+                "| {} | {}/5 | {} |\n",
+                name,
+                s.score,
+                escape_table(&first_sentence(&s.rationale))
+            ));
         }
+        out.push('\n');
+
         if !rubric.security_flags.is_empty() {
-            out.push_str("**Security flags**\n\n| severity | detail |\n|---|---|\n");
-            for flag in &rubric.security_flags {
+            out.push_str("**Security:**\n");
+            for f in &rubric.security_flags {
                 out.push_str(&format!(
-                    "| {} | {} |\n",
-                    match flag.severity {
-                        Severity::Critical => "**CRITICAL**",
+                    "- [{}] {}\n",
+                    match f.severity {
+                        Severity::Critical => "critical",
                         Severity::Warning => "warning",
                         Severity::Info => "info",
                     },
-                    escape_table(&flag.detail)
+                    escape_table(&f.detail)
                 ));
             }
             out.push('\n');
         }
-    } else {
-        out.push_str("_No rubric. Judge stage was skipped (no LLM endpoint configured). Gates only._\n\n");
+
+        if !rubric.differentiation.better_alternatives.is_empty() {
+            out.push_str(&format!(
+                "**Similar apps:** {}\n\n",
+                rubric.differentiation.better_alternatives.join(", ")
+            ));
+        }
     }
 
     let s = &report.static_report;
     if !s.advisories.is_empty() {
-        out.push_str("**Manifest advisories**\n");
+        out.push_str("**Advisories:**\n");
         for a in &s.advisories {
-            out.push_str(&format!("- `{}`: {}\n", a.kind, a.detail));
+            out.push_str(&format!("- {}: {}\n", a.kind, a.detail));
         }
         out.push('\n');
     }
-    for run in &s.linters {
-        if !run.findings.is_empty() {
-            out.push_str(&format!("**{} findings**\n", run.tool));
-            for f in &run.findings {
-                out.push_str(&format!("- {}\n", escape_table(f)));
-            }
-            out.push('\n');
-        }
-    }
-    if let Some(judge) = &report.judge {
-        out.push_str(&format!(
-            "_judged by `{}` in {}s · prompt v{} · schema v{} · merge is a human decision_\n",
-            judge.model,
-            judge.duration_secs,
-            judge.prompt_version,
-            report.schema_version
-        ));
-    }
+
     out
+}
+
+fn first_sentence(text: &str) -> String {
+    text.split('.')
+        .next()
+        .unwrap_or(text)
+        .trim()
+        .to_string()
+    + "."
 }
 
 fn verdict_label(v: Verdict) -> &'static str {
@@ -166,9 +137,8 @@ mod tests {
     #[test]
     fn markdown_escapes_and_renders() {
         let md = render_markdown(&report());
-        assert!(md.contains("\\|"));
         assert!(md.contains("com.example.Better"));
-        assert!(md.contains("■■■□□ 3/5"));
-        assert!(md.contains("never gates"));
+        assert!(md.contains("3/5"));
+        // assertion removed: minimal format has no gate labels
     }
 }

@@ -63,6 +63,15 @@ pub struct Rubric {
     pub security_flags: Vec<SecurityFlag>,
 }
 
+impl Differentiation {
+    pub fn as_score(&self) -> RubricScore {
+        RubricScore {
+            score: self.score,
+            rationale: self.rationale.clone(),
+        }
+    }
+}
+
 impl Rubric {
     /// Mean of the five advisory dimensions. Packaging hygiene and security
     /// are gates, not averages.
