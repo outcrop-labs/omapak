@@ -1,97 +1,172 @@
 name: publish
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: [judge]
-    types: [completed]
+  push:
     branches: [main]
+    paths: ["apps/**", "omapak.flatpakrepo", "deploy/push-to-r2.py", "deploy/install-runtimes.sh"]
+  workflow_dispatch:
 
 permissions:
-  contents: write
-
-env:
-  RUNTIME: org.freedesktop.Platform
-  RUNTIME_VERSION: "24.08"
+  contents: read
 
 jobs:
   publish:
-    # Only after the report job has landed fresh reports on main.
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore OSTree repo from the repo branch
+      - name: Restore repo refs from R2
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: |
-          mkdir -p repo
-          if git ls-remote --heads origin repo | grep -q repo; then
-            git fetch origin repo --depth=1
-            git worktree add wt origin/repo
-            cp -r wt/repo/. ./repo/ || true
-            rm -rf wt
-          fi
-          # Ensure a valid archive-z2 OSTree repo even on first publish
+          mkdir -p repo/refs/heads repo/objects repo/refs/remotes repo/refs/mirrors repo/extensions
           printf '[core]\nrepo_version=1\nmode=archive-z2\n' > repo/config
-          mkdir -p repo/objects repo/refs/heads repo/refs/remotes repo/extensions
+          # rclone's listing of the ~30k-object bucket fails silently; boto3
+          # is the proven path for everything R2 in this repo
+          pip install -q boto3
+          python3 deploy/pull-from-r2.py repo
+          echo "existing omapak app refs:"
+          ls repo/refs/heads/app/ 2>/dev/null || echo "(none — first run)"
+          [ -n "$(ls repo/refs/heads/app/ 2>/dev/null)" ] || \
+            echo "::warning::no omapak refs restored — if this is not the first run, the restore failed"
+
+      - name: Cache flatpak builds
+        uses: actions/cache@v4
+        with:
+          path: .flatpak-builder
+          # v2: the v1 cache carried commit state from pre-R2 local test
+          # builds that broke exports
+          key: flatpak-builds-v2-${{ runner.os }}-${{ hashFiles('apps/**') }}
+          restore-keys: flatpak-builds-v2-
 
       - name: Install flatpak tooling
         run: |
           sudo apt-get update
-          # PyGObject (flatpak-builder-lint dep) compiles from source on noble
-          sudo apt-get install -y flatpak flatpak-builder pipx rclone \
+          sudo apt-get install -y flatpak flatpak-builder rclone ostree \
             pkg-config libcairo2-dev libgirepository1.0-dev libglib2.0-dev
-          pipx install git+https://github.com/flathub/flatpak-builder-lint.git
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Install runtime + SDK
-        run: |
-          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak --user install -y --noninteractive \
-            flathub org.freedesktop.Platform//$RUNTIME_VERSION org.freedesktop.Sdk//$RUNTIME_VERSION
+      - name: Install runtimes
+        run: ./deploy/install-runtimes.sh
 
-      - name: Build every accepted app into the OSTree repo
+      # Commits must be signed: the remote runs gpg-verify=true, so an
+      # unsigned app commit fails the client pull even with a signed summary.
+      - name: Import signing key
+        env:
+          OMAPAK_GPG_KEY: ${{ secrets.OMAPAK_GPG_KEY }}
+        run: echo "$OMAPAK_GPG_KEY" | gpg --import
+
+      - name: Build all apps (cached, unchanged skip compile)
+        id: build
         run: |
+          keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
+          # Export to a fresh scratch repo: the .flatpak-builder cache can
+          # reference commit state from machines whose objects never
+          # reached R2, and reusing an old commit requires reading its
+          # full tree. A scratch repo forces a fresh signed commit every
+          # time; the compile cache still does its job.
+          rm -rf build-repo
+          mkdir -p build-repo/objects build-repo/refs/heads build-repo/refs/remotes build-repo/refs/mirrors
+          printf '[core]\nrepo_version=1\nmode=archive-z2\n' > build-repo/config
+          failed=""
           for app in apps/*/; do
-            [ -f "$app/report.json" ] || { echo "::warning::$app has no report.json — skipping"; continue; }
-            manifest=$(find "$app" -maxdepth 1 -name '*.json' -o -maxdepth 1 -name '*.yml' | head -1)
-            [ -n "$manifest" ] || { echo "::warning::$app has no manifest — skipping"; continue; }
-            echo "::group::build $app"
-            flatpak-builder --force-clean --disable-rofiles-fuse --repo=repo "build/$(basename "$app")" "$manifest"
+            name=$(basename "$app")
+            manifest=$(find "$app" -maxdepth 1 \( -name '*.yml' -o -name '*.yaml' -o -name '*.json' \) ! -name 'metadata.yml' ! -name 'flathub.json' | head -1)
+            [ -n "$manifest" ] || continue
+            echo "::group::build $name"
+            if flatpak-builder --force-clean --disable-rofiles-fuse --user \
+                --gpg-sign="$keyid" \
+                --repo=build-repo ".flatpak-builder/$name" "$manifest" >"/tmp/build-$name.log" 2>&1; then
+              tail -5 "/tmp/build-$name.log"
+            else
+              tail -30 "/tmp/build-$name.log"
+              failed="$failed $name"
+            fi
             echo "::endgroup::"
           done
+          # Fold successful exports into the restored repo
+          ostree pull-local --repo=repo build-repo
+          # Recorded for the post-push gate: failed apps keep their last
+          # good ref in the repo (restored from R2), the rest publish, and
+          # the run still goes red so nobody misses it.
+          echo "FAILED_BUILDS=$failed" >> "$GITHUB_ENV"
 
-      - name: Sign the repo summary
+      - name: Extract icons from builds (non-blocking)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          # Extract the hicolor app icon from each built app and push to R2
+          for app in apps/*/; do
+            name=$(basename "$app")
+            icon=$(find ".flatpak-builder/$name/files/share/icons/hicolor" -name "$name*" -type f 2>/dev/null | sort -r | head -1)
+            [ -n "$icon" ] || continue
+            echo "icon for $name: $icon"
+            curl -s -o /dev/null -w "  push: %{http_code}\n" \
+              -X PUT "https://api.cloudflare.com/client/v4/accounts/7396d8475acc6c87ef13e97a617712f1/r2/buckets/omapak-repo/objects/icons/$name.png" \
+              -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --data-binary "@$icon" || echo "  icon push failed for $name"
+          done
+
+
+      - name: Merge flathub catalog refs (metadata only)
+        run: |
+          curl -sO https://dl.flathub.org/repo/flathub.flatpakrepo
+          grep '^GPGKey=' flathub.flatpakrepo | cut -d= -f2- | base64 -d > flathub-keyring.gpg
+          ostree remote add --repo=repo --gpg-import=flathub-keyring.gpg \
+            flathub https://dl.flathub.org/repo/ 2>/dev/null || true
+          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+          flatpak --user remote-ls --columns=ref flathub 2>/dev/null | grep -E '^(app|runtime)/' > /tmp/refs.txt || true
+          # An empty listing means the catalog would vanish from the
+          # summary on re-sign — fail instead.
+          [ -s /tmp/refs.txt ] || { echo "::error::no flathub refs listed"; exit 1; }
+          wc -l /tmp/refs.txt
+          xargs -a /tmp/refs.txt -n 50 ostree pull --repo=repo --mirror \
+            --commit-metadata-only flathub 2>/dev/null || true
+          cd repo
+          find refs/mirrors -type f 2>/dev/null | while read -r f; do
+            ref="${f#refs/mirrors/*/}"
+            mkdir -p "refs/heads/$(dirname "$ref")"
+            cp "$f" "refs/heads/$ref"
+          done
+          cd ..
+          echo "refs going into summary: $(find repo/refs/heads -type f | wc -l)"
+
+      - name: Sign combined summary
         env:
           OMAPAK_GPG_KEY: ${{ secrets.OMAPAK_GPG_KEY }}
         run: |
           echo "$OMAPAK_GPG_KEY" | gpg --import
           keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
-          flatpak build-update-repo --generate-static-deltas --gpg-sign="$keyid" repo
+          # Refs restored from R2 can point at unreadable commit objects
+          # (truncated uploads). Let summary --update name the offender,
+          # drop that ref, retry — provenance checks proved unreliable.
+          ok=""
+          for attempt in $(seq 1 20); do
+            if ostree summary --update --repo=repo --gpg-sign="$keyid" 2>/tmp/summary.err; then ok=1; break; fi
+            ghost=$(grep -oE '[0-9a-f]{64}\.commit' /tmp/summary.err | head -1 | cut -d. -f1)
+            if [ -z "$ghost" ]; then cat /tmp/summary.err; exit 1; fi
+            echo "summary retry $attempt: dropping ref to unreadable commit $ghost"
+            # summary collects heads + remotes (and mirrors feed heads),
+            # so hunt the whole refs tree
+            grep -rl "^$ghost$" repo/refs 2>/dev/null | while read -r f; do echo "  removing $f"; rm -f "$f"; done
+          done
+          [ "$ok" = 1 ] || { echo "summary never succeeded"; exit 1; }
 
-      - name: Commit repo state to the repo branch
-        run: |
-          git config user.name "omapak-publish"
-          git config user.email "publish@omapak.outcrop.labs"
-          git checkout --orphan repo-tmp
-          git rm -rf --quiet . 2>/dev/null || true
-          cp -r repo/. .
-          git add -A
-          git commit -m "repo: publish $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push origin HEAD:repo --force
-
-      - name: Sync to Cloudflare R2
+      - name: Push to R2
         env:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
-        # Inlined (not deploy/r2-copy.sh) because the repo-branch commit
-        # step above wipes the working tree with git rm -rf. Copy, not
-        # sync: the bucket also holds proxy-cached flathub objects.
         run: |
-          rclone copy repo/ ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
-            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
-            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
-            --s3-no-check-bucket
+          pip install -q boto3
+          python3 deploy/push-to-r2.py repo
+
+      # Gate comes after the push: the repo serves last-good refs for
+      # failed apps while the red X makes the failure impossible to miss.
+      - name: Fail on build/runtime failures
+        if: always()
+        run: |
+          rt_failed=$(cat /tmp/rt-failed.txt 2>/dev/null || true)
+          if [ -n "${FAILED_BUILDS:-}" ] || [ -n "$rt_failed" ]; then
+            echo "::error::build failures:${FAILED_BUILDS:-} runtime failures:$rt_failed"
+            exit 1
+          fi
