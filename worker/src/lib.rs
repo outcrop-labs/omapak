@@ -12,6 +12,22 @@ use worker::*;
 
 const UPSTREAM: &str = "https://dl.flathub.org/repo";
 
+// R2 throws transient errors under load; a repo server retries before
+// giving the client a 500 (flatpak treats one failed object as fatal).
+async fn r2_get(bucket: &worker::Bucket, path: &str) -> Result<Option<Object>> {
+    let mut last_err = None;
+    for attempt in 1..=3 {
+        match bucket.get(path).execute().await {
+            Ok(obj) => return Ok(obj),
+            Err(e) => {
+                console_debug!("r2 get {path} attempt {attempt} failed: {e:#}");
+                last_err = Some(e);
+            }
+        }
+    }
+    Err(last_err.expect("at least one attempt"))
+}
+
 #[event(fetch)]
 async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     if req.method() != Method::Get && req.method() != Method::Head {
@@ -24,28 +40,58 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         return Response::error("not found", 404);
     }
 
+
+
     // R2 first (omapak's own objects, plus everything previously cached).
-    if let Some(obj) = bucket.get(&path).execute().await? {
+    if let Some(obj) = r2_get(&bucket, &path).await? {
         let is_summary = path.starts_with("summary");
         let mut headers = Headers::new();
         headers.set("Content-Type", "application/octet-stream")?;
         if is_summary {
-            headers.set("Cache-Control", "public, max-age=600")?;
+            headers.set("Cache-Control", "public, max-age=60, must-revalidate")?;
         } else {
             headers.set("Cache-Control", "public, max-age=31536000, immutable")?;
         }
         headers.set("X-Omapak-Origin", if is_summary { "omapak" } else { "cached" })?;
         // worker 0.8: body() is Option<ObjectBody>; response_body() hands
         // the stream to the runtime without buffering it in the worker.
+        let _ = headers.set("Access-Control-Allow-Origin", "*");
         let body = obj.body().ok_or_else(|| Error::RustError("object body consumed".into()))?;
         return Ok(Response::from_body(body.response_body()?)?.with_headers(headers));
+    }
+
+    // Repo-critical files must come from R2 only. A flathub fallback 200
+    // here would cache upstream bytes as omapak's own (a flathub summary
+    // masquerading as ours, an upstream .flatpakrepo re-keying clients),
+    // which no omapak keyring could ever verify.
+    let repo_critical = path.starts_with("summary")
+        || path == "config"
+        || path == "omapak.flatpakrepo";
+    if repo_critical {
+        return Response::error("not found", 404);
     }
 
     // Cache miss: fetch from flathub once, store, serve. Content-addressed
     // paths make this safe forever. Anything but a clean upstream 200
     // becomes a 404: clients (rightly) treat speculative paths like
     // deltas/ as miss-and-fallback, and a thrown 500 would abort installs.
+    // dl.flathub.org's CDN also breaks streams mid-body now and then —
+    // retry before surfacing the failure.
     async fn fetch_upstream(path: &str, bucket: &worker::Bucket) -> Result<Response> {
+        let mut last_err = None;
+        for attempt in 1..=3u8 {
+            match fetch_upstream_once(path, bucket).await {
+                Ok(resp) => return Ok(resp),
+                Err(e) => {
+                    console_debug!("upstream fetch {path} attempt {attempt} failed: {e:#}");
+                    last_err = Some(e);
+                }
+            }
+        }
+        Err(last_err.expect("at least one attempt"))
+    }
+
+    async fn fetch_upstream_once(path: &str, bucket: &worker::Bucket) -> Result<Response> {
         let mut init = RequestInit::new();
         init.method = Method::Get;
         let upstream_req = Request::new_with_init(&format!("{UPSTREAM}/{path}"), &init)?;
@@ -69,12 +115,14 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
             .and_then(|v| v.parse().ok());
         let huge = path.starts_with("deltas/") || content_length.is_some_and(|n| n > 8 * 1024 * 1024);
         if huge {
+            let _ = headers.set("Access-Control-Allow-Origin", "*");
             headers.set("X-Omapak-Origin", "flathub-stream")?;
             return Ok(resp.with_headers(headers));
         }
 
         let bytes = resp.bytes().await?;
         let _ = bucket.put(path, bytes.clone()).execute().await;
+        let _ = headers.set("Access-Control-Allow-Origin", "*");
         headers.set("X-Omapak-Origin", "flathub-pass-through")?;
         Ok(Response::from_bytes(bytes)?.with_headers(headers))
     }
@@ -83,7 +131,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         Ok(resp) => Ok(resp),
         Err(e) => {
             console_debug!("upstream fetch failed for {path}: {e:#}");
-            Response::error("not found", 404)
+            Response::error("upstream unavailable", 502)
         }
     }
 }

@@ -37,6 +37,12 @@
           >
             omapak</span
           >
+          <span
+            class="rounded-sm border border-warning/40 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-warning"
+            title="Omapak is in active development"
+          >
+            alpha</span
+          >
         </a>
         <nav class="flex items-center gap-5 font-mono text-sm">
           <a href="/" class="text-muted transition-colors hover:text-fg">catalog</a>

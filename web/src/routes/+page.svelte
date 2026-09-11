@@ -68,6 +68,24 @@
       curl -fsSL https://omapak.org/omapak.sh | sh</code
     >
   </div>
+
+  <div
+    class="mt-6 flex max-w-[var(--read-width)] items-start gap-4 rounded-sm border border-warning/40 bg-card px-4 py-3.5"
+  >
+    <span class="shrink-0 font-mono text-xs uppercase tracking-[0.15em] text-warning"
+      >alpha</span
+    >
+    <p class="text-sm leading-relaxed text-muted">
+      Omapak is in active development. The judge, the catalog, and this site are all being
+      <a
+        href="https://github.com/outcrop-labs/omapak"
+        class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
+        >built in the open</a
+      >
+      right now — expect rough edges, moving parts, and the occasional break. The mission is
+      settled; everything else is warming up.
+    </p>
+  </div>
 </section>
 
 <section class="border-t border-line py-10">
@@ -116,13 +134,15 @@
           href="/app/{entry.app_id}"
           class="group rounded-sm border border-line bg-card p-5 shadow-[var(--theme-shadow-1)] transition-colors hover:border-line-strong hover:bg-hover"
         >
-          <div class="flex items-start justify-between gap-3">
-          <div class="flex items-start justify-between gap-3">
-            <code class="min-w-0 flex-1 truncate font-mono text-sm text-fg group-hover:text-accent"
-              >{entry.name || entry.app_id}</code
-            >
-          </div>
-          <VerdictBadge verdict={entry.verdict} certified={entry.certified} />
+          <div class="flex items-start gap-3">
+            {#if entry.icon}
+              <img src={entry.icon} alt="" loading="lazy" class="h-10 w-10 shrink-0 rounded-lg border border-line-subtle" />
+            {/if}
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-medium text-fg group-hover:text-accent">{entry.name || entry.app_id}</p>
+              <p class="font-mono text-xs text-ink-dim">{entry.app_id}</p>
+            </div>
+            <VerdictBadge verdict={entry.verdict} certified={entry.certified} />
           </div>
           <p class="mt-2 line-clamp-2 text-sm text-muted">{entry.summary}</p>
           <div class="mt-4 flex items-center justify-between font-mono text-xs text-ink-dim">
