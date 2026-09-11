@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/eval-exec/neomacs
+summary: Neomacs, the Emacs-like editor built on Lisp
+license: GPL-3.0
+tags: [utility]
+description: >-
+  Continuity submission. %s (%s stars, actively maintained) had its Flathub
+  submission (flathub/flathub#%s) closed. omapak picked it up; manifest
+  from that PR. Neomacs, the Emacs-like editor built on Lisp 1194 8776
