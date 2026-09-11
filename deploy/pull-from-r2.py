@@ -9,6 +9,7 @@ many tiny ref files.
 Usage: pull-from-r2.py [repo-dir]
 """
 import os
+import re
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
@@ -18,6 +19,7 @@ from botocore.config import Config
 REPO = sys.argv[1] if len(sys.argv) > 1 else "repo"
 BUCKET = "omapak-repo"
 KEEP = ("refs/", "summary", "config")
+SHA256 = re.compile(r"[0-9a-f]{64}")
 
 s3 = boto3.client(
     "s3",
@@ -50,4 +52,34 @@ with ThreadPoolExecutor(max_workers=16) as pool:
             failed += 1
 
 print(f"restored {len(keys) - failed}/{len(keys)} files ({failed} failed)")
-sys.exit(1 if failed else 0)
+
+# ostree summary --update reads each ref's commit object, but objects/
+# isn't restored wholesale (it holds the big filez payloads). Commit
+# objects are ~1KB — fetch the ones refs point at that we don't have.
+commits = []
+for root, _, files in os.walk(os.path.join(REPO, "refs", "heads")):
+    for f in files:
+        try:
+            with open(os.path.join(root, f)) as fh:
+                c = fh.read().strip()
+        except OSError:
+            continue
+        if not SHA256.fullmatch(c):
+            continue
+        obj = os.path.join(REPO, "objects", c[:2], f"{c[2:]}.commit")
+        if not os.path.exists(obj):
+            commits.append((c, obj))
+
+def fetch_commit(pair):
+    c, obj = pair
+    os.makedirs(os.path.dirname(obj), exist_ok=True)
+    s3.download_file(BUCKET, f"objects/{c[:2]}/{c[2:]}.commit", obj)
+
+cfailed = 0
+with ThreadPoolExecutor(max_workers=16) as pool:
+    for (c, _), exc in zip(commits, pool.map(fetch_commit, commits)):
+        if exc is not None:
+            print(f"  FAILED commit object: {c}: {exc}", file=sys.stderr)
+            cfailed += 1
+print(f"commit objects: {len(commits) - cfailed} fetched ({cfailed} failed)")
+sys.exit(1 if (failed or cfailed) else 0)
