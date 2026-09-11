@@ -27,9 +27,9 @@ jobs:
       - name: Install flatpak-external-data-checker
         run: |
           sudo apt-get update
-          # PyGObject (a dependency) compiles from source on noble
+          # PyGObject and lxml (dependencies) compile from source on noble
           sudo apt-get install -y pkg-config libcairo2-dev \
-            libgirepository1.0-dev libglib2.0-dev
+            libgirepository1.0-dev libglib2.0-dev libxml2-dev libxslt-dev
           pip install "git+https://github.com/flathub-infra/flatpak-external-data-checker.git"
 
       - name: Configure git for bot commits
