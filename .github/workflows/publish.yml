@@ -128,11 +128,18 @@ jobs:
             mkdir -p "refs/heads/$(dirname "$ref")"
             cp "$f" "refs/heads/$ref"
           done
-          # Dead upstream apps: ref restored from R2 but its commit object
-          # never landed — summary --update can't sign what it can't read.
-          find refs/heads -type f | while read -r f; do
+          # Refs restored from R2 can point at corrupt commit objects
+          # (truncated uploads) — existence isn't enough, summary --update
+          # can't sign what ostree can't read. Fresh flathub pulls are
+          # trusted; omapak's own refs get validated.
+          find refs/heads -type f | sed 's|^refs/heads/||' | sort > /tmp/have-refs
+          comm -23 /tmp/have-refs <(sort /tmp/refs.txt) | while read -r ref; do
+            f="refs/heads/$ref"
             c=$(cat "$f")
-            [ -f "objects/${c:0:2}/${c:2}.commit" ] || { echo "dropping ref without commit object: $f"; rm -f "$f"; }
+            if [ ! -f "objects/${c:0:2}/${c:2}.commit" ] || ! ostree show --repo=. "$c" >/dev/null 2>&1; then
+              echo "dropping unreadable ref: $f"
+              rm -f "$f"
+            fi
           done
           cd ..
           echo "refs going into summary: $(find repo/refs/heads -type f | wc -l)"
