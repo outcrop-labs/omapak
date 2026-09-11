@@ -7,60 +7,70 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   publish:
-    # Only after the report job has landed fresh reports on main.
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore OSTree repo from the repo branch
+      - name: Restore repo refs from R2
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
         run: |
-          mkdir -p repo
-          if git ls-remote --heads origin repo | grep -q repo; then
-            git fetch origin repo --depth=1
-            git worktree add wt origin/repo
-            cp -r wt/repo/. ./repo/ || true
-            rm -rf wt
-          fi
-          # Ensure a valid archive-z2 OSTree repo even on first publish
+          mkdir -p repo/refs/heads repo/objects repo/refs/remotes repo/refs/mirrors repo/extensions
           printf '[core]\nrepo_version=1\nmode=archive-z2\n' > repo/config
-          mkdir -p repo/objects repo/refs/heads repo/refs/remotes repo/extensions
+          rclone copy ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo/refs" repo/refs \
+            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
+            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" --s3-no-check-bucket 2>/dev/null || true
+          rclone copy ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" repo \
+            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
+            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" --s3-no-check-bucket \
+            --include "summary*" --include "config" 2>/dev/null || true
+          echo "existing omapak app refs:"
+          ls repo/refs/heads/app/ 2>/dev/null || echo "(none — first run)"
+
+      - name: Cache flatpak builds
+        uses: actions/cache@v4
+        with:
+          path: .flatpak-builder
+          key: flatpak-builds-${{ runner.os }}-${{ hashFiles('apps/**') }}
+          restore-keys: flatpak-builds-
 
       - name: Install flatpak tooling
         run: |
           sudo apt-get update
-          # PyGObject (flatpak-builder-lint dep) compiles from source on noble
-          sudo apt-get install -y flatpak flatpak-builder pipx rclone \
+          sudo apt-get install -y flatpak flatpak-builder rclone ostree \
             pkg-config libcairo2-dev libgirepository1.0-dev libglib2.0-dev
-          pipx install git+https://github.com/flathub/flatpak-builder-lint.git
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Install runtimes
         run: ./deploy/install-runtimes.sh
 
-      - name: Build every app on main
+      - name: Build all apps (cached, unchanged skip compile)
         run: |
           for app in apps/*/; do
-            [ -d "$app" ] || continue
-            manifest=$(find "$app" -maxdepth 1 -name '*.json' -o -maxdepth 1 -name '*.yml' -o -maxdepth 1 -name '*.yaml' 2>/dev/null | grep -v flathub.json | head -1)
-            [ -n "$manifest" ] || { echo "::warning::$app has no manifest — skipping"; continue; }
-            echo "::group::build $app"
-            flatpak-builder --force-clean --disable-rofiles-fuse --repo=repo "build/$(basename "$app")" "$manifest"
+            name=$(basename "$app")
+            manifest=$(find "$app" -maxdepth 1 \( -name '*.yml' -o -name '*.yaml' -o -name '*.json' \) ! -name 'metadata.yml' ! -name 'flathub.json' | head -1)
+            [ -n "$manifest" ] || continue
+            echo "::group::build $name"
+            flatpak-builder --force-clean --disable-rofiles-fuse --user \
+              --repo=repo ".flatpak-builder/$name" "$manifest" 2>&1 | tail -5
             echo "::endgroup::"
           done
 
-      - name: Merge flathub refs
+      - name: Pull flathub ref metadata
         run: |
           curl -sO https://dl.flathub.org/repo/flathub.flatpakrepo
           grep '^GPGKey=' flathub.flatpakrepo | cut -d= -f2 | base64 -d > flathub-keyring.gpg
-          ostree remote add --repo=repo --gpg-import=flathub-keyring.gpg flathub https://dl.flathub.org/repo/ 2>/dev/null || true
-          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+          ostree remote add --repo=repo --gpg-import=flathub-keyring.gpg \
+            flathub https://dl.flathub.org/repo/ 2>/dev/null || true
+          flatpak --user remote-add --if-not-exists flathub https://dl.flubhub.org/repo/flathub.flatpakrepo 2>/dev/null || true
           flatpak --user remote-ls --columns=ref flathub 2>/dev/null | grep -E '^(app|runtime)/' > /tmp/refs.txt || true
-          xargs -a /tmp/refs.txt -n 50 ostree pull --repo=repo --mirror --commit-metadata-only flathub 2>/dev/null || true
+          xargs -a /tmp/refs.txt -n 50 ostree pull --repo=repo --mirror \
+            --commit-metadata-only flathub 2>/dev/null || true
           cd repo
           find refs/mirrors -type f 2>/dev/null | while read -r f; do
             ref="${f#refs/mirrors/*/}"
@@ -69,7 +79,7 @@ jobs:
           done
           cd ..
 
-      - name: Sign the repo summary
+      - name: Sign combined summary
         env:
           OMAPAK_GPG_KEY: ${{ secrets.OMAPAK_GPG_KEY }}
         run: |
@@ -77,18 +87,13 @@ jobs:
           keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
           ostree summary --update --repo=repo --gpg-sign="$keyid"
 
-
-      - name: Sync to Cloudflare R2
+      - name: Push to R2
         env:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
-        # Inlined (not deploy/r2-copy.sh) because the repo-branch commit
-        # step above wipes the working tree with git rm -rf. Copy, not
-        # sync: the bucket also holds proxy-cached flathub objects.
         run: |
           rclone copy repo/ ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
             --s3-access-key-id "$R2_ACCESS_KEY_ID" \
             --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
             --s3-no-check-bucket
-
