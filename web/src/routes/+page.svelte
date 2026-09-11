@@ -116,13 +116,15 @@
           href="/app/{entry.app_id}"
           class="group rounded-sm border border-line bg-card p-5 shadow-[var(--theme-shadow-1)] transition-colors hover:border-line-strong hover:bg-hover"
         >
-          <div class="flex items-start justify-between gap-3">
-          <div class="flex items-start justify-between gap-3">
-            <code class="min-w-0 flex-1 truncate font-mono text-sm text-fg group-hover:text-accent"
-              >{entry.name || entry.app_id}</code
-            >
-          </div>
-          <VerdictBadge verdict={entry.verdict} certified={entry.certified} />
+          <div class="flex items-start gap-3">
+            {#if entry.icon}
+              <img src={entry.icon} alt="" loading="lazy" class="h-10 w-10 shrink-0 rounded-lg border border-line-subtle" />
+            {/if}
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-medium text-fg group-hover:text-accent">{entry.name || entry.app_id}</p>
+              <p class="font-mono text-xs text-ink-dim">{entry.app_id}</p>
+            </div>
+            <VerdictBadge verdict={entry.verdict} certified={entry.certified} />
           </div>
           <p class="mt-2 line-clamp-2 text-sm text-muted">{entry.summary}</p>
           <div class="mt-4 flex items-center justify-between font-mono text-xs text-ink-dim">
