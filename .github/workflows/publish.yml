@@ -35,8 +35,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .flatpak-builder
-          key: flatpak-builds-${{ runner.os }}-${{ hashFiles('apps/**') }}
-          restore-keys: flatpak-builds-
+          # v2: the v1 cache carried commit state from pre-R2 local test
+          # builds that broke exports
+          key: flatpak-builds-v2-${{ runner.os }}-${{ hashFiles('apps/**') }}
+          restore-keys: flatpak-builds-v2-
 
       - name: Install flatpak tooling
         run: |
@@ -58,6 +60,14 @@ jobs:
         id: build
         run: |
           keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
+          # Export to a fresh scratch repo: the .flatpak-builder cache can
+          # reference commit state from machines whose objects never
+          # reached R2, and reusing an old commit requires reading its
+          # full tree. A scratch repo forces a fresh signed commit every
+          # time; the compile cache still does its job.
+          rm -rf build-repo
+          mkdir -p build-repo
+          printf '[core]\nrepo_version=1\nmode=archive-z2\n' > build-repo/config
           failed=""
           for app in apps/*/; do
             name=$(basename "$app")
@@ -66,7 +76,7 @@ jobs:
             echo "::group::build $name"
             if flatpak-builder --force-clean --disable-rofiles-fuse --user \
                 --gpg-sign="$keyid" \
-                --repo=repo ".flatpak-builder/$name" "$manifest" >"/tmp/build-$name.log" 2>&1; then
+                --repo=build-repo ".flatpak-builder/$name" "$manifest" >"/tmp/build-$name.log" 2>&1; then
               tail -5 "/tmp/build-$name.log"
             else
               tail -30 "/tmp/build-$name.log"
@@ -74,6 +84,8 @@ jobs:
             fi
             echo "::endgroup::"
           done
+          # Fold successful exports into the restored repo
+          ostree pull-local --repo=repo build-repo
           # Recorded for the post-push gate: failed apps keep their last
           # good ref in the repo (restored from R2), the rest publish, and
           # the run still goes red so nobody misses it.
