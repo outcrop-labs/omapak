@@ -53,17 +53,19 @@ trap 'rm -rf "$tmpdir"' EXIT
 curl -fsSL "$FLATPAKREPO" -o "$tmpdir/omapak.flatpakrepo"
 # -f2- keeps any '=' padding inside the base64 blob intact
 grep '^GPGKey=' "$tmpdir/omapak.flatpakrepo" | cut -d= -f2- | base64 -d > "$tmpdir/key.gpg"
+REMOTE_URL=$(grep '^Url=' "$tmpdir/omapak.flatpakrepo" | cut -d= -f2-)
 
 say "adding the $REMOTE remote"
 run flatpak remote-add --user --if-not-exists "$REMOTE" "$tmpdir/omapak.flatpakrepo"
-# Key refresh for remotes added before a signing-key rollover.
-run flatpak remote-modify --user --gpg-import="$tmpdir/key.gpg" "$REMOTE"
+# Key refresh for remotes added before a signing-key rollover, and URL
+# correction for remotes pointing somewhere else (e.g. dl.flathub.org).
+run flatpak remote-modify --user --gpg-import="$tmpdir/key.gpg" --url="$REMOTE_URL" "$REMOTE"
 if [ "$(id -u)" = 0 ]; then
   run flatpak remote-add --system --if-not-exists "$REMOTE" "$tmpdir/omapak.flatpakrepo"
-  run flatpak remote-modify --system --gpg-import="$tmpdir/key.gpg" "$REMOTE"
+  run flatpak remote-modify --system --gpg-import="$tmpdir/key.gpg" --url="$REMOTE_URL" "$REMOTE"
 elif have_sudo; then
   run sudo flatpak remote-add --system --if-not-exists "$REMOTE" "$tmpdir/omapak.flatpakrepo"
-  run sudo flatpak remote-modify --system --gpg-import="$tmpdir/key.gpg" "$REMOTE"
+  run sudo flatpak remote-modify --system --gpg-import="$tmpdir/key.gpg" --url="$REMOTE_URL" "$REMOTE"
 else
   echo "  (no sudo: added for your user only; system installs will need it later)"
 fi
