@@ -75,7 +75,23 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     // paths make this safe forever. Anything but a clean upstream 200
     // becomes a 404: clients (rightly) treat speculative paths like
     // deltas/ as miss-and-fallback, and a thrown 500 would abort installs.
+    // dl.flathub.org's CDN also breaks streams mid-body now and then —
+    // retry before surfacing the failure.
     async fn fetch_upstream(path: &str, bucket: &worker::Bucket) -> Result<Response> {
+        let mut last_err = None;
+        for attempt in 1..=3u8 {
+            match fetch_upstream_once(path, bucket).await {
+                Ok(resp) => return Ok(resp),
+                Err(e) => {
+                    console_debug!("upstream fetch {path} attempt {attempt} failed: {e:#}");
+                    last_err = Some(e);
+                }
+            }
+        }
+        Err(last_err.expect("at least one attempt"))
+    }
+
+    async fn fetch_upstream_once(path: &str, bucket: &worker::Bucket) -> Result<Response> {
         let mut init = RequestInit::new();
         init.method = Method::Get;
         let upstream_req = Request::new_with_init(&format!("{UPSTREAM}/{path}"), &init)?;
@@ -115,7 +131,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         Ok(resp) => Ok(resp),
         Err(e) => {
             console_debug!("upstream fetch failed for {path}: {e:#}");
-            Response::error("not found", 404)
+            Response::error("upstream unavailable", 502)
         }
     }
 }
