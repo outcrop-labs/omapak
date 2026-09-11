@@ -33,19 +33,6 @@ jobs:
           pipx install git+https://github.com/flathub/flatpak-builder-lint.git
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Cache flatpak runtimes
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/share/flatpak
-          key: flatpak-runtimes-${{ hashFiles('apps/**/com.*', 'apps/**/io.*', 'apps/**/net.*') }}-v1
-          restore-keys: flatpak-runtimes-
-
-      - name: Install runtimes
-        run: ./deploy/install-runtimes.sh
-
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-
       - name: Changed app dirs
         if: github.event_name == 'pull_request'
         run: |
@@ -54,8 +41,30 @@ jobs:
               | grep '^apps/' | cut -d/ -f1-2 | sort -u || true
           } | tee changed.txt
 
+      - name: Cache flatpak runtimes
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/flatpak
+          key: flatpak-runtimes-${{ hashFiles('apps/**/com.*', 'apps/**/io.*', 'apps/**/net.*') }}-v1
+          restore-keys: flatpak-runtimes-
+
+      # PR runs provision ONLY the changed app's toolchain: installing
+      # every runtime in the merged tree (~10GB) has exhausted runner
+      # disk and killed the judge mid-step.
+      - name: Install runtimes
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -s changed.txt ]; then
+            ./deploy/install-runtimes.sh $(cat changed.txt)
+          else
+            ./deploy/install-runtimes.sh
+          fi
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
       - name: Judge - static + build (no agent keys in this job)
         run: |
+          echo "disk free at judge start: $(df -h / | awk 'NR==2{print $4}')"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             APPS=$(cat changed.txt)
           else

@@ -40,7 +40,16 @@ sdk_exts() {
     | sed -e 's/^[[:space:]]*-[[:space:]]*//' -e 's/["'\'']//g'
 }
 
-for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
+# Args: app dirs to provision for (PR checks judge only the changed
+# app). No args: every app in apps/ (publish builds everything).
+if [ "$#" -gt 0 ]; then
+  paths=""
+  for d in "$@"; do paths="$paths $d/*.yml $d/*.yaml $d/*.json"; done
+else
+  paths="apps/*/*.yml apps/*/*.yaml apps/*/*.json"
+fi
+
+for m in $paths; do
   [ -f "$m" ] || continue
   rt=$(strip "$(grep -m1 '^runtime:' "$m" | cut -d: -f2-)")
   rv=$(strip "$(grep -m1 '^runtime-version:' "$m" | cut -d: -f2-)")
