@@ -95,4 +95,9 @@ jobs:
           rclone copy repo/ ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" \
             --s3-access-key-id "$R2_ACCESS_KEY_ID" \
             --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" \
-            --s3-no-check-bucket
+            --s3-no-check-bucket \
+            --s3-disable-checksum \
+            --s3-chunk-size 16M \
+            --s3-upload-concurrency 2 \
+            --transfers 8 \
+            --ignore-checksum
