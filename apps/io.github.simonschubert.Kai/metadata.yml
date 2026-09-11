@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/SimonSchubert/Kai
+summary: Kai, a text and code editor with AI integration
+license: Apache-2.0
+tags: [utility]
+description: >-
+  Continuity submission. %s (%s stars, actively maintained) had its Flathub
+  submission (flathub/flathub#%s) closed. omapak picked it up; manifest
+  from that PR. Kai, a text and code editor with AI integration 1237 7975
