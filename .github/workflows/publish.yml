@@ -86,8 +86,10 @@ jobs:
           keyid=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')
           ostree summary --update --repo=repo --gpg-sign="$keyid"
 
-      - name: Push to R2 via Cloudflare API
+      - name: Push to R2
         env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-        run: ./deploy/push-to-r2.sh repo
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          pip install -q boto3
+          python3 deploy/push-to-r2.py repo
