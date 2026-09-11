@@ -30,19 +30,21 @@ pub fn run(manifest: &Path, work_dir: &Path, repo_dir: &Path) -> Result<BuildRep
         .context("spawn flatpak-builder — is it installed?")?;
 
     // Spawn readers so a chatty build can't deadlock on a full pipe.
+    // Read bytes and convert lossily: build tools emit arbitrary bytes,
+    // and read_to_string silently truncates at the first invalid UTF-8.
     let mut stdout = child.stdout.take().unwrap();
     let mut stderr = child.stderr.take().unwrap();
     let out_handle = std::thread::spawn(move || {
         use std::io::Read;
-        let mut s = String::new();
-        let _ = stdout.read_to_string(&mut s);
-        s
+        let mut b = Vec::new();
+        let _ = stdout.read_to_end(&mut b);
+        b
     });
     let err_handle = std::thread::spawn(move || {
         use std::io::Read;
-        let mut s = String::new();
-        let _ = stderr.read_to_string(&mut s);
-        s
+        let mut b = Vec::new();
+        let _ = stderr.read_to_end(&mut b);
+        b
     });
 
     let status = loop {
@@ -64,8 +66,15 @@ pub fn run(manifest: &Path, work_dir: &Path, repo_dir: &Path) -> Result<BuildRep
         }
     };
 
-    let stdout = out_handle.join().unwrap_or_default();
-    let stderr = err_handle.join().unwrap_or_default();
+    // Status's Display names signals ("signal: 9 (SIGKILL)") — the only
+    // way to distinguish a real builder error from the runner killing it.
+    if !status.success() {
+        eprintln!("  flatpak-builder {status}");
+    }
+    let out_bytes = out_handle.join().unwrap_or_default();
+    let err_bytes = err_handle.join().unwrap_or_default();
+    let stdout = String::from_utf8_lossy(&out_bytes);
+    let stderr = String::from_utf8_lossy(&err_bytes);
     let mut log_tail: Vec<String> = stdout
         .lines()
         .chain(stderr.lines())
