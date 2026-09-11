@@ -103,3 +103,31 @@ if (!R2_ENDPOINT || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
 const r2 = `:s3,provider=Cloudflare,endpoint="${R2_ENDPOINT}":omapak-repo`;
 execSync(`rclone copyto ${tmp}/catalog.json "${r2}/data/catalog.json" --s3-access-key-id ${R2_ACCESS_KEY_ID} --s3-secret-access-key ${R2_SECRET_ACCESS_KEY} --s3-no-check-bucket`, { stdio: "inherit" });
 console.log(`catalog pushed: ${entries.length} apps`);
+
+// Push icons to R2 (non-blocking: failures warn, never kill)
+const CF_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+const CF_ACCOUNT = process.env.CF_ACCOUNT || "7396d8475acc6c87ef13e97a617712f1";
+const iconsDir = resolve(here, "../static/icons");
+
+if (CF_TOKEN && existsSync(iconsDir)) {
+  for (const file of readdirSync(iconsDir)) {
+    if (!file.endsWith(".png") && !file.endsWith(".svg")) continue;
+    try {
+      const buf = readFileSync(join(iconsDir, file));
+      const res = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/r2/buckets/omapak-repo/objects/icons/${file}`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${CF_TOKEN}` },
+          body: buf,
+        }
+      );
+      if (res.ok) console.log(`  icon pushed: ${file}`);
+      else console.warn(`  icon push failed (${res.status}): ${file}`);
+    } catch (e) {
+      console.warn(`  icon push error: ${file}: ${e.message}`);
+    }
+  }
+} else {
+  console.log("icons: skipped (no CLOUDFLARE_API_TOKEN)");
+}

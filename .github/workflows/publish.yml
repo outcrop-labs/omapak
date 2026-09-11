@@ -61,6 +61,22 @@ jobs:
             echo "::endgroup::"
           done
 
+      - name: Extract icons from builds (non-blocking)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          # Extract the hicolor app icon from each built app and push to R2
+          for app in apps/*/; do
+            name=$(basename "$app")
+            icon=$(find ".flatpak-builder/$name/files/share/icons/hicolor" -name "$name*" -type f 2>/dev/null | sort -r | head -1)
+            [ -n "$icon" ] || continue
+            echo "icon for $name: $icon"
+            curl -s -o /dev/null -w "  push: %{http_code}\n" \
+              -X PUT "https://api.cloudflare.com/client/v4/accounts/7396d8475acc6c87ef13e97a617712f1/r2/buckets/omapak-repo/objects/icons/$name.png" \
+              -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --data-binary "@$icon" || echo "  icon push failed for $name"
+          done
+
       - name: Pull flathub ref metadata
         run: |
           curl -sO https://dl.flathub.org/repo/flathub.flatpakrepo
