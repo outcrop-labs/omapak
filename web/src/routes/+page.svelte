@@ -68,6 +68,24 @@
       curl -fsSL https://omapak.org/omapak.sh | sh</code
     >
   </div>
+
+  <div
+    class="mt-6 flex max-w-[var(--read-width)] items-start gap-4 rounded-sm border border-warning/40 bg-card px-4 py-3.5"
+  >
+    <span class="shrink-0 font-mono text-xs uppercase tracking-[0.15em] text-warning"
+      >alpha</span
+    >
+    <p class="text-sm leading-relaxed text-muted">
+      Omapak is in active development. The judge, the catalog, and this site are all being
+      <a
+        href="https://github.com/outcrop-labs/omapak"
+        class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
+        >built in the open</a
+      >
+      right now — expect rough edges, moving parts, and the occasional break. The mission is
+      settled; everything else is warming up.
+    </p>
+  </div>
 </section>
 
 <section class="border-t border-line py-10">
