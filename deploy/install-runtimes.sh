@@ -24,6 +24,22 @@ install_retry() {
   return 1
 }
 
+# sdk-extensions entries, one per line: handles both YAML styles —
+#   sdk-extensions: [org.freedesktop.Sdk.Extension.node24]
+#   sdk-extensions:
+#     - org.freedesktop.Sdk.Extension.rust-stable
+sdk_exts() {
+  awk '/^sdk-extensions:/ {
+         if ($0 ~ /\[/) {
+           sub(/^sdk-extensions:[[:space:]]*/, ""); gsub(/[\[\],]/, " "); print; exit
+         }
+         f=1; next
+       }
+       f && /^[[:space:]]*-/ {print; next}
+       f {exit}' "$1" \
+    | sed -e 's/^[[:space:]]*-[[:space:]]*//' -e 's/["'\'']//g'
+}
+
 for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
   [ -f "$m" ] || continue
   rt=$(strip "$(grep -m1 '^runtime:' "$m" | cut -d: -f2-)")
@@ -31,6 +47,11 @@ for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
   if [ -n "$rt" ] && [ -n "$rv" ]; then
     sdk=$(echo "$rt" | sed 's/Platform/Sdk/')
     install_retry "$rt//$rv" "$sdk//$rv"
+    # Extensions are versioned alongside the SDK; flatpak-builder fails
+    # outright ("Requested extension ... not installed") without them.
+    for ext in $(sdk_exts "$m"); do
+      install_retry "$ext//$rv"
+    done
   fi
   bt=$(strip "$(grep -m1 '^base:' "$m" | cut -d: -f2-)")
   bv=$(strip "$(grep -m1 '^base-version:' "$m" | cut -d: -f2-)")
