@@ -29,22 +29,35 @@ s3 = boto3.client(
 
 pushed = 0
 failed = 0
+skipped = 0
 total = sum(len(files) for _, _, files in os.walk(REPO))
+
+# Content-addressed ostree objects are immutable; skip re-uploading the
+# ~12k flathub ref/commit files that are already in the bucket. The
+# summary, signatures and flatpakrepo always re-upload.
+ALWAYS_PUSH = {"summary", "summary.sig", "omapak.flatpakrepo"}
+existing = {}
+for page in s3.get_paginator("list_objects_v2").paginate(Bucket=BUCKET):
+    for obj in page.get("Contents", []):
+        existing[obj["Key"]] = obj["Size"]
 
 for root, _, files in os.walk(REPO):
     for f in files:
         local = os.path.join(root, f)
         key = os.path.relpath(local, REPO)
+        if key not in ALWAYS_PUSH and existing.get(key) == os.path.getsize(local):
+            skipped += 1
+            continue
         try:
             s3.upload_file(local, BUCKET, key)
             pushed += 1
         except Exception as e:
             print(f"  FAILED: {key}: {e}", file=sys.stderr)
             failed += 1
-        if (pushed + failed) % 500 == 0:
-            print(f"  progress: {pushed + failed} / {total}", flush=True)
+        if (pushed + failed + skipped) % 500 == 0:
+            print(f"  progress: {pushed + failed + skipped} / {total}", flush=True)
 
-print(f"pushed {pushed}/{total} files ({failed} failed)")
+print(f"pushed {pushed}/{total} files ({skipped} unchanged skipped, {failed} failed)")
 
 # Flatpak fetches summary.idx before summary, so a stale .idx/.idx.sig
 # (old-key signed, left over from local test pushes — CI never generates
