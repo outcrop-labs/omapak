@@ -22,7 +22,8 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          # the checker pins aiohttp==3.8.4, which has no 3.12 wheels
+          python-version: "3.11"
 
       - name: Install flatpak-external-data-checker
         run: |
