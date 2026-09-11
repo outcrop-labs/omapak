@@ -5,25 +5,42 @@ strip() {
   echo "$1" | sed 's/[^a-zA-Z0-9._-]//g'
 }
 
+# dl.flathub.org throws transient HTTP/2 framing errors under load; a
+# runtime that fails to install here means every app needing it silently
+# drops from the repo, so retry before giving up.
+failed=""
+install_retry() {
+  echo "Installing $*"
+  for attempt in 1 2 3; do
+    if flatpak install --user -y --noninteractive flathub "$@" >/tmp/rt-install.log 2>&1; then
+      grep -m3 . /tmp/rt-install.log | tail -3
+      return 0
+    fi
+    [ "$attempt" = 3 ] || { echo "  attempt $attempt failed, retrying"; sleep $((attempt * 5)); }
+  done
+  echo "  FAILED to install: $*"
+  tail -5 /tmp/rt-install.log
+  failed="$failed $*"
+  return 1
+}
+
 for m in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
   [ -f "$m" ] || continue
   rt=$(strip "$(grep -m1 '^runtime:' "$m" | cut -d: -f2-)")
   rv=$(strip "$(grep -m1 '^runtime-version:' "$m" | cut -d: -f2-)")
   if [ -n "$rt" ] && [ -n "$rv" ]; then
     sdk=$(echo "$rt" | sed 's/Platform/Sdk/')
-    echo "Installing $rt//$rv + $sdk//$rv"
-    flatpak install --user -y --noninteractive flathub "$rt//$rv" "$sdk//$rv" 2>&1 | tail -3
+    install_retry "$rt//$rv" "$sdk//$rv"
   fi
   bt=$(strip "$(grep -m1 '^base:' "$m" | cut -d: -f2-)")
   bv=$(strip "$(grep -m1 '^base-version:' "$m" | cut -d: -f2-)")
   if [ -n "$bt" ] && [ -n "$bv" ]; then
-    echo "Installing base $bt//$bv"
-    flatpak install --user -y --noninteractive flathub "$bt//$bv" 2>&1 | tail -3
+    install_retry "$bt//$bv"
   fi
 done
 
-flatpak install --user -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 2>&1 | tail -1
+install_retry org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08
 
 echo '=== installed runtimes:'
 flatpak list --user --runtime 2>/dev/null | head -20
-exit 0
+[ -z "$failed" ] || { echo "::error::runtime install failures:$failed"; exit 1; }

@@ -3,7 +3,7 @@ name: publish
 on:
   push:
     branches: [main]
-    paths: ["apps/**", "omapak.flatpakrepo", "deploy/push-to-r2.py"]
+    paths: ["apps/**", "omapak.flatpakrepo", "deploy/push-to-r2.py", "deploy/install-runtimes.sh"]
   workflow_dispatch:
 
 permissions:
@@ -51,15 +51,24 @@ jobs:
 
       - name: Build all apps (cached, unchanged skip compile)
         run: |
+          failed=""
           for app in apps/*/; do
             name=$(basename "$app")
             manifest=$(find "$app" -maxdepth 1 \( -name '*.yml' -o -name '*.yaml' -o -name '*.json' \) ! -name 'metadata.yml' ! -name 'flathub.json' | head -1)
             [ -n "$manifest" ] || continue
             echo "::group::build $name"
-            flatpak-builder --force-clean --disable-rofiles-fuse --user \
-              --repo=repo ".flatpak-builder/$name" "$manifest" 2>&1 | tail -5
+            if flatpak-builder --force-clean --disable-rofiles-fuse --user \
+                --repo=repo ".flatpak-builder/$name" "$manifest" >"/tmp/build-$name.log" 2>&1; then
+              tail -5 "/tmp/build-$name.log"
+            else
+              tail -30 "/tmp/build-$name.log"
+              failed="$failed $name"
+            fi
             echo "::endgroup::"
           done
+          # A failed build must fail the publish — otherwise the app silently
+          # vanishes from the repo and nobody notices until a user does.
+          [ -z "$failed" ] || { echo "::error::build failures:$failed"; exit 1; }
 
       - name: Extract icons from builds (non-blocking)
         env:
