@@ -43,4 +43,8 @@ install_retry org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08
 
 echo '=== installed runtimes:'
 flatpak list --user --runtime 2>/dev/null | head -20
-[ -z "$failed" ] || { echo "::error::runtime install failures:$failed"; exit 1; }
+# Record failures for the end-of-publish gate; apps needing a missing
+# runtime fail (loudly) in the build step, but must not block the push —
+# one broken upstream object can't hold the whole repo hostage.
+[ -z "$failed" ] || echo "::error::runtime install failures:$failed"
+echo "$failed" > /tmp/rt-failed.txt

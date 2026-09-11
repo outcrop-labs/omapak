@@ -50,6 +50,7 @@ jobs:
         run: ./deploy/install-runtimes.sh
 
       - name: Build all apps (cached, unchanged skip compile)
+        id: build
         run: |
           failed=""
           for app in apps/*/; do
@@ -66,9 +67,10 @@ jobs:
             fi
             echo "::endgroup::"
           done
-          # A failed build must fail the publish — otherwise the app silently
-          # vanishes from the repo and nobody notices until a user does.
-          [ -z "$failed" ] || { echo "::error::build failures:$failed"; exit 1; }
+          # Recorded for the post-push gate: failed apps keep their last
+          # good ref in the repo (restored from R2), the rest publish, and
+          # the run still goes red so nobody misses it.
+          echo "FAILED_BUILDS=$failed" >> "$GITHUB_ENV"
 
       - name: Extract icons from builds (non-blocking)
         env:
@@ -102,3 +104,14 @@ jobs:
         run: |
           pip install -q boto3
           python3 deploy/push-to-r2.py repo
+
+      # Gate comes after the push: the repo serves last-good refs for
+      # failed apps while the red X makes the failure impossible to miss.
+      - name: Fail on build/runtime failures
+        if: always()
+        run: |
+          rt_failed=$(cat /tmp/rt-failed.txt 2>/dev/null || true)
+          if [ -n "${FAILED_BUILDS:-}" ] || [ -n "$rt_failed" ]; then
+            echo "::error::build failures:${FAILED_BUILDS:-} runtime failures:$rt_failed"
+            exit 1
+          fi
