@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-09-11T00:15:02.537Z",
+  "generated_at": "2026-09-11T00:16:45.113Z",
   "entries": [
     {
       "app_id": "io.github.juwan_hwang.Zephyr",
       "name": "Zephyr",
-      "icon": "/icons/io.github.juwan_hwang.Zephyr.png",
+      "icon": "https://repo.omapak.org/icons/io.github.juwan_hwang.Zephyr.png",
       "developer": "Juwan",
       "description": [
         "Zephyr is a state-of-the-art cross-platform GUI client for Mihomo, combining modern desktop aesthetics, high performance with Rust and Tauri v2, and a 13-layer security defense architecture.",
         [
           "High performance and low memory footprint with Tauri v2 and native Rust IPC",
-          "Zero heavyweight frontend frameworks — pure native JavaScript UI",
+          "Zero heavyweight frontend frameworks \u2014 pure native JavaScript UI",
           "Full proxy protocol management, subscription parsing, and latency testing",
           "Real-time traffic oscilloscope monitoring and system tray integration"
         ]
@@ -44,7 +44,7 @@
     {
       "app_id": "io.github.simonschubert.Kai",
       "name": "Kai",
-      "icon": "/icons/io.github.simonschubert.Kai.png",
+      "icon": "https://repo.omapak.org/icons/io.github.simonschubert.Kai.png",
       "developer": "Simon Schubert",
       "description": [
         "Kai is a versatile AI assistant that connects to multiple AI services including\n      Ollama, Google Gemini, OpenAI ChatGPT, Anthropic Claude, Mistral, Groq,\n      OpenRouter, and any OpenAI-compatible API.",
@@ -86,11 +86,11 @@
     {
       "app_id": "io.ipfs.Desktop",
       "name": "IPFS Desktop",
-      "icon": "/icons/io.ipfs.Desktop.png",
+      "icon": "https://repo.omapak.org/icons/io.ipfs.Desktop.png",
       "developer": "Interplanetary Shipyard",
       "description": [
         "IPFS Desktop gives you all the power of IPFS in a convenient desktop app:\n      a complete IPFS node, plus handy OS menubar/taskbar shortcuts and an all-in-one\n      file manager, peer map, and content explorer.",
-        "Use IPFS Desktop to get acquainted with IPFS without needing to touch the\n      terminal — or, if you're already experienced, use the powerful menubar/taskbar\n      shortcuts alongside the command line to make your IPFS workflow faster.",
+        "Use IPFS Desktop to get acquainted with IPFS without needing to touch the\n      terminal \u2014 or, if you're already experienced, use the powerful menubar/taskbar\n      shortcuts alongside the command line to make your IPFS workflow faster.",
         "Features include:",
         [
           "Start your node at system startup and control it from your OS system tray",
@@ -136,7 +136,7 @@
     {
       "app_id": "me.tyrrrz.DiscordChatExporter",
       "name": "Discord Chat Exporter",
-      "icon": "/icons/me.tyrrrz.DiscordChatExporter.png",
+      "icon": "https://repo.omapak.org/icons/me.tyrrrz.DiscordChatExporter.png",
       "developer": "Oleksii Holub",
       "description": [
         "Discord Chat Exporter is an application that can be used to export message history\n      from any Discord channel to a file. It works with direct messages, group messages,\n      and server channels, and supports various output formats.",
@@ -175,7 +175,7 @@
     {
       "app_id": "org.libredb.Studio",
       "name": "LibreDB Studio",
-      "icon": "/icons/org.libredb.Studio.png",
+      "icon": "https://repo.omapak.org/icons/org.libredb.Studio.png",
       "developer": "LibreDB",
       "description": [
         "LibreDB Studio is an open-source SQL IDE for developers and data teams. The desktop\n      app runs entirely on your machine: it starts a local LibreDB Studio server in the\n      background and shows it in a native window. Nothing is sent to a cloud service.",

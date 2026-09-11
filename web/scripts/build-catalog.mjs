@@ -15,12 +15,55 @@ const sources = [
   ...(withFixtures ? [{ dir: join(root, "fixtures"), published: false }] : []),
 ];
 
+
+// Resolve an icon URL for an app: local file in the app dir → copied
+// to static/icons/, else GitHub owner avatar → fetched and cached.
+async function getIcon(appId, sourceRepo, appDir) {
+  const iconsDir = join(here, "../static/icons");
+  mkdirSync(iconsDir, { recursive: true });
+  const dest = join(iconsDir, `${appId}.png`);
+
+  // Already cached
+  if (existsSync(dest)) return `https://repo.omapak.org/icons/${appId}.png`;
+
+  // Look for icon files in the app dir
+  const candidates = [
+    join(appDir, `${appId}.png`),
+    join(appDir, `${appId}.svg`),
+    join(appDir, "icon.png"),
+    join(appDir, "icon.svg"),
+    ...["512", "256", "128", "64"].map(s => join(appDir, "icons", `icon-${s}.png`)),
+  ];
+  for (const c of candidates) {
+    if (existsSync(c)) {
+      copyFileSync(c, dest);
+      return `https://repo.omapak.org/icons/${appId}.png`;
+    }
+  }
+
+  // Fallback: GitHub owner avatar
+  const owner = (sourceRepo || "").replace(/.*github\.com\//, "").split("/")[0];
+  if (owner) {
+    try {
+      const res = await fetch(`https://github.com/${owner}.png?size=128`);
+      if (res.ok) {
+        const buf = Buffer.from(await res.arrayBuffer());
+        writeFileSync(dest, buf);
+        return `https://repo.omapak.org/icons/${appId}.png`;
+      }
+    } catch {}
+  }
+
+  return null;
+}
+
 const entries = [];
 mkdirSync(resolve(here, "../static/data/reports"), { recursive: true });
 
 for (const { dir, published } of sources) {
   if (!existsSync(dir)) continue;
   for (const name of readdirSync(dir)) {
+    // (async handled via await in getIcon)
     const appDir = join(dir, name);
     const metaPath = join(appDir, "metadata.yml");
     const reportPath = join(appDir, "report.json");
@@ -106,7 +149,7 @@ for (const { dir, published } of sources) {
     entries.push({
       app_id: appId,
       name: meta.name || null,
-      icon: existsSync(join(root, 'web/static/icons', `${appId}.png`)) ? `/icons/${appId}.png` : null,
+      icon: await getIcon(appId, meta.source_repo, appDir),
       developer: meta.developer || null,
       description: meta.description || null,
       urls: meta.urls || {},
