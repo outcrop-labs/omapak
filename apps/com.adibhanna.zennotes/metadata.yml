@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/ZenNotes/zennotes
+summary: ZenNotes, keyboard-first local Markdown notes with Vim motions and diagrams
+license: MIT
+tags: [utility]
+description: >-
+  Continuity submission. ZenNotes, keyboard-first local Markdown notes with Vim motions and diagrams (2411 stars on GitHub) had its Flathub
+  submission (flathub/flathub#9067) closed. omapak picked it up; manifest
+  from that PR.
