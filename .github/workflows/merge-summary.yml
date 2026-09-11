@@ -24,14 +24,22 @@ jobs:
           R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
         run: |
           mkdir -p repo
+          # refs via prefix copy (include-filtered copies match nothing here —
+          # same reason publish.yml restores refs in a separate command)
+          rclone copy ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo/refs" repo/refs \
+            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
+            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" --s3-no-check-bucket 2>/dev/null || true
           rclone copy ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" repo \
             --s3-access-key-id "$R2_ACCESS_KEY_ID" \
             --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" --s3-no-check-bucket \
-            --include "summary*" --include "config" --include "refs/**" 2>/dev/null || true
+            --include "summary*" --include "config" 2>/dev/null || true
           printf '[core]\nrepo_version=1\nmode=archive-z2\n' > repo/config
           mkdir -p repo/objects repo/extensions repo/refs/heads repo/refs/remotes repo/refs/mirrors
           echo "omapak refs preserved:"
           ls repo/refs/heads/app/ 2>/dev/null || echo "(none)"
+          # Wipe guard: re-signing without the omapak refs would remove
+          # every omapak app from the live summary.
+          [ -n "$(ls repo/refs/heads/app/ 2>/dev/null)" ] || { echo "::error::omapak app refs missing after restore"; exit 1; }
 
       - name: Install tooling
         run: sudo apt-get update && sudo apt-get install -y flatpak ostree rclone
