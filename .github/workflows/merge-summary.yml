@@ -21,18 +21,12 @@ jobs:
         env:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
         run: |
           mkdir -p repo
-          # refs via prefix copy (include-filtered copies match nothing here —
-          # same reason publish.yml restores refs in a separate command)
-          rclone copy ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo/refs" repo/refs \
-            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
-            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" --s3-no-check-bucket 2>/dev/null || true
-          rclone copy ":s3,provider=Cloudflare,endpoint=\"${R2_ENDPOINT}\":omapak-repo" repo \
-            --s3-access-key-id "$R2_ACCESS_KEY_ID" \
-            --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" --s3-no-check-bucket \
-            --include "summary*" --include "config" 2>/dev/null || true
+          # rclone's listing of the ~30k-object bucket fails silently; boto3
+          # is the proven path for everything R2 in this repo
+          pip install -q boto3
+          python3 deploy/pull-from-r2.py repo
           printf '[core]\nrepo_version=1\nmode=archive-z2\n' > repo/config
           mkdir -p repo/objects repo/extensions repo/refs/heads repo/refs/remotes repo/refs/mirrors
           echo "omapak refs preserved:"
