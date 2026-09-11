@@ -106,7 +106,7 @@ for (const { dir, published } of sources) {
     entries.push({
       app_id: appId,
       name: meta.name || null,
-      icon: meta.icon || null,
+      icon: existsSync(join(root, 'web/static/icons', `${appId}.png`)) ? `/icons/${appId}.png` : null,
       developer: meta.developer || null,
       description: meta.description || null,
       urls: meta.urls || {},

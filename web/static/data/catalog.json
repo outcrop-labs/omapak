@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-09-10T21:46:08.824Z",
+  "generated_at": "2026-09-11T00:15:02.537Z",
   "entries": [
     {
       "app_id": "io.github.juwan_hwang.Zephyr",
       "name": "Zephyr",
-      "icon": null,
+      "icon": "/icons/io.github.juwan_hwang.Zephyr.png",
       "developer": "Juwan",
       "description": [
         "Zephyr is a state-of-the-art cross-platform GUI client for Mihomo, combining modern desktop aesthetics, high performance with Rust and Tauri v2, and a 13-layer security defense architecture.",
@@ -42,9 +42,51 @@
       "report_available": false
     },
     {
+      "app_id": "io.github.simonschubert.Kai",
+      "name": "Kai",
+      "icon": "/icons/io.github.simonschubert.Kai.png",
+      "developer": "Simon Schubert",
+      "description": [
+        "Kai is a versatile AI assistant that connects to multiple AI services including\n      Ollama, Google Gemini, OpenAI ChatGPT, Anthropic Claude, Mistral, Groq,\n      OpenRouter, and any OpenAI-compatible API.",
+        "Features:",
+        [
+          "Chat with multiple AI providers from a single app",
+          "Run local AI models via Ollama",
+          "Text-to-speech support",
+          "Image attachments and analysis",
+          "Customizable system prompts",
+          "Multiple conversation management",
+          "Available on Android, iOS, Desktop, and Web"
+        ]
+      ],
+      "urls": {
+        "homepage": "https://github.com/SimonSchubert/Kai",
+        "bugtracker": "https://github.com/SimonSchubert/Kai/issues",
+        "vcs-browser": "https://github.com/SimonSchubert/Kai",
+        "details": "https://github.com/SimonSchubert/Kai/releases/tag/v1.7.2"
+      },
+      "bugtracker": "https://github.com/SimonSchubert/Kai/issues",
+      "help": null,
+      "screenshots": [
+        "https://raw.githubusercontent.com/SimonSchubert/Kai/v1.7.9/screenshots/desktop-1.png"
+      ],
+      "summary": "AI assistant powered by Ollama, Gemini, ChatGPT and more",
+      "submitter": "jon",
+      "source_repo": "https://github.com/SimonSchubert/Kai",
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/SimonSchubert/Kai",
+      "tags": [
+        "utility"
+      ],
+      "source_access": "public",
+      "verdict": "published",
+      "certified": false,
+      "report_available": false
+    },
+    {
       "app_id": "io.ipfs.Desktop",
       "name": "IPFS Desktop",
-      "icon": null,
+      "icon": "/icons/io.ipfs.Desktop.png",
       "developer": "Interplanetary Shipyard",
       "description": [
         "IPFS Desktop gives you all the power of IPFS in a convenient desktop app:\n      a complete IPFS node, plus handy OS menubar/taskbar shortcuts and an all-in-one\n      file manager, peer map, and content explorer.",
@@ -94,7 +136,7 @@
     {
       "app_id": "me.tyrrrz.DiscordChatExporter",
       "name": "Discord Chat Exporter",
-      "icon": null,
+      "icon": "/icons/me.tyrrrz.DiscordChatExporter.png",
       "developer": "Oleksii Holub",
       "description": [
         "Discord Chat Exporter is an application that can be used to export message history\n      from any Discord channel to a file. It works with direct messages, group messages,\n      and server channels, and supports various output formats.",
@@ -133,7 +175,7 @@
     {
       "app_id": "org.libredb.Studio",
       "name": "LibreDB Studio",
-      "icon": null,
+      "icon": "/icons/org.libredb.Studio.png",
       "developer": "LibreDB",
       "description": [
         "LibreDB Studio is an open-source SQL IDE for developers and data teams. The desktop\n      app runs entirely on your machine: it starts a local LibreDB Studio server in the\n      background and shows it in a native window. Nothing is sent to a cloud service.",
