@@ -5,10 +5,14 @@ R2's direct REST API doesn't handle multi-segment object keys (slashes),
 and rclone's CopyObject isn't implemented by R2. boto3's upload_file
 sends a simple PUT which R2 fully supports.
 
-Non-blocking: individual failures are warnings, never kill the process.
+Ordering invariant: content-addressed objects and refs upload first, and
+the summary only replaces the live one after every object it references
+is in the bucket — a summary naming missing objects breaks clients
+mid-publish. Any upload failure aborts before the summary flips.
 """
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import boto3
@@ -17,6 +21,7 @@ from botocore.config import Config
 REPO = sys.argv[1] if len(sys.argv) > 1 else "repo"
 BUCKET = "omapak-repo"
 ROOT = Path(__file__).resolve().parents[1]
+WORKERS = 16
 
 s3 = boto3.client(
     "s3",
@@ -24,55 +29,81 @@ s3 = boto3.client(
     aws_access_key_id=os.environ["R2_ACCESS_KEY_ID"],
     aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
     region_name="auto",
-    config=Config(retries={"max_attempts": 3, "mode": "adaptive"}),
+    config=Config(
+        retries={"max_attempts": 3, "mode": "adaptive"},
+        max_pool_connections=WORKERS,
+    ),
 )
-
-pushed = 0
-failed = 0
-skipped = 0
-total = sum(len(files) for _, _, files in os.walk(REPO))
 
 # Content-addressed ostree objects are immutable; skip re-uploading the
 # ~12k flathub ref/commit files that are already in the bucket. The
-# summary, signatures and flatpakrepo always re-upload.
+# summary pair always re-uploads (phase 2).
 ALWAYS_PUSH = {"summary", "summary.sig", "omapak.flatpakrepo"}
+
 existing = {}
 for page in s3.get_paginator("list_objects_v2").paginate(Bucket=BUCKET):
     for obj in page.get("Contents", []):
         existing[obj["Key"]] = obj["Size"]
 
+pending = []
+finals = []
+skipped = 0
 for root, _, files in os.walk(REPO):
     for f in files:
         local = os.path.join(root, f)
         key = os.path.relpath(local, REPO)
-        if key not in ALWAYS_PUSH and existing.get(key) == os.path.getsize(local):
+        if key in ALWAYS_PUSH:
+            finals.append((local, key))
+        elif existing.get(key) == os.path.getsize(local):
             skipped += 1
-            continue
-        try:
-            s3.upload_file(local, BUCKET, key)
-            pushed += 1
-        except Exception as e:
-            print(f"  FAILED: {key}: {e}", file=sys.stderr)
-            failed += 1
-        if (pushed + failed + skipped) % 500 == 0:
-            print(f"  progress: {pushed + failed + skipped} / {total}", flush=True)
+        else:
+            pending.append((local, key))
 
-print(f"pushed {pushed}/{total} files ({skipped} unchanged skipped, {failed} failed)")
+print(f"to push: {len(pending)} objects/refs + {len(finals)} summary files "
+      f"({skipped} unchanged skipped)", flush=True)
+
+
+def upload(pair):
+    local, key = pair
+    try:
+        s3.upload_file(local, BUCKET, key)
+        return None
+    except Exception as e:
+        return (key, e)
+
+
+failed = []
+done = 0
+with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+    for result in pool.map(upload, pending):
+        done += 1
+        if done % 1000 == 0:
+            print(f"  progress: {done} / {len(pending)}", flush=True)
+        if result is not None:
+            key, e = result
+            print(f"  FAILED: {key}: {e}", file=sys.stderr)
+            failed.append(key)
+
+print(f"pushed {done - len(failed)}/{len(pending)} objects/refs ({len(failed)} failed)")
 
 # Flatpak fetches summary.idx before summary, so a stale .idx/.idx.sig
 # (old-key signed, left over from local test pushes — CI never generates
 # them) fails gpg-verify-summary for every client even when summary and
-# summary.sig are fresh. Same for a stale omapak.flatpakrepo: it would
-# advertise an old keyring. Purge the leftovers, then republish the
-# flatpakrepo so the advertised key always matches the signing key.
+# summary.sig are fresh.
 for key in ("summary.idx", "summary.idx.sig"):
     s3.delete_object(Bucket=BUCKET, Key=key)
-    print(f"purged {key} (if present)")
 
 stale = s3.list_objects_v2(Bucket=BUCKET, Prefix="summaries/")
 for obj in stale.get("Contents", []):
     s3.delete_object(Bucket=BUCKET, Key=obj["Key"])
-    print(f"purged {obj['Key']}")
+
+if failed:
+    print("::error::object uploads failed — leaving live summary untouched", file=sys.stderr)
+    sys.exit(1)
+
+for local, key in finals:
+    s3.upload_file(local, BUCKET, key)
+    print(f"pushed {key}")
 
 s3.upload_file(str(ROOT / "omapak.flatpakrepo"), BUCKET, "omapak.flatpakrepo")
 print("pushed omapak.flatpakrepo (current signing key)")
