@@ -53,9 +53,6 @@ fn main() -> Result<()> {
     if !app_dir.is_dir() {
         bail!("{} is not a directory", app_dir.display());
     }
-    // Track whether any app's build failed so the process can exit
-    // non-zero (GitHub shows a red X on the CI check).
-    let mut any_build_failed = false;
 
     let (static_report, build_report) = match &cli.partial {
         Some(path) => {
@@ -83,6 +80,9 @@ fn main() -> Result<()> {
                     &cli.work.join("build"),
                     &cli.work.join("repo"),
                 )?;
+                if !build.ok && build.log_tail.is_empty() {
+                    eprintln!("  (flatpak-builder produced no output)");
+                }
                 for line in &build.log_tail {
                     eprintln!("  {line}");
                 }
