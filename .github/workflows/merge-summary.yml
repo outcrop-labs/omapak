@@ -76,7 +76,9 @@ jobs:
             ghost=$(grep -oE '[0-9a-f]{64}\.commit' /tmp/summary.err | head -1 | cut -d. -f1)
             if [ -z "$ghost" ]; then cat /tmp/summary.err; exit 1; fi
             echo "summary retry $attempt: dropping ref to unreadable commit $ghost"
-            grep -rl "^$ghost$" repo/refs/heads 2>/dev/null | while read -r f; do echo "  removing $f"; rm -f "$f"; done
+            # summary collects heads + remotes (and mirrors feed heads),
+            # so hunt the whole refs tree
+            grep -rl "^$ghost$" repo/refs 2>/dev/null | while read -r f; do echo "  removing $f"; rm -f "$f"; done
           done
           [ "$ok" = 1 ] || { echo "summary never succeeded"; exit 1; }
 
