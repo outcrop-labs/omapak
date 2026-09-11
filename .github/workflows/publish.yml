@@ -3,7 +3,7 @@ name: publish
 on:
   push:
     branches: [main]
-    paths: ["apps/**"]
+    paths: ["apps/**", "omapak.flatpakrepo", "deploy/push-to-r2.py"]
   workflow_dispatch:
 
 permissions:
