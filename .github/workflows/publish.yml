@@ -66,7 +66,7 @@ jobs:
           # full tree. A scratch repo forces a fresh signed commit every
           # time; the compile cache still does its job.
           rm -rf build-repo
-          mkdir -p build-repo/objects build-repo/refs/heads
+          mkdir -p build-repo/objects build-repo/refs/heads build-repo/refs/remotes build-repo/refs/mirrors
           printf '[core]\nrepo_version=1\nmode=archive-z2\n' > build-repo/config
           failed=""
           for app in apps/*/; do
