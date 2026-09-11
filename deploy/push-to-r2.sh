@@ -1,31 +1,25 @@
 #!/bin/bash
-# Push the repo directory to R2 via the Cloudflare API.
-# R2's S3 API doesn't support CopyObject, so rclone fails with 501.
-# This uses the Cloudflare API directly which is fully supported.
+# Push repo files to R2 via Cloudflare API.
+# R2's S3 API doesn't support CopyObject, so rclone fails.
+# Object keys keep their slashes — no URL encoding needed.
 set -u
 
 DIR="${1:-repo}"
-BUCKET="omapak-repo"
-APIBase="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/r2/buckets/${BUCKET}/objects"
+API="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/r2/buckets/omapak-repo/objects"
 
-pushed=0
-failed=0
+total=$(find "$DIR" -type f | wc -l)
+count=0
 
-find "$DIR" -type f | while read -r f; do
+while IFS= read -r f; do
   rel="${f#"$DIR"/}"
-  # URL-encode the path (slashes become %2F for the API path)
-  encoded=$(echo "$rel" | sed 's/\//%2F/g')
-  
-  result=$(curl -s -o /dev/null -w "%{http_code}" -X PUT "${ApiBase}/${encoded}" \
+  count=$((count + 1))
+  code=$(curl -s -o /dev/null -w "%{http_code}" -X PUT "${API}/${rel}" \
     -H "Authorization: Bearer ${CF_TOKEN}" \
     --data-binary "@$f")
-  
-  if [ "$result" = "200" ]; then
-    pushed=$((pushed+1))
-  else
-    echo "  FAILED ($result): $rel"
-    failed=$((failed+1))
+  if [ "$code" != "200" ]; then
+    echo "  FAILED ($code): $rel"
   fi
-done
+  [ $((count % 500)) -eq 0 ] && echo "  progress: $count / $total"
+done < <(find "$DIR" -type f)
 
-echo "push complete"
+echo "pushed $count files"
