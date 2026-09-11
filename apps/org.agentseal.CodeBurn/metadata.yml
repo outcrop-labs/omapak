@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/getagentseal/codeburn
+summary: CodeBurn (10.9k stars), the code-execution sandbox editor
+description: >-
+  Continuity submission. CodeBurn (10,948 stars, MIT, pushed the day of
+  this submission) had its Flathub submission (flathub/flathub#9741)
+  closed with: "The rest of the submission, including the manifest, was
+  also created with AI. This makes it not acceptable." The rejection was
+  specifically that the build manifest was AI-written. omapak picked it
+  up; manifest from that PR.
+license: MIT
+homepage: https://github.com/getagentseal/codeburn
+tags: [development, editor]
