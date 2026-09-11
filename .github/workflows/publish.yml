@@ -116,6 +116,12 @@ jobs:
             mkdir -p "refs/heads/$(dirname "$ref")"
             cp "$f" "refs/heads/$ref"
           done
+          # Dead upstream apps: ref restored from R2 but its commit object
+          # never landed — summary --update can't sign what it can't read.
+          find refs/heads -type f | while read -r f; do
+            c=$(cat "$f")
+            [ -f "objects/${c:0:2}/${c:2}.commit" ] || { echo "dropping ref without commit object: $f"; rm -f "$f"; }
+          done
           cd ..
           echo "refs going into summary: $(find repo/refs/heads -type f | wc -l)"
 
