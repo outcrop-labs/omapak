@@ -40,6 +40,34 @@ sdk_exts() {
     | sed -e 's/^[[:space:]]*-[[:space:]]*//' -e 's/["'\'']//g'
 }
 
+# Published branches for an extension, one per line. remote-ls is slow,
+# so the listing is fetched once per run and cached.
+ext_branches() {
+  [ -s /tmp/ext-refs.txt ] || \
+    flatpak --user remote-ls flathub --runtime --columns=ref > /tmp/ext-refs.txt 2>/dev/null || true
+  grep "^runtime/$1/x86_64/" /tmp/ext-refs.txt | cut -d/ -f4
+}
+
+# Manifest entries may pin a branch (org.freedesktop.Sdk.Extension.node22//24.08);
+# use it verbatim. Unpinned entries version with the runtime, which is
+# only correct for org.freedesktop.* runtimes — GNOME/KDE number their
+# runtimes independently (50, 6.10) while the extensions stay
+# date-versioned, so fall back to the newest published branch, the same
+# convention flathub manifests use when pinning across runtime lines.
+install_ext() {
+  ext="$1"; rv="$2"
+  case "$ext" in
+    *//*) install_retry "$ext"; return ;;
+  esac
+  if ! install_retry "$ext//$rv"; then
+    latest=$(ext_branches "$ext" | sort -V | tail -1)
+    if [ -n "$latest" ]; then
+      echo "  no $ext//$rv on flathub; falling back to $ext//$latest"
+      install_retry "$ext//$latest"
+    fi
+  fi
+}
+
 # Args: app dirs to provision for (PR checks judge only the changed
 # app). No args: every app in apps/ (publish builds everything).
 if [ "$#" -gt 0 ]; then
@@ -59,7 +87,7 @@ for m in $paths; do
     # Extensions are versioned alongside the SDK; flatpak-builder fails
     # outright ("Requested extension ... not installed") without them.
     for ext in $(sdk_exts "$m"); do
-      install_retry "$ext//$rv"
+      install_ext "$ext" "$rv"
     done
   fi
   bt=$(strip "$(grep -m1 '^base:' "$m" | cut -d: -f2-)")
@@ -75,6 +103,9 @@ echo '=== installed runtimes:'
 flatpak list --user --runtime 2>/dev/null | head -20
 # Record failures for the end-of-publish gate; apps needing a missing
 # runtime fail (loudly) in the build step, but must not block the push —
-# one broken upstream object can't hold the whole repo hostage.
-[ -z "$failed" ] || echo "::error::runtime install failures:$failed"
+# one broken upstream object can't hold the whole repo hostage. A
+# ::warning::, not ::error::: judge PR runs must reach the judge so the
+# failure lands in a per-app report instead of killing the run before
+# any report exists (publish still goes red via the rt-failed gate).
+[ -z "$failed" ] || echo "::warning::runtime install failures:$failed"
 echo "$failed" > /tmp/rt-failed.txt
