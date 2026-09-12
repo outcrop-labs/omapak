@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/alejandroqh/term39
+summary: term39, a retro-styled terminal multiplexer written in Rust
+license: MIT
+tags: [utility]
+description: >-
+  Continuity submission. term39 (201 stars, MIT), a retro-styled terminal
+  multiplexer in Rust, had its Flathub submission (flathub/flathub#7942)
+  closed with "Since you see no reason to follow basic requirements [...]
+  there us no reason to review this." omapak picked it up. Manifest from
+  that PR unchanged.
