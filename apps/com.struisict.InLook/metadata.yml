@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/Struis112/InLook
+summary: InLook, a CSP-sandboxed .eml email file viewer
+description: >-
+  Continuity submission. InLook (Struis112) is a clean CSP-sandboxed .eml
+  viewer. Its Flathub submission (flathub/flathub#8798, by Struis112) was
+  bot-closed and never reviewed. omapak picked it up. Manifest from that
+  PR unchanged.
+tags: [utility, office]
