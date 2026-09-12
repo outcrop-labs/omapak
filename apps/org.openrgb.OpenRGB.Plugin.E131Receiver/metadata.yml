@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://gitlab.com/OpenRGBDevelopers/OpenRGBE131ReceiverPlugin
+summary: OpenRGB E131 Receiver plugin — receive sACN/E1.31 lighting data to control LEDs from any controller
+homepage: https://openrgb.org
+tags: [extension, utility]
+description: >-
+  Continuity submission. The OpenRGB E131 Receiver plugin was submitted to
+  Flathub by OpenRGB's own creator (flathub/flathub#9728) as one of three
+  official OpenRGB plugins. Every technical request was fixed within a day;
+  reviewers still refused, and the stale bot closed all three. omapak picked
+  it up. Manifest from that PR unchanged.
