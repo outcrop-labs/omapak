@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/FiniteSingularity/obs-retro-effects
+summary: RetroEffects, an OBS Studio plugin of retro TV/game display effects by an established OBS plugin dev
+license: GPL-2.0
+tags: [multimedia, plugin]
+description: >-
+  Continuity submission. RetroEffects (296 stars, GPL-2.0) is an OBS Studio
+  plugin by FiniteSingularity. Its Flathub submission (flathub/flathub#9830)
+  was auto-closed on a "video checklist" technicality that cannot apply to a
+  plugin; the author verified it loads in the flatpak OBS build and asked what
+  else to do, and no human ever replied. omapak picked it up. Manifest from
+  that PR unchanged (build-extension packaging).
