@@ -78,7 +78,7 @@ jobs:
           done
 
       - name: Clone upstream sources for the digest
-        if: github.event_name == 'pull_request'
+        if: "!cancelled() && github.event_name == 'pull_request'"
         run: |
           while read -r app; do
             [ -f "$app/metadata.yml" ] || continue
@@ -87,7 +87,12 @@ jobs:
             git clone --depth 100 "$repo" "sources/$(basename "$app")" || echo "::warning::clone failed for $repo"
           done < changed.txt
 
+      # !cancelled(): a red judge run means an app failed a gate/build —
+      # exactly when the partial report (with the reason) must reach
+      # judge-report.yml. The default success() condition was silently
+      # discarding it.
       - uses: actions/upload-artifact@v4
+        if: "!cancelled()"
         with:
           name: judge-partial
           path: |
@@ -99,7 +104,7 @@ jobs:
   # Main-branch pushes have secrets: full agent run, commit reports back
   # into apps/ so every accepted app carries its public report in-repo.
   report:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: "!cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/main'"
     needs: [static-build]
     runs-on: ubuntu-latest
     steps:

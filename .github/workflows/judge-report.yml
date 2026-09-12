@@ -14,7 +14,11 @@ permissions:
 
 jobs:
   judge:
-    if: github.event.workflow_run.conclusion == 'success'
+    # Run on failed judge runs too: a red judge means an app failed a
+    # gate or build, and the partial report carries the reason — that's
+    # the report the submitter most needs to see. Only cancelled runs
+    # have nothing worth posting.
+    if: github.event.workflow_run.conclusion != 'cancelled'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -51,17 +55,27 @@ jobs:
             cargo run -q -p omapak-judge -- "pr-apps/apps/$name" --partial "$partial" $source_dir --out "final/$name"
           done
 
+      # rclone is gone from the runner images and its S3 uploads fail
+      # against R2 anyway; boto3 PUT is this repo's only proven R2 path.
       - name: Push reports to R2
         env:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
         run: |
-          for dir in final/*/; do
-            name=$(basename "$dir")
-            [ -f "$dir/report.json" ] || continue
-            rclone copyto "$dir/report.json" ":s3,provider=Cloudflare,endpoint=\${R2_ENDPOINT}\:omapak-repo/reports/${name}.json" --s3-access-key-id "$R2_ACCESS_KEY_ID" --s3-secret-access-key "$R2_SECRET_ACCESS_KEY" --s3-no-check-bucket
-          done
+          pip install -q boto3
+          python3 - <<'EOF'
+          import os, pathlib, boto3
+          s3 = boto3.client("s3",
+              endpoint_url=os.environ["R2_ENDPOINT"],
+              aws_access_key_id=os.environ["R2_ACCESS_KEY_ID"],
+              aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
+              region_name="auto")
+          for report in pathlib.Path("final").glob("*/report.json"):
+              key = f"reports/{report.parent.name}.json"
+              s3.upload_file(str(report), "omapak-repo", key)
+              print(f"pushed {key}")
+          EOF
 
       - name: Post report comment
         uses: actions/github-script@v7
