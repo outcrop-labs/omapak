@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+  <id>com.obsproject.Studio.Plugin.RetroEffects</id>
+  <extends>com.obsproject.Studio</extends>
+  <name>Retro Effects</name>
+  <summary>A collection of OBS filters to give your stream that retro feel.</summary>
+  <url type="homepage">https://github.com/FiniteSingularity/obs-retro-effects</url>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0</project_license>
+  <releases>
+    <release version="1.0.3" date="2026-08-20">
+      <description></description>
+    </release>
+</component>
