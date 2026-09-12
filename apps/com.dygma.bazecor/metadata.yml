@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/Dygmalab/Bazecor
+summary: Bazecor, the configuration tool for Dygma Raise and Defy keyboards
+description: >-
+  Continuity submission. Bazecor (497 stars, GPL-3.0, Dygmalab) configures
+  real commercial keyboards. Its Flathub submission
+  (flathub/flathub#9147, by mean-ui-thread) was bot-closed on a checklist
+  technicality and never human-reviewed. omapak picked it up. Manifest from
+  that PR unchanged (extra-data AppImage, apply_extra unsquashfs install;
+  flathub repo helper scripts not carried over).
+license: GPL-3.0-only
+homepage: https://dygma.com/
+tags: [hardware, utility]
