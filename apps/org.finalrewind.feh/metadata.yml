@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/derf/feh
+summary: feh, the lightweight X11 image viewer maintained since 1999
+description: >-
+  Continuity submission. feh (1,913 stars, MIT, maintained since ~1999) had
+  its Flathub submission (flathub/flathub#9328, by thorpelawrence) labeled
+  work-in-progress, then closed by the stale bot. No human comment was ever
+  posted. omapak picked it up. Manifest from that PR unchanged.
+license: MIT
+homepage: https://feh.finalrewind.org/
+tags: [graphics, viewer]
