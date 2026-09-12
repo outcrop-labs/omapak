@@ -1,0 +1,10 @@
+submitter: jon
+source_repo: https://github.com/Ishidawg/ReshadeInstaller
+summary: ReshadeInstaller, a ReShade manager for Linux that installs and removes ReShade into games
+description: >-
+  Continuity submission. ReshadeInstaller (389 stars, MIT) had its Flathub
+  submission (flathub/flathub#7649) closed after a polite first-time
+  submitter walked a linter maze across 33 comments. omapak picked it up.
+  Manifest from that PR unchanged.
+license: MIT
+tags: [utility, game]
