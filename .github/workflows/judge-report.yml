@@ -52,7 +52,11 @@ jobs:
             name=$(basename "$(dirname "$partial")")
             source_dir=""
             [ -d "sources/$name" ] && source_dir="--source-dir sources/$name"
-            cargo run -q -p omapak-judge -- "pr-apps/apps/$name" --partial "$partial" $source_dir --out "final/$name"
+            # The judge exits nonzero when the recommendation isn't
+            # "accept" — that's a report to deliver, not a CI failure.
+            # Files under final/ are written before the exit.
+            cargo run -q -p omapak-judge -- "pr-apps/apps/$name" --partial "$partial" $source_dir --out "final/$name" \
+              || echo "::warning::$name: judge recommended against accepting"
           done
 
       # rclone is gone from the runner images and its S3 uploads fail
