@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/dprietob/luma
+summary: Luma, a real-time multitrack audio mixer for Linux
+license: GPL-3.0
+tags: [audio]
+description: >-
+  Continuity submission. Luma, a real-time multitrack audio mixer for Linux,
+  had its Flathub submission (flathub/flathub#9789) closed. omapak picked it
+  up; manifest from that PR unchanged.
