@@ -1,0 +1,10 @@
+submitter: jon
+source_repo: https://github.com/MVinhas/chronicle
+summary: Chronicle, an RSS reader that queues the blogs you follow, oldest first
+license: GPL-3.0
+tags: [utility, news]
+description: >-
+  Continuity submission. Chronicle, an RSS reader presenting followed blogs
+  in a single oldest-first queue, had its Flathub submission
+  (flathub/flathub#9924) closed. omapak picked it up; manifest from that
+  PR unchanged.
