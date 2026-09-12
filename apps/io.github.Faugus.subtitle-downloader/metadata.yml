@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/Faugus/subtitle-downloader
+summary: Faugus Subtitle Downloader, part of the Faugus suite for running Windows games on Linux via UMU
+description: >-
+  Continuity submission. Faugus Subtitle Downloader (MIT, from the Faugus
+  suite behind faugus-launcher, 2.2k stars) had its Flathub submission
+  (flathub/flathub#7558) closed after the author's 14 comments of effort —
+  the entire human review was one bare link to the minimal-submissions
+  policy. omapak picked it up. Manifest from that PR unchanged.
+license: MIT
+tags: [utility, game]
