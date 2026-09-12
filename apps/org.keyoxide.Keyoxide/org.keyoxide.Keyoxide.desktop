@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Keyoxide
+GenericName=Identity verification
+Comment=Verify decentralized cryptographic identities on the go
+Exec=keyoxide %u
+Icon=org.keyoxide.Keyoxide
+Terminal=false
+Categories=Network;Utility;
+Keywords=keyoxide;identity;pgp;asp;verification;
+MimeType=x-scheme-handler/openpgp4fpr;x-scheme-handler/aspe;
+DBusActivatable=true
+StartupWMClass=org.keyoxide.Keyoxide
