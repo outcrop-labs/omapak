@@ -90,7 +90,7 @@ fn escape_table(text: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::schema::{Differentiation, Report, Rubric};
+    use crate::schema::{Differentiation, Report, Rubric, RubricScore};
 
     fn report() -> Report {
         Report {
