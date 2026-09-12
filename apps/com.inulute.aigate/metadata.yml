@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/inulute/ai-gate
+summary: AI Gate, a multi-AI gateway client (ChatGPT, Gemini and more) that needs no API keys
+description: >-
+  Continuity submission. AI Gate (220 stars, GPL-3.0) had its Flathub
+  submission (flathub/flathub#8292) closed with zero comments of any kind.
+  omapak picked it up. Manifest from that PR unchanged.
+license: GPL-3.0
+tags: [network, utility]
