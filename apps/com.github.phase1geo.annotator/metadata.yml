@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/phase1geo/Annotator
+summary: Annotator, elementary-style image annotation and editing with highlights, blurs and arrows
+description: >-
+  Continuity submission. Annotator (279 stars, GPL-3.0) is by phase1geo, a
+  longtime elementary app developer. Its Flathub submission
+  (flathub/flathub#7798) was closed after he complied with every request,
+  with the review: "If you are going to argue about the ID we can close this
+  PR and move on. This is a waste of time." omapak picked it up. Manifest
+  from that PR unchanged.
+license: GPL-3.0
+tags: [graphics, utility]
