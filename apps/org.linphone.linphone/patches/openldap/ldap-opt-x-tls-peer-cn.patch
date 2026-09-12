@@ -1,0 +1,185 @@
+diff --git a/include/ldap.h b/include/ldap.h
+index eb0fa158f1..d4154a160d 100644
+--- a/include/ldap.h
++++ b/include/ldap.h
+@@ -164,6 +164,7 @@ LDAP_BEGIN_DECL
+ #define LDAP_OPT_X_TLS_PEERKEY_HASH	0x6019
+ #define LDAP_OPT_X_TLS_REQUIRE_SAN	0x601a
+ #define LDAP_OPT_X_TLS_PROTOCOL_MAX	0x601b
++#define LDAP_OPT_X_TLS_PEER_CN		0x601c	/* Check CNs on this name */
+ 
+ #define LDAP_OPT_X_TLS_NEVER	0
+ #define LDAP_OPT_X_TLS_HARD		1
+diff --git a/libraries/libldap/controls.c b/libraries/libldap/controls.c
+index aafcae9c7f..186a23174d 100644
+--- a/libraries/libldap/controls.c
++++ b/libraries/libldap/controls.c
+@@ -530,7 +530,8 @@ int ldap_int_client_controls( LDAP *ld, LDAPControl **ctrls )
+ 	LDAPControl *const *c;
+ 
+ 	assert( ld != NULL );
+-	assert( LDAP_VALID( ld ) );
++	if(!LDAP_VALID( ld ))
++		return LDAP_CONNECT_ERROR;
+ 
+ 	if( ctrls == NULL ) {
+ 		/* use default client controls */
+diff --git a/libraries/libldap/init.c b/libraries/libldap/init.c
+index e40fa931bd..7ff204aa33 100644
+--- a/libraries/libldap/init.c
++++ b/libraries/libldap/init.c
+@@ -132,6 +132,7 @@ static const struct ol_attribute {
+ 	{0, ATTR_TLS,	"TLS_PROTOCOL_MAX",	NULL,	LDAP_OPT_X_TLS_PROTOCOL_MAX},
+ 	{0, ATTR_TLS,	"TLS_PEERKEY_HASH",	NULL,	LDAP_OPT_X_TLS_PEERKEY_HASH},
+ 	{0, ATTR_TLS,	"TLS_ECNAME",		NULL,	LDAP_OPT_X_TLS_ECNAME},
++	{0, ATTR_TLS,	"TLS_PEERCN",		NULL,	LDAP_OPT_X_TLS_PEER_CN},
+ 
+ #ifdef HAVE_OPENSSL
+ 	{0, ATTR_TLS,	"TLS_CRLCHECK",		NULL,	LDAP_OPT_X_TLS_CRLCHECK},
+diff --git a/libraries/libldap/ldap-int.h b/libraries/libldap/ldap-int.h
+index 6c2eadd469..3871ba82f2 100644
+--- a/libraries/libldap/ldap-int.h
++++ b/libraries/libldap/ldap-int.h
+@@ -320,8 +320,9 @@ struct ldapoptions {
+    	int			ldo_tls_crlcheck;
+ 	int			ldo_tls_require_san;
+ 	char		*ldo_tls_pin_hashalg;
++	char		*ldo_tls_peercn;
+ 	struct berval	ldo_tls_pin;
+-#define LDAP_LDO_TLS_NULLARG ,0,0,0,{0,0,0,0,0,0,0,0,0},0,0,0,0,0,0,{0,0}
++#define LDAP_LDO_TLS_NULLARG ,0,0,0,{0,0,0,0,0,0,0,0,0},0,0,0,0,0,0,0,{0,0}
+ #else
+ #define LDAP_LDO_TLS_NULLARG
+ #endif
+diff --git a/libraries/libldap/ldap.map b/libraries/libldap/ldap.map
+index b28c9c21e7..a4d4ed6141 100644
+--- a/libraries/libldap/ldap.map
++++ b/libraries/libldap/ldap.map
+@@ -292,6 +292,7 @@ OPENLDAP_2.200
+     ldap_pvt_gethostbyaddr_a;
+     ldap_pvt_gethostbyname_a;
+     ldap_pvt_gettime;
++    ldap_pvt_gettimeofday;
+     ldap_pvt_hex_unescape;
+     ldap_pvt_put_control;
+     ldap_pvt_put_filter;
+diff --git a/libraries/libldap/os-ip.c b/libraries/libldap/os-ip.c
+index 97be0bc9b9..b5741b4ae7 100644
+--- a/libraries/libldap/os-ip.c
++++ b/libraries/libldap/os-ip.c
+@@ -653,8 +653,9 @@ ldap_connect_to_host(LDAP *ld, Sockbuf *sb,
+ 	LDAP_MUTEX_UNLOCK(&ldap_int_resolv_mutex);
+ 
+ 	if ( err != 0 ) {
+-		Debug1(LDAP_DEBUG_TRACE,
+-			"ldap_connect_to_host: getaddrinfo failed: %s\n",
++		Debug2(LDAP_DEBUG_TRACE,
++			"ldap_connect_to_host: getaddrinfo() with ai_family=%i failed: %s\n",
++			ldap_int_inet4or6,
+ 			AC_GAI_STRERROR(err) );
+ 		return -1;
+ 	}
+diff --git a/libraries/libldap/thr_posix.c b/libraries/libldap/thr_posix.c
+index 74b561cf0b..adc49a1eb2 100644
+--- a/libraries/libldap/thr_posix.c
++++ b/libraries/libldap/thr_posix.c
+@@ -38,6 +38,7 @@
+ #define LDAP_THREAD_RDWR_IMPLEMENTATION
+ #include "ldap_thr_debug.h"	 /* May rename the symbols defined below */
+ #include <signal.h>			 /* For pthread_kill() */
++#include <unistd.h>
+ 
+ extern int ldap_int_stackguard;
+ 
+diff --git a/libraries/libldap/tls2.c b/libraries/libldap/tls2.c
+index 054b016e6e..3d3f9c0a90 100644
+--- a/libraries/libldap/tls2.c
++++ b/libraries/libldap/tls2.c
+@@ -145,6 +145,10 @@ ldap_int_tls_destroy( struct ldapoptions *lo )
+ 		LDAP_FREE( lo->ldo_tls_pin.bv_val );
+ 	}
+ 	BER_BVZERO( &lo->ldo_tls_pin );
++	if ( lo->ldo_tls_peercn ) {
++		LDAP_FREE( lo->ldo_tls_peercn );
++		lo->ldo_tls_peercn = NULL;
++	}
+ }
+ 
+ /*
+@@ -343,7 +347,8 @@ update_flags( Sockbuf *sb, tls_session * ssl, int rc )
+  *	  Do a select (using information from lber_pvt_sb_needs_{read,write}
+  *		and call again.
+  */
+-
++int
++ldap_pvt_tls_check_hostname( LDAP *ld, void *s, const char *name_in );
+ static int
+ ldap_int_tls_connect( LDAP *ld, LDAPConn *conn, const char *host )
+ {
+@@ -597,6 +602,7 @@ ldap_pvt_tls_config( LDAP *ld, int option, const char *arg )
+ 	case LDAP_OPT_X_TLS_DHFILE:
+ 	case LDAP_OPT_X_TLS_PEERKEY_HASH:
+ 	case LDAP_OPT_X_TLS_ECNAME:
++	case LDAP_OPT_X_TLS_PEER_CN:
+ 	case LDAP_OPT_X_TLS_CRLFILE:	/* GnuTLS only */
+ 		return ldap_pvt_tls_set_option( ld, option, (void *) arg );
+ 
+@@ -819,6 +825,10 @@ ldap_pvt_tls_get_option( LDAP *ld, int option, void *arg )
+ 		}
+ 		break;
+ 	}
++	case LDAP_OPT_X_TLS_PEER_CN:
++		*(char **)arg = lo->ldo_tls_peercn ?
++			LDAP_STRDUP( lo->ldo_tls_peercn ) : NULL;
++		break;
+ 	case LDAP_OPT_X_TLS_CACERT: {
+ 		struct berval *bv = arg;
+ 		if ( lo->ldo_tls_cacert.bv_val ) {
+@@ -1105,6 +1115,10 @@ ldap_pvt_tls_set_option( LDAP *ld, int option, void *arg )
+ 
+ 		return rc;
+ 	}
++	case LDAP_OPT_X_TLS_PEER_CN:
++		if ( lo->ldo_tls_peercn ) LDAP_FREE( lo->ldo_tls_peercn);
++		lo->ldo_tls_peercn = (arg && *(char *)arg) ? LDAP_STRDUP( (char *) arg ) : NULL;
++		break;
+ 	default:
+ 		return -1;
+ 	}
+@@ -1327,8 +1341,17 @@ ldap_install_tls( LDAP *ld )
+ 	if ( ldap_tls_inplace( ld ) ) {
+ 		return LDAP_LOCAL_ERROR;
+ 	}
+-
+-	return ldap_int_tls_start( ld, ld->ld_defconn, NULL );
++	char * peercn = NULL;
++	int rc;
++	ldap_pvt_tls_get_option(ld, LDAP_OPT_X_TLS_PEER_CN, &peercn);
++	if(peercn != NULL){
++		LDAPURLDesc desc;
++		desc.lud_host = peercn;
++		rc = ldap_int_tls_start( ld, ld->ld_defconn, &desc );
++		LDAP_FREE(peercn);
++	}else
++		rc = ldap_int_tls_start( ld, ld->ld_defconn, NULL );
++	return rc;
+ #endif
+ }
+ 
+@@ -1362,7 +1385,15 @@ ldap_start_tls_s ( LDAP *ld,
+ 	}
+ 
+ 	if ( rc == LDAP_SUCCESS ) {
+-		rc = ldap_int_tls_start( ld, ld->ld_defconn, NULL );
++		char * peercn = NULL;
++		ldap_pvt_tls_get_option(ld, LDAP_OPT_X_TLS_PEER_CN, &peercn);
++		if(peercn != NULL){
++			LDAPURLDesc desc;
++			desc.lud_host = peercn;
++			rc = ldap_int_tls_start( ld, ld->ld_defconn, &desc );
++			LDAP_FREE(peercn);
++		}else
++			rc = ldap_int_tls_start( ld, ld->ld_defconn, NULL );
+ 	}
+ 
+ 	return rc;

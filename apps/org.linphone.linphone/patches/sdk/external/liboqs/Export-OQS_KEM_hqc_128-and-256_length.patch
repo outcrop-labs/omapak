@@ -1,0 +1,51 @@
+diff --git a/external/linphone-sdk/external/liboqs/src/CMakeLists.txt b/external/linphone-sdk/external/liboqs/src/CMakeLists.txt
+index 09f00cf2..060250b9 100644
+--- a/external/linphone-sdk/external/liboqs/src/CMakeLists.txt
++++ b/external/linphone-sdk/external/liboqs/src/CMakeLists.txt
+@@ -123,7 +123,15 @@ endif()
+ 
+ target_include_directories(oqs
+                            PUBLIC
++                           "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
++                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common>"
++                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common/aes>"
++                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common/sha2>"
++                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common/sha3>"
++                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common/rand>"
++                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/kem>"
++                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sig>"
+                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+ )
+ 
+diff --git a/external/linphone-sdk/external/liboqs/src/oqs.h b/external/linphone-sdk/external/liboqs/src/oqs.h
+index d6833bcb..916d6c58 100644
+--- a/external/linphone-sdk/external/liboqs/src/oqs.h
++++ b/external/linphone-sdk/external/liboqs/src/oqs.h
+@@ -13,6 +13,19 @@
+ 
+ #include <oqs/oqsconfig.h>
+ 
++#ifdef LIBOQS_USE_BUILD_INTERFACE
++
++#include <common.h>
++#include <aes.h>
++#include <sha2.h>
++#include <sha3.h>
++#include <sha3x4.h>
++#include <rand.h>
++#include <kem.h>
++#include <sig.h>
++
++#else
++
+ #include <oqs/common.h>
+ #include <oqs/rand.h>
+ #include <oqs/kem.h>
+@@ -23,4 +36,6 @@
+ #include <oqs/sha3_ops.h>
+ #include <oqs/sha3x4_ops.h>
+ 
++#endif
++
+ #endif // OQS_H

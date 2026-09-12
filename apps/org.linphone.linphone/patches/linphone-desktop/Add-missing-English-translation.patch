@@ -1,0 +1,13 @@
+diff --git a/Linphone/data/languages/en.ts b/Linphone/data/languages/en.ts
+index 59f7d52d5..62181f3ad 100644
+--- a/Linphone/data/languages/en.ts
++++ b/Linphone/data/languages/en.ts
+@@ -791,7 +791,7 @@
+     <message>
+         <location filename="../../core/App.cpp" line="1809"/>
+         <source>mark_all_read_action</source>
+-        <translation>Marquer tout comme lu</translation>
++        <translation>Mark all as read</translation>
+     </message>
+ </context>
+ <context>

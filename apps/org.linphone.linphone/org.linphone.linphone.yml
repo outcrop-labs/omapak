@@ -1,0 +1,397 @@
+app-id: org.linphone.linphone
+runtime: org.kde.Platform
+runtime-version: "6.10"
+sdk: org.kde.Sdk
+command: linphone
+rename-desktop-file: linphone.desktop
+rename-icon: linphone
+finish-args:
+  # NOTE: As long as /dev/video is directly needed and neither the Camera portal nor device=usb helps (also used for USB microphones)
+  - --device=all
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --socket=wayland
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --talk-name=org.freedesktop.ScreenSaver
+modules:
+  # Development tools from:
+  # https://github.com/BelledonneCommunications/linphone-desktop/blob/master/docker-files/bc-dev-ubuntu-22-04-lts
+  ## Python dependencies
+  - name: python3-pystache-six
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} pystache six --no-build-isolation
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/fa/78/ffd13a516219129cef6a754a11ba2a1c0d69f1e281af4f6bca9ed5327219/pystache-0.6.8-py3-none-any.whl
+        sha256: 7211e000974a6e06bce2d4d5cad8df03bcfffefd367209117376e4527a1c3cb8
+        x-checker-data:
+          name: pystache
+          packagetype: bdist_wheel
+          type: pypi
+      - type: file
+        url: https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl
+        sha256: 4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274
+        x-checker-data:
+          name: six
+          packagetype: bdist_wheel
+          type: pypi
+    cleanup:
+      - "*"
+  ## Binary dependencies
+  - name: yasm
+    buildsystem: autotools
+    sources:
+      - type: archive
+        url: https://github.com/yasm/yasm/releases/download/v1.3.0/yasm-1.3.0.tar.gz
+        sha256: 3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f
+      # Patches from https://sources.debian.org/patches/yasm/1.3.0-8/
+      - type: patch
+        paths:
+          - patches/yasm/0000-gcc-15.patch
+          - patches/yasm/1000-x86-dir-cpu-CVE-2023-29579.patch
+          - patches/yasm/100_ytasm_parsing_error.diff
+          - patches/yasm/1010-nasm-pp-no-env-CVE-2021-33464.patch
+          - patches/yasm/1020-hash-null-CVE-2021-33456.patch
+          - patches/yasm/autoconf.patch
+    cleanup:
+      - "*"
+  - name: OpenLDAP
+    buildsystem: autotools
+    config-opts:
+      - --disable-backends
+      - --disable-debug
+      - --disable-overlays
+      - --disable-slapd
+      - --disable-syslog
+      - --disable-static
+      - --enable-dynamic
+      - --enable-ipv6
+      - --with-cyrus-sasl
+      - --with-threads
+      - --with-tls=gnutls
+      - --without-systemd
+    sources:
+      - type: archive
+        url: https://github.com/openldap/openldap/archive/refs/tags/OPENLDAP_REL_ENG_2_6_13.tar.gz
+        sha256: dd5be2f8e7deab34d1afc3babb7ad29fd1391860b321ffdbcab4ed7a5dfccf76
+        x-checker-data:
+          type: anitya
+          project-id: 2551
+          stable-only: true
+          url-template: https://github.com/openldap/openldap/archive/refs/tags/OPENLDAP_REL_ENG_${version0}_${version1}_version2.tar.gz
+      - type: patch
+        paths:
+          - patches/openldap/ldap-opt-x-tls-peer-cn.patch
+  - "shared-modules/glu/glu-9.json"
+  - "shared-modules/glew/glew.json"
+  # Linphone
+  - name: linphone
+    buildsystem: cmake-ninja
+    builddir: true
+    cleanup:
+      - "*.cmake"
+      - "*.a"
+      - /bin/cjpeg
+      - /bin/djpeg
+      - /bin/jpegtran
+      - /bin/CreateDOMDocument
+      - /bin/DOMCount
+      - /bin/DOMPrint
+      - /bin/EnumVal
+      - /bin/MemParse
+      - /bin/PParse
+      - /bin/PSVIWriter
+      - /bin/Redirect
+      - /bin/SAX2Count
+      - /bin/SAX2Print
+      - /bin/SAXCount
+      - /bin/SAXPrint
+      - /bin/SCMPrint
+      - /bin/SEnumVal
+      - /bin/StdInParse
+      - /bin/XInclude
+      - /bin/yuvconvert
+      - /include
+      - /cmake
+      - /lib/cmake
+      - /lib/pkgconfig
+      - /lib/BCMatroska2
+      - /lib/BCToolbox
+      - /lib/BCUnit
+      - /lib/BV16
+      - /lib/BZRTP
+      - /lib/BelCard
+      - /lib/LibLinphone
+      - /lib/Lime
+      - /lib/LinphoneCxx
+      - /lib/Mediastreamer2
+      - /lib/Ortp
+      - /lib/PostQuantumCryptoEngine
+      - /lib/SQLITE3
+      - /lib/YUV
+      - /lib/decaf
+      - /lib/doc
+      - /lib/man
+      - /lib/xerces-c
+      - /share/doc
+      - /share/man
+      - /lib/pkgconfig
+      - /share/BCMatroska2
+      - /share/BCToolbox
+      - /share/BCToolbox/cmake
+      - /share/BCToolbox/cmake/gitversion.h.in
+      - /share/BCUnit
+      - /share/BCUnit/BCUnit-List.dtd
+      - /share/BCUnit/BCUnit-List.xsl
+      - /share/BCUnit/BCUnit-Run.dtd
+      - /share/BCUnit/BCUnit-Run.xsl
+      - /share/BCUnit/Memory-Dump.dtd
+      - /share/BCUnit/Memory-Dump.xsl
+      - /share/BV16
+      - /share/BZRTP
+      - /share/BelCard
+      - /share/GSM
+      - /share/LibLinphone
+      - /share/Lime
+      - /share/LinphoneCxx
+      - /share/Mediastreamer2
+      - /share/Ortp
+      - /share/PostQuantumCryptoEngine
+      - /share/SQLITE3
+      - /share/Speex
+      - /share/decaf
+      - /share/libjpeg-turbo
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DBUILD_LIBSRTP2=OFF
+      - -DENABLE_OPENSSL=ON
+      - -DBUILD_OPENSSL=OFF
+      - -DENABLE_MBEDTLS=OFF
+      - -DBUILD_MBEDTLS=OFF
+      - -DBUILD_OPENLDAP=OFF
+      - -DBUILD_OPUS=OFF
+      - -DBUILD_LIBJPEGTURBO=OFF
+      - -DBUILD_LIBVPX=OFF
+      - -DBUILD_LIBXML2=OFF
+      - -DBUILD_SPEEX=OFF
+      - -DBUILD_ZLIB=OFF
+      - -DBUILD_DAV1D=OFF
+      - -DBUILD_AOM=OFF
+      - -DENABLE_AV1=ON # Otherwise forced OFF, when BUILD_DAV1D=OFF, and this needs, and also forces ENABLE_VIDEO=ON
+      - -DENABLE_DOC=OFF
+      - -DENABLE_FFMPEG=OFF # <- Not needed by mediastreamer2 anymore and just causes compilation issues 10+ years old (n0.10.2) baseline
+      - -DENABLE_GPL_THIRD_PARTIES=ON
+      - -DENABLE_NON_FREE_CODECS=ON
+      - -DENABLE_NON_FREE_FEATURES=ON #<- implied by DENABLE_NON_FREE_CODECS
+      - -DENABLE_OPENH264=ON #<- implied by ENABLE_VIDEO=ON
+      - -DENABLE_EMBEDDED_OPENH264=ON
+      - -DENABLE_VIDEO=ON
+      - -DENABLE_PQCRYPTO=ON
+      - -DLINPHONEAPP_INSTALL_PREFIX=/app/
+      - -DLINPHONESDK_PLATFORM=Desktop
+      # While this seems redundandt, without this `bctoolbox` is not buildable from archive, as cmake would try to use git to read the repo
+      - -DLINPHONESDK_VERSION=5.4.106 # Also Linphone-desktop needs this
+      # While this seems redundandt, without this `bctoolbox` is not buildable from archive, as cmake would try to use git to read the repo
+      - -DLINPHONEAPP_VERSION=6.1.2
+      - -DGIT_BRANCH_NAME=6.1.2
+      # Option added by `CMake-flatpak-packaging.patch`
+      - -DFLATPAK_ID=org.linphone.linphone
+    post-install:
+      - desktop-file-edit --set-key="Icon" --set-value="${FLATPAK_ID}" ${FLATPAK_DEST}/share/applications/linphone.desktop
+    sources:
+      - type: archive
+        url: https://github.com/BelledonneCommunications/linphone-desktop/archive/refs/tags/6.1.2.tar.gz
+        sha256: 45b8c4f1bf98aadc794172b8fd10a6f7a2c5fb8d1c3f6b8dd3645bae50f0e848
+        x-checker-data:
+          type: anitya
+          project-id: 1823
+          stable-only: true
+          url-template: https://github.com/BelledonneCommunications/linphone-desktop/archive/refs/tags/$version.tar.gz
+      - type: archive
+        dest: external/linphone-sdk
+        url: https://github.com/BelledonneCommunications/linphone-sdk/archive/refs/tags/5.4.104.tar.gz
+        sha256: dc3902c3db5e3a5cb34d4ac629e2ca5314e9a16ceef8ea045545d133b438fed4
+      - type: archive
+        dest: external/linphone-sdk/belr
+        url: https://github.com/BelledonneCommunications/belr/archive/refs/tags/5.4.106.tar.gz
+        sha256: f58cf4d4484804a0ebcc5be6237a6f910cd5b17076bbea77ebdf77f049636c40
+      - type: archive
+        dest: external/linphone-sdk/bcg729
+        url: https://github.com/BelledonneCommunications/bcg729/archive/8bec1e5fc072f3669e435edd137eb3da6da2eef7.tar.gz
+        sha256: 62812779c776620f8fa005fc7c6ae14039d7b2efce66cf9af69c426393b5d062
+      - type: archive
+        dest: external/linphone-sdk/bcmatroska2
+        # This is the latest anyway up to 5.6.0-alpha only 5.4.106 is missing
+        url: https://github.com/BelledonneCommunications/bcmatroska2/archive/refs/tags/5.4.102.tar.gz
+        sha256: f99bdc4077a02c4b3869cf5ad3d49fd8b4d5b049f61c550f9a6f7b685ccfdc45
+      - type: archive
+        dest: external/linphone-sdk/bctoolbox
+        url: https://github.com/BelledonneCommunications/bctoolbox/archive/refs/tags/5.4.106.tar.gz
+        sha256: 0ad18b7e7da04c6ec53a4549e31e5518ec2ecb8372f26b8b5f4d220554f05e8e
+      - type: archive
+        dest: external/linphone-sdk/bcunit
+        # Same as all the releases in the 5.4.X series only 5.4.106 is missing
+        url: https://github.com/BelledonneCommunications/bcunit/archive/refs/tags/5.5.0-alpha.tar.gz
+        sha256: 7489f9ee58e87f8c89a0dbbe0b787e9337859e16ab0a031c11729a659ab88d6d
+      - type: archive
+        dest: external/linphone-sdk/belcard
+        url: https://github.com/BelledonneCommunications/belcard/archive/refs/tags/5.4.106.tar.gz
+        sha256: 12fcb7fbd6b55010c5e986a8f8bd63baf184c164b60b3a15e97ff783775dc3e4
+      - type: archive
+        dest: external/linphone-sdk/belle-sip
+        url: https://github.com/BelledonneCommunications/belle-sip/archive/refs/tags/5.4.106.tar.gz
+        sha256: 564da0e09847d6854a263bc1d7cd875bf83b19871eaf8114febbd48637baa544
+      - type: archive
+        dest: external/linphone-sdk/bzrtp
+        url: https://github.com/BelledonneCommunications/bzrtp/archive/refs/tags/5.4.106.tar.gz
+        sha256: fca7405b9a0d350453663def33c1e2ff0d9e060acc8889254491c34e5411d271
+      - type: archive
+        dest: external/linphone-sdk/liblinphone
+        url: https://github.com/BelledonneCommunications/liblinphone/archive/refs/tags/5.4.106.tar.gz
+        sha256: 0ad0e4b758a4cc780e0d3dc3e2188a59c1c9221c132338f1791cad7446d8d9e5
+      - type: archive
+        dest: external/linphone-sdk/lime
+        url: https://github.com/BelledonneCommunications/lime/archive/refs/tags/5.4.106.tar.gz
+        sha256: 64d237202c3f71d9e63b94de5cb36ff4517d2fce21a9d7e0c37be3df205aa5ee
+      - type: archive
+        dest: external/linphone-sdk/mediastreamer2
+        url: https://github.com/BelledonneCommunications/mediastreamer2/archive/refs/tags/5.4.106.tar.gz
+        sha256: b9fa823ab5802cb14397a015de386ed4f54e5ff9b82551f8e0f009d0ef6eecb1
+      - type: archive
+        dest: external/linphone-sdk/msopenh264
+        url: https://github.com/BelledonneCommunications/msopenh264/archive/refs/tags/5.4.58.tar.gz
+        sha256: 550fad8981551a760d16581fddbbc5ee805c857d3add5f22fc96c1e7d595d736
+      - type: archive
+        dest: external/linphone-sdk/mswebrtc
+        url: https://github.com/BelledonneCommunications/mswebrtc/archive/refs/tags/5.5.0-alpha.tar.gz
+        sha256: 8d4546eb390b9f2024284128b2821b410b937d76a16abf34695349fb7347bff2
+      - type: archive
+        dest: external/linphone-sdk/mswebrtc/webrtc/
+        # Reproducible alternative to:
+        # url: https://webrtc.googlesource.com/src/+archive/d153a37801d9b1258ffff9f878064fa0ddfd3b0a.tar.gz
+        url: https://github.com/webrtc-mirror/webrtc/archive/d153a37801d9b1258ffff9f878064fa0ddfd3b0a.zip
+        sha256: eec20fee341c6d6edc096060415ce96356a4ddf05a8724c3384c106bc12420bd
+      - type: archive
+        dest: external/linphone-sdk/ortp
+        url: https://github.com/BelledonneCommunications/ortp/archive/refs/tags/5.4.106.tar.gz
+        sha256: 9f35f73246be724adc0de96535701419d3b0c6369203c89e4fbf4a0227cc39ca
+      - type: archive
+        dest: external/linphone-sdk/postquantumcryptoengine
+        # Same as all the releases in the 5.4.X series only 5.4.106 is missing
+        url: https://github.com/BelledonneCommunications/postquantumcryptoengine/archive/refs/tags/5.4.102.tar.gz
+        sha256: c4bd907140a34562d4e6de306d00804fd56d3e6cba56dd6d987433c4b9ac3b41
+      - type: archive
+        dest: external/linphone-sdk/external/bv16-floatingpoint
+        # NOTE:
+        # Tracking the changes on top of upstream in this repo would be unmaintainable,
+        # because BC's changes on top of Broadcom's BroadVoice16OpenSource.v1.2.zip
+        # are structurally different from upstream, and it is extremely unlikely,
+        # that Braodcom would ever release an update.
+        # Either use BC's codebase directly:
+        # url: https://gitlab.linphone.org/BC/public/external/bv16-floatingpoint/-/archive/c4a341a3277e8adcc42427c4fd80a457fe934f2a/bv16-floatingpoint-c4a341a3277e8adcc42427c4fd80a457fe934f2a.tar.bz2
+        # sha256: f28d6f0ae6d27d5f86d3cdf73c6c8d05a22096e6082aaaefa89390d1892b139b
+        # Or a faster more reliable mirror:
+        url: https://github.com/Ferenc-/linphone-bv16-floatingpoint/archive/c4a341a3277e8adcc42427c4fd80a457fe934f2a.zip
+        sha256: 07fb1ca72bd9eeb18e8298d899fac0ca9d956b9f9d623a3958befb5279b4250a
+      - type: archive
+        dest: external/linphone-sdk/external/decaf
+        url: https://downloads.sourceforge.net/project/ed448goldilocks/libdecaf-1.0.3.tgz
+        sha256: bb2952e006a5ec983edd4895719cc258d099e4bc4f09f5352045f824f042ebd0
+        x-checker-data:
+          type: html
+          url: https://sourceforge.net/p/ed448goldilocks/activity/feed",
+          pattern: "<link>(https://sourceforge.net/projects/ed448goldilocks/files/libdecaf-([\\d\\.]+\\d).tgz)/download</link>"
+      - type: archive
+        dest: external/linphone-sdk/external/gsm
+        url: https://www.quut.com/gsm/gsm-1.0.24.tar.gz
+        disable-http-decompression: true
+        sha256: a3c40c6471928383f4abfcb2e8f24012a1f562be2f17b8d672145d5986681a92
+        x-checker-data:
+          type: anitya
+          project-id: 12587
+          stable-only: true
+          url-template: https://www.quut.com/gsm/gsm-$version.tar.gz
+      - type: archive
+        dest: external/linphone-sdk/external/jsoncpp
+        url: https://github.com/open-source-parsers/jsoncpp/archive/refs/tags/1.9.7.tar.gz
+        sha256: 830bf352d822d8558e9d0eb19d640d2e38536b4b6699c30a4488da09d5b1df18
+        x-checker-data:
+          type: anitya
+          project-id: 7483
+          stable-only: true
+          url-template: https://github.com/open-source-parsers/jsoncpp/archive/refs/tags/$version.tar.gz
+      - type: archive
+        dest: external/linphone-sdk/external/libjpeg-turbo
+        # NOTE: libjpeg-turbo is part of the SDK but it's lagging behind the latest
+        url: https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/3.1.4.1.tar.gz
+        sha256: a7da42b640377c2a9a9665e2c4b0ea60cd5599afb48c2521e6df0c9dc9d15a25
+      - type: file
+        dest: external/linphone-sdk/external/libjpeg-turbo
+        path: patches/sdk/external/libjpeg-turbo/CMakeLists.txt
+      - type: archive
+        dest: external/linphone-sdk/external/liboqs
+        url: https://github.com/open-quantum-safe/liboqs/archive/refs/tags/0.15.0.tar.gz
+        sha256: 3983f7cd1247f37fb76a040e6fd684894d44a84cecdcfbdb90559b3216684b5c
+        x-checker-data:
+          type: anitya
+          project-id: 364436
+          stable-only: true
+          url-template: https://github.com/open-quantum-safe/liboqs/archive/refs/tags/$version.tar.gz
+      - type: archive
+        dest: external/linphone-sdk/external/libyuv
+        # Reproducible alternative to:
+        # url: https://chromium.googlesource.com/libyuv/libyuv/+archive/4afb9654162e142b52d349471823815f4c60bc3d.tar.gz
+        url: https://github.com/Ferenc-/libyuv/archive/4afb9654162e142b52d349471823815f4c60bc3d.zip
+        sha256: 2474f2068e9876c322e425c496ddf6f81926d059d3cc68587de7da57c5f4568e
+      - type: archive
+        dest: external/linphone-sdk/external/openh264
+        url: https://github.com/cisco/openh264/archive/refs/tags/v2.6.0.tar.gz
+        sha256: 558544ad358283a7ab2930d69a9ceddf913f4a51ee9bf1bfb9e377322af81a69
+      - type: archive
+        dest: external/linphone-sdk/external/sqlite3
+        # NOTE:
+        # Tracking the changes on top of upstream in this repo would be unmaintainable,
+        # because BC's changes on top of upstream sqlite
+        # are structurally different from upstream.
+        # Either use BC's codebase directly:
+        # url: https://gitlab.linphone.org/BC/public/external/sqlite3/-/archive/ceb88c26e1bde0ab02b09d09cbb481d9baeeefc4/sqlite3-ceb88c26e1bde0ab02b09d09cbb481d9baeeefc4.tar.bz2
+        # sha256: c6a607f98dedb60206b16cac1de67dc4e2c2505baa0464fc8fb2cd5b76113552
+        # Or a faster more reliable mirror:
+        url: https://github.com/Ferenc-/linphone-sqlite3/archive/refs/tags/bc-head-ceb88c2.tar.gz
+        sha256: b2e0aca477bdb063f8d2a0aaee91bba18071404efae1c5ff2734257317c5f060
+      - type: archive
+        dest: external/linphone-sdk/external/soci
+        url: https://github.com/SOCI/soci/archive/refs/tags/v4.1.2.tar.gz
+        sha256: c0974067e57242f21d9a85677c5f6cc7848fba3cbd5ec58d76c95570a5a7a15b
+        x-checker-data:
+          type: anitya
+          project-id: 11081
+          stable-only: true
+          url-template: https://github.com/SOCI/soci/archive/refs/tags/v$version.tar.gz
+      - type: archive
+        dest: external/linphone-sdk/external/xerces-c
+        url: https://github.com/apache/xerces-c/archive/refs/tags/v3.3.0.tar.gz
+        sha256: 0f28ea2d7a0a3824d326c8bc4be26a3bb01dde289663beb6f15b241f80cbd3ae
+        x-checker-data:
+          type: anitya
+          project-id: 5182
+          stable-only: true
+          url-template: https://github.com/apache/xerces-c/archive/refs/tags/v$version.tar.gz
+      - type: patch
+        paths:
+          - patches/linphone-desktop/Own-name-match-Flatpak-ID.patch # https://docs.flathub.org/docs/for-app-authors/linter#finish-args-own-name-cpt
+          - patches/linphone-desktop/Add-missing-English-translation.patch
+          - patches/linphone-desktop/CMake-build-from-archive.patch
+          - patches/linphone-desktop/CMake-flatpak-packaging.patch
+          - patches/sdk/liblinphone/Fix-use-of-function-deleted-in-SOCI-4.1.2-and-potential-stack-use-after-scope.patch
+          - patches/sdk/mediastreamer2/Find-dependencies.patch
+          - patches/sdk/external/gsm/Add-CMakeLists.txt.patch
+          - patches/sdk/external/liboqs/Export-OQS_KEM_hqc_128-and-256_length.patch
+          - patches/sdk/external/libyuv/FindTurboJpeg-and-CMake-integration.patch
+          - patches/sdk/external/xerces-c/Fix-C++-minimum-level.patch
+      - type: file
+        path: org.linphone.linphone.metainfo.xml

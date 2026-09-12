@@ -1,0 +1,13 @@
+diff --git a/Linphone/core/singleapplication/SingleApplicationDBus.cpp b/Linphone/core/singleapplication/SingleApplicationDBus.cpp
+index 1f6015b62..9613ae565 100644
+--- a/Linphone/core/singleapplication/SingleApplicationDBus.cpp
++++ b/Linphone/core/singleapplication/SingleApplicationDBus.cpp
+@@ -30,7 +30,7 @@
+ // =============================================================================
+ 
+ namespace {
+-constexpr char ServiceName[] = "org." EXECUTABLE_NAME ".SingleApplication";
++constexpr char ServiceName[] = "org.linphone.linphone";
+ }
+ 
+ SingleApplicationPrivate::SingleApplicationPrivate(SingleApplication *q_ptr)

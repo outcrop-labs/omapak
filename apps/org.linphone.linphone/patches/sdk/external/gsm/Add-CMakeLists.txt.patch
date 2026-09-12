@@ -1,0 +1,63 @@
+diff --git a/external/linphone-sdk/external/gsm/CMakeLists.txt b/external/linphone-sdk/external/gsm/CMakeLists.txt
+new file mode 100644
+index 0000000..6e06b2b
+--- /dev/null
++++ b/external/linphone-sdk/external/gsm/CMakeLists.txt
+@@ -0,0 +1,57 @@
++cmake_minimum_required(VERSION 3.22)
++project(GSM C)
++
++set(EXPORT_TARGETS_NAME "GSM")
++
++set(GSM_SOURCE_FILES
++	src/add.c
++	src/code.c
++	src/debug.c
++	src/decode.c
++	src/long_term.c
++	src/lpc.c
++	src/preprocess.c
++	src/rpe.c
++	src/gsm_destroy.c
++	src/gsm_decode.c
++	src/gsm_encode.c
++	src/gsm_explode.c
++	src/gsm_implode.c
++	src/gsm_create.c
++	src/gsm_print.c
++	src/gsm_option.c
++	src/short_term.c
++	src/table.c
++)
++
++include(GNUInstallDirs)
++
++add_library(gsm ${GSM_SOURCE_FILES})
++target_compile_options(gsm PRIVATE "-w")
++target_include_directories(gsm INTERFACE
++	$<INSTALL_INTERFACE:include>
++	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/inc>
++	PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/inc>
++)
++if(NOT BUILD_SHARED_LIBS)
++	set_target_properties(gsm PROPERTIES POSITION_INDEPENDENT_CODE ON)
++endif()
++
++install(TARGETS gsm EXPORT ${EXPORT_TARGETS_NAME}Targets
++	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
++)
++
++file(GLOB HEADER_FILES "inc/gsm.h")
++
++install(FILES ${HEADER_FILES}
++	DESTINATION include/gsm
++	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
++)
++
++install(EXPORT ${EXPORT_TARGETS_NAME}Targets
++	FILE "${EXPORT_TARGETS_NAME}Targets.cmake"
++	DESTINATION "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/cmake"
++)

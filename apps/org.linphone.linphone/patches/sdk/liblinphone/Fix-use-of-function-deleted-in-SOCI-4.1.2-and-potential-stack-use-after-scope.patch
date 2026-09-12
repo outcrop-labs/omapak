@@ -1,0 +1,58 @@
+diff --git a/external/linphone-sdk/liblinphone/src/db/main-db.cpp b/external/linphone-sdk/liblinphone/src/db/main-db.cpp
+index a2ce2169b..40541bddd 100644
+--- a/external/linphone-sdk/liblinphone/src/db/main-db.cpp
++++ b/external/linphone-sdk/liblinphone/src/db/main-db.cpp
+@@ -1884,11 +1884,12 @@ void MainDbPrivate::updateConferenceChatMessageEvent(const shared_ptr<EventLog>
+ 	if (state == ChatMessage::State::NotDelivered) {
+ 		const auto &meAddress = chatRoom->getMe()->getAddress();
+ 		long long meAddressId = insertSipAddress(meAddress);
++		const auto storageId = chatMessage->getStorageId();
+ 		static const string query =
+ 		    "SELECT chat_message_participant.state FROM chat_message_participant WHERE event_id = :eventId AND "
+ 		    "chat_message_participant.participant_sip_address_id = :meAddressId";
+ 		soci::rowset<soci::row> rows =
+-		    (session->prepare << query, soci::use(chatMessage->getStorageId()), soci::use(meAddressId));
++		    (session->prepare << query, soci::use(storageId), soci::use(meAddressId));
+ 		ChatMessage::State meParticipantState = ChatMessage::State::Idle;
+ 		for (const auto &row : rows) {
+ 			meParticipantState = static_cast<ChatMessage::State>(row.get<int>(0));
+@@ -1911,7 +1912,8 @@ void MainDbPrivate::updateConferenceChatMessageEvent(const shared_ptr<EventLog>
+ 		                            " FROM sip_address, chat_message_participant"
+ 		                            " WHERE event_id = :eventId"
+ 		                            " AND sip_address.id = chat_message_participant.participant_sip_address_id";
+-		soci::rowset<soci::row> rows = (session->prepare << query, soci::use(chatMessage->getStorageId()));
++		const auto storageId = chatMessage->getStorageId();
++		soci::rowset<soci::row> rows = (session->prepare << query, soci::use(storageId));
+ 
+ 		// Use list of participants the client is sure have received the message and not the actual list of participants
+ 		// being part of the chatroom
+@@ -5063,15 +5065,15 @@ list<shared_ptr<ChatMessage>> MainDb::getEphemeralMessages() const {
+ 	    " ORDER BY expired_time ASC";
+ 	query += getBackend() == MainDb::Backend::Sqlite3 ? " LIMIT :maxMessages) ORDER BY expired_time ASC"
+ 	                                                  : " ) ORDER BY expired_time ASC";
+-
+ 	return L_DB_TRANSACTION {
+ 		L_D();
+ 		list<shared_ptr<ChatMessage>> chatMessages;
+ 		auto epoch = d->dbSession.getTimeWithSociIndicator(0);
++		auto const copyable_ephemeral_message_tasks_max_nb = EPHEMERAL_MESSAGE_TASKS_MAX_NB;
+ 		soci::rowset<soci::row> rows =
+ 		    getBackend() == MainDb::Backend::Sqlite3
+ 		        ? (d->dbSession.getBackendSession()->prepare << query, soci::use(epoch.first),
+-		           soci::use(EPHEMERAL_MESSAGE_TASKS_MAX_NB))
++		           soci::use(copyable_ephemeral_message_tasks_max_nb))
+ 		        : (d->dbSession.getBackendSession()->prepare << query, soci::use(epoch.first));
+ 		for (const auto &row : rows) {
+ 			const long long &dbChatRoomId = d->dbSession.resolveId(row, (int)row.size() - 1);
+@@ -5867,8 +5869,10 @@ list<shared_ptr<EventLog>> MainDb::getHistoryRangeNear(const ConferenceId &confe
+ 			MainDbKeyPrivate *dEventKey = static_cast<MainDbKey &>(dEventLog->dbKey).getPrivate();
+ 			const long long &dbEventId = dEventKey->storageId;
+ 
++			const auto before_plus1 = before + 1;
++			const auto after_plus1 = after + 1;
+ 			soci::rowset<soci::row> rows = (d->dbSession.getBackendSession()->prepare << query, soci::use(dbChatRoomId),
+-			                                soci::use(dbEventId), soci::use(before + 1), soci::use(after + 1));
++			                                soci::use(dbEventId), soci::use(before_plus1), soci::use(after_plus1));
+ 
+ 			for (const auto &row : rows) {
+ 				shared_ptr<EventLog> event = d->selectGenericConferenceEvent(chatRoom, row);

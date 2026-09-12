@@ -1,0 +1,48 @@
+diff --git a/external/linphone-sdk/mediastreamer2/cmake/FindDav1d.cmake b/external/linphone-sdk/mediastreamer2/cmake/FindDav1d.cmake
+index 627dbff9..c17f5f12 100644
+--- a/external/linphone-sdk/mediastreamer2/cmake/FindDav1d.cmake
++++ b/external/linphone-sdk/mediastreamer2/cmake/FindDav1d.cmake
+@@ -65,7 +65,7 @@ else()
+ 		PATH_SUFFIXES bin lib lib/Win32
+ 	)
+ 
+-	if(_Dav1d_INCLUDE_DIRS AND _Dav1d_LIBRARY)
++	if(Dav1d_INCLUDE_DIRS AND Dav1d_LIBRARY)
+ 		add_library(libdav1d UNKNOWN IMPORTED)
+ 		if(WIN32)
+ 			set_target_properties(libdav1d PROPERTIES
+@@ -74,8 +74,8 @@ else()
+ 			)
+ 		else()
+ 			set_target_properties(libdav1d PROPERTIES
+-				INTERFACE_INCLUDE_DIRECTORIES "${_Dav1d_INCLUDE_DIRS}"
+-				IMPORTED_LOCATION "${_Dav1d_LIBRARY}"
++				INTERFACE_INCLUDE_DIRECTORIES "${Dav1d_INCLUDE_DIRS}"
++				IMPORTED_LOCATION "${Dav1d_LIBRARY}"
+ 			)
+ 		endif()
+
+diff --git a/external/linphone-sdk/mediastreamer2/cmake/FindAom.cmake b/external/linphone-sdk/mediastreamer2/cmake/FindAom.cmake
+index e2c55742..2c5f35be 100644
+--- a/external/linphone-sdk/mediastreamer2/cmake/FindAom.cmake
++++ b/external/linphone-sdk/mediastreamer2/cmake/FindAom.cmake
+@@ -65,7 +65,7 @@ else()
+ 		PATH_SUFFIXES bin lib lib/Win32
+ 	)
+ 
+-	if(_Aom_INCLUDE_DIRS AND _Aom_LIBRARY)
++	if(Aom_INCLUDE_DIRS AND Aom_LIBRARY)
+ 		add_library(aom UNKNOWN IMPORTED)
+ 		if(WIN32)
+ 			set_target_properties(aom PROPERTIES
+@@ -74,8 +74,8 @@ else()
+ 			)
+ 		else()
+ 			set_target_properties(aom PROPERTIES
+-				INTERFACE_INCLUDE_DIRECTORIES "${_Aom_INCLUDE_DIRS}"
+-				IMPORTED_LOCATION "${_Aom_LIBRARY}"
++				INTERFACE_INCLUDE_DIRECTORIES "${Aom_INCLUDE_DIRS}"
++				IMPORTED_LOCATION "${Aom_LIBRARY}"
+ 			)
+ 		endif()
+ 

@@ -1,0 +1,15 @@
+submitter: jon
+source_repo: https://github.com/BelledonneCommunications/linphone-desktop
+summary: Linphone desktop, the SIP softphone client by Belledonne Communications
+description: >-
+  Continuity submission. Linphone desktop (503 stars, GPL-3.0,
+  BelledonneCommunications) had its Flathub submission
+  (flathub/flathub#9038, by Ferenc-) dismissed with "This seems a
+  ridiculous amount of patches" — and when the packager asked what to
+  change, the answer was "I don't know." The packager gave up and
+  self-closed. omapak picked it up. Manifest and patches from that PR
+  unchanged; shared-modules (glu, glew) vendored at the PR's pinned
+  revision so the tree is self-contained.
+license: GPL-3.0-only
+homepage: https://www.linphone.org/en/
+tags: [network, voip]

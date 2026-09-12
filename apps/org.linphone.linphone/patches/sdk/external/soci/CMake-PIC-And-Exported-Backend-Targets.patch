@@ -1,0 +1,50 @@
+diff --git a/external/linphone-sdk/external/soci/CMakeLists.txt b/external/linphone-sdk/external/soci/CMakeLists.txt
+index 7798b45f..2a965965 100644
+--- a/external/linphone-sdk/external/soci/CMakeLists.txt
++++ b/external/linphone-sdk/external/soci/CMakeLists.txt
+@@ -10,19 +10,19 @@
+ ###############################################################################
+ # General settings
+ ###############################################################################
+-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
+ 
+-project(SOCI)
++project(SOCI VERSION 4.0.0 LANGUAGES C CXX)
+ 
+ ###############################################################################
+ # Build features and variants
+ ##############################################################################
+ 
+-option(SOCI_SHARED "Enable build of shared libraries" ON)
++option(SOCI_SHARED "Enable build of shared libraries" OFF)
+ option(SOCI_STATIC "Enable build of static libraries" ON)
+ option(SOCI_TESTS "Enable build of collection of SOCI tests" ON)
+ option(SOCI_ASAN "Enable address sanitizer on GCC v4.8+/Clang v 3.1+" OFF)
+-
++option(SOCI_INSTALL_BACKEND_TARGETS "Export the target of each backend on installation" ON)
+ 
+ ###############################################################################
+ # SOCI CMake modules
+@@ -65,6 +65,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+ 
++if(NOT CMAKE_INSTALL_RPATH AND CMAKE_INSTALL_PREFIX)
++  set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR})
++  message(STATUS "Setting install rpath to ${CMAKE_INSTALL_RPATH}")
++endif()
++
+ ###############################################################################
+ # Find SOCI dependencies
+ ###############################################################################
+@@ -155,6 +160,9 @@ set(CONFIG_FILE_IN "include/soci/soci-config.h.in")
+ set(CONFIG_FILE_OUT "${CONFIG_INCLUDE_DIR}/soci/soci-config.h")
+ 
+ 
++if(SOCI_STATIC)
++  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
++endif()
+ 
+ ###############################################################################
+ # Build configured components

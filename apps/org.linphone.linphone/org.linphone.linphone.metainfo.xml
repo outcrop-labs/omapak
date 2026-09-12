@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<component type="desktop-application">
+  <id>org.linphone.linphone</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+  <name>Linphone</name>
+  <summary>Open source softphone for voice and video over IP calling and instant messaging</summary>
+  <description>
+    <p>Open source softphone for voice and video over IP calling and instant messaging.
+      It is fully SIP-based, for all calling, presence and IM features.</p>
+  </description>
+  <developer id="org.linphone">
+    <name translate="no">Belledonne Communications</name>
+  </developer>
+  <launchable type="desktop-id">org.linphone.linphone.desktop</launchable>
+  <url type="homepage">https://www.linphone.org/en/</url>
+  <!--
+	  Unfortunately the original bugtracker is not open for the public, and the public can only use the
+  GH mirror
+          <url type="bugtracker">https://gitlab.linphone.org/BC/public/linphone-desktop/-/issues</url>
+  -->
+  <url type="bugtracker">https://github.com/BelledonneCommunications/linphone-desktop/issues</url>
+  <!--
+	  Unfortunately upstream is too often unreachable causing flatpak validations to fail
+	  <url type="vcs-browser">https://gitlab.linphone.org/BC/public/linphone-desktop</url>
+  -->
+  <url type="vcs-browser">https://github.com/BelledonneCommunications/linphone-desktop</url>
+  <url type="translate">https://weblate.linphone.org/projects/linphone</url>
+  <url type="contribute">https://www.linphone.org/en/form-to-contribute-code</url>
+  <provides>
+    <id>linphone.desktop</id>
+    <binary>linphone</binary>
+  </provides>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </supports>
+  <content_rating type="oars-1.1" />
+  <screenshots>
+    <screenshot type="default" environment="gnome">
+      <caption>Conversation and screen sharing to mobile</caption>
+      <image>https://www.linphone.org/wp-content/uploads/2024/10/4-5.png</image>
+    </screenshot>
+    <screenshot environment="gnome">
+      <caption>Video call and chat</caption>
+      <image>https://www.linphone.org/wp-content/uploads/2025/06/Hearder-gu-scaled.png</image>
+    </screenshot>
+    <screenshot environment="gnome">
+      <caption>Changing video call layout</caption>
+      <image>https://www.linphone.org/wp-content/uploads/2024/10/7.png</image>
+    </screenshot>
+  </screenshots>
+  <branding>
+    <color type="primary" scheme_preference="light">#ffffff</color>
+    <color type="primary" scheme_preference="dark">#26233a</color>
+  </branding>
+  <categories>
+    <!-- Main Categories https://specifications.freedesktop.org/menu/latest/category-registry.html -->
+    <category>AudioVideo</category>
+    <category>Audio</category>
+    <category>Video</category>
+    <category>Network</category>
+    <!-- Additional Categories https://specifications.freedesktop.org/menu/latest/additional-category-registry.html -->
+    <category>ContactManagement</category>
+    <category>InstantMessaging</category>
+    <category>Telephony</category>
+  </categories>
+  <releases>
+    <release version="6.1.2" date="2026-04-03">
+      <description>
+        <p>Added</p>
+        <ul>
+          <li>New setting to enable or disable auto check for new version on start</li>
+          <li>Accessibility improvements (visible focus on buttons to facilitate key navigation,
+            start call by pressing Enter...)</li>
+        </ul>
+        <p>Fixed</p>
+        <ul>
+          <li>UI improvements and fixes</li>
+          <li>Crash and bug fixes</li>
+        </ul>
+        <p>Changed</p>
+        <ul>
+          <li>SDK version is now 5.4.104</li>
+          <li>Qt version is now 6.10.2 (Qt &lt; 6.9 is deprecated because of the emojis rendering)</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+</component>

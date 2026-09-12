@@ -1,0 +1,92 @@
+diff --git a/external/linphone-sdk/external/libyuv/CMakeLists.txt b/external/linphone-sdk/external/libyuv/CMakeLists.txt
+index 77e0527f..f87eca92 100644
+--- a/external/linphone-sdk/external/libyuv/CMakeLists.txt
++++ b/external/linphone-sdk/external/libyuv/CMakeLists.txt
+@@ -7,6 +7,7 @@ project ( YUV C CXX )	# "C" is required even for C++ projects
+ option( UNIT_TEST "Built unit tests" OFF )
+ 
+ include(CheckCSourceCompiles)
++list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+ 
+ set ( ly_base_dir	${PROJECT_SOURCE_DIR} )
+ set ( ly_src_dir	${ly_base_dir}/source )
+@@ -171,9 +172,17 @@ endif()
+ 
+ # this creates the static library (.a)
+ add_library( ${ly_lib_static} STATIC ${ly_lib_parts})
++target_include_directories(${ly_lib_static} INTERFACE
++  $<INSTALL_INTERFACE:include>
++  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
++)
+ 
+ # this creates the shared library (.so)
+ add_library( ${ly_lib_shared} SHARED ${ly_lib_parts})
++target_include_directories(${ly_lib_shared} INTERFACE
++  $<INSTALL_INTERFACE:include>
++  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
++)
+ set_target_properties( ${ly_lib_shared} PROPERTIES OUTPUT_NAME "${ly_lib_name}" )
+ set_target_properties( ${ly_lib_shared} PROPERTIES PREFIX "lib" )
+ if(WIN32)
+@@ -192,9 +201,9 @@ target_link_libraries	( yuvconvert ${ly_lib_static} )
+ add_executable      ( yuvconstants ${ly_base_dir}/util/yuvconstants.c )
+ target_link_libraries  ( yuvconstants ${ly_lib_static} )
+ 
+-find_package ( JPEG )
+-if (JPEG_FOUND)
+-  include_directories( ${JPEG_INCLUDE_DIR} )
++find_package(TurboJpeg)
++if(TurboJpeg_FOUND)
++  set(JPEG_LIBRARY ${TurboJpeg_TARGET})
+   target_link_libraries( ${ly_lib_shared} ${JPEG_LIBRARY} )
+   add_definitions( -DHAVE_JPEG )
+ endif()
+diff --git a/external/linphone-sdk/external/libyuv/cmake/FindTurboJpeg.cmake b/external/linphone-sdk/external/libyuv/cmake/FindTurboJpeg.cmake
+new file mode 100644
+index 00000000..06874b6d
+--- /dev/null
++++ b/external/linphone-sdk/external/libyuv/cmake/FindTurboJpeg.cmake
+@@ -0,0 +1,43 @@
++include(FindPackageHandleStandardArgs)
++
++set(_TurboJpeg_REQUIRED_VARS TurboJpeg_TARGET)
++set(_TurboJpeg_CACHE_VARS ${_TurboJpeg_REQUIRED_VARS})
++
++if(TARGET turbojpeg)
++
++	set(TurboJpeg_TARGET turbojpeg)
++
++else()
++
++	find_path(_TurboJpeg_INCLUDE_DIRS
++		NAMES turbojpeg.h
++		PATH_SUFFIXES include
++	)
++
++	find_library(_TurboJpeg_LIBRARY
++		NAMES turbojpeg turbojpeg-static
++		PATH_SUFFIXES bin lib
++	)
++
++	if(_TurboJpeg_INCLUDE_DIRS AND _TurboJpeg_LIBRARY)
++		add_library(turbojpeg UNKNOWN IMPORTED)
++		set_target_properties(turbojpeg PROPERTIES
++			INTERFACE_INCLUDE_DIRECTORIES "${_TurboJpeg_INCLUDE_DIRS}"
++			IMPORTED_LOCATION "${_TurboJpeg_LIBRARY}"
++		)
++
++		include(CMakePushCheckState)
++		cmake_push_check_state(RESET)
++		list(APPEND CMAKE_REQUIRED_INCLUDES ${_TurboJpeg_INCLUDE_DIRS})
++		list(APPEND CMAKE_REQUIRED_LIBRARIES ${_TurboJpeg_LIBRARIES})
++		set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -Werror")
++
++		set(TurboJpeg_TARGET turbojpeg)
++	endif()
++
++endif()
++
++find_package_handle_standard_args(TurboJpeg
++	REQUIRED_VARS ${_TurboJpeg_REQUIRED_VARS}
++)
++mark_as_advanced(${_TurboJpeg_CACHE_VARS})

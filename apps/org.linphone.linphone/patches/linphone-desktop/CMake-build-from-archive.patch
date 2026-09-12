@@ -1,0 +1,37 @@
+diff --git a/Linphone/CMakeLists.txt b/Linphone/CMakeLists.txt
+index af9000cc6..f742a1221 100644
+--- a/Linphone/CMakeLists.txt
++++ b/Linphone/CMakeLists.txt
+@@ -63,6 +63,7 @@ bc_parse_full_version(${LINPHONEAPP_VERSION} LINPHONE_MAJOR_VERSION LINPHONE_MIN
+ 
+ set(LINPHONEAPP_SHORT_VERSION "${LINPHONE_MAJOR_VERSION}.${LINPHONE_MINOR_VERSION}.${LINPHONE_MICRO_VERSION}")
+ 
++if(NOT DEFINED GIT_BRANCH_NAME)
+ set(GIT_BRANCH_NAME)
+ execute_process(
+     COMMAND git name-rev --name-only HEAD
+@@ -70,7 +71,9 @@ execute_process(
+     OUTPUT_VARIABLE GIT_BRANCH_NAME
+     OUTPUT_STRIP_TRAILING_WHITESPACE
+ )
++endif()
+ 
++if(NOT DEFINED LINPHONESDK_VERSION)
+ set(LINPHONESDK_VERSION)
+ execute_process(
+     COMMAND git describe
+@@ -78,6 +81,7 @@ execute_process(
+     OUTPUT_VARIABLE LINPHONESDK_VERSION
+     OUTPUT_STRIP_TRAILING_WHITESPACE
+ )
++endif()
+ 
+ include(application_info.cmake)
+ string(TIMESTAMP CURRENT_YEAR "%Y")
+@@ -237,4 +241,4 @@ if (WIN32)
+ 			install(FILES "$<TARGET_PDB_FILE:${T}>" DESTINATION ${CMAKE_INSTALL_BINDIR})
+ 		endforeach ()
+ 	endif()
+-endif()
+\ No newline at end of file
++endif()
