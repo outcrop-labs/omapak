@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://gitlab.com/OpenRGBDevelopers/OpenRGBEffectsPlugin
+summary: OpenRGB Effects plugin — EAS animations, ambient effects, and LED synchronization for OpenRGB
+homepage: https://openrgb.org
+tags: [extension, utility]
+description: >-
+  Continuity submission. The OpenRGB Effects plugin (part of the OpenRGB
+  ecosystem, whose main app has 4.4k stars) was submitted to Flathub by
+  OpenRGB's own creator (flathub/flathub#9724). He fixed every technical
+  request within a day and was told "Why patch your own project? You are
+  upstream. That is nonsensical", then "Flathub is intended to host stable
+  software, not release candidates", and the stale bot closed it. omapak
+  picked it up. Manifest from that PR unchanged.
