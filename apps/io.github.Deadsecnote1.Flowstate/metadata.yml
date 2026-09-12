@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/Deadsecnote1/flowstate
+summary: Flowstate, a GTK4 focus-timer app
+tags: [utility, productivity]
+description: >-
+  Continuity submission. Flowstate, a GTK4 focus-timer app, had its Flathub
+  submission (flathub/flathub#10018) closed: "The source is barely a couple
+  days old so this falls under insufficient-development-history." omapak
+  grades the artifact, not its birthday; manifest from that PR unchanged.
