@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://gitlab.nic.cz/datovka/mobile-datovka
+summary: Mobile Datovka, the official mobile client for Czech government data boxes, by CZ.NIC
+homepage: https://datovka.nic.cz
+tags: [utility, government]
+description: >-
+  Continuity submission. Mobile Datovka is the official client for the Czech
+  Republic's government data boxes, maintained by CZ.NIC (the .cz registry).
+  Its Flathub submission (flathub/flathub#8761) was bot-closed and never
+  reviewed — even though desktop Datovka is already on Flathub. omapak picked
+  it up. Manifest from that PR unchanged.
