@@ -1,0 +1,14 @@
+submitter: jon
+source_access: proprietary
+source_repo: https://www.interactivebrokers.com
+summary: IBKR Desktop, Interactive Brokers' official desktop trading platform
+license: proprietary
+homepage: https://www.interactivebrokers.com
+tags: [finance, proprietary]
+description: >-
+  Continuity submission, proprietary pilot (MacroTrainer-style). IBKR
+  Desktop's Flathub submission (flathub/flathub#8986) passed its test builds
+  twice but died in review friction over the proprietary packaging script;
+  the packager self-closed. omapak picked it up: prebuilt installers as
+  extra-data assembled offline by apply_extra, exactly as authored in that
+  PR.
