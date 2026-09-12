@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/ebkr/r2modman
+summary: r2modman, the popular mod manager for games using Thunderstore
+description: >-
+  Continuity submission. r2modman (upstream repo now archived; successor
+  Gale was also denied, flathub/flathub#8747) is the most-used mod manager
+  on Linux for Thunderstore games. Flathub would not grant the host-spawn
+  permission it needs (flathub/flathub#8694, by TB516), so upstream
+  decided to self-host its flatpak repo instead. omapak picked it up.
+  Manifest from that PR unchanged.
+homepage: https://github.com/ebkr/r2modman
+tags: [game, utility]

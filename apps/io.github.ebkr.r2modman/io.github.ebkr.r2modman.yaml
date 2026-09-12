@@ -1,0 +1,58 @@
+id: io.github.ebkr.r2modman
+runtime: org.freedesktop.Platform
+runtime-version: "25.08"
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.node22
+base: org.electronjs.Electron2.BaseApp
+base-version: "25.08"
+command: io.github.ebkr.r2modman
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  - --talk-name=org.freedesktop.Flatpak
+  - --share=network
+  - --share=ipc
+  - --filesystem=host
+  - --filesystem=~/.var/app/com.valvesoftware.Steam:rw
+modules:
+  - name: r2modmanPlus
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/node22/bin
+      env:
+        XDG_CACHE_HOME: /run/build/r2modmanPlus/flatpak-node/cache
+        npm_config_nodedir: /usr/lib/sdk/node22
+        YARN_ENABLE_INLINE_BUILDS: "1"
+        YARN_ENABLE_TELEMETRY: "0"
+        YARN_ENABLE_NETWORK: "0"
+        YARN_ENABLE_GLOBAL_CACHE: "0"
+        YARN_GLOBAL_FOLDER: /run/build/r2modmanPlus/flatpak-node/yarn-berry
+    sources:
+      - type: git
+        url: https://github.com/ebkr/r2modmanPlus.git
+        commit: 5de59e50abe01d34eeeeeaaac9c556fdf5a6efef
+      - generated-sources.json
+      - type: file
+        url: https://repo.yarnpkg.com/4.11.0/packages/yarnpkg-cli/bin/yarn.js
+        dest-filename: yarn.cjs
+        sha256: b0efc6597348fab50c777d2ff4b09e814974058cf012c3d687c9e80bca824358
+    build-commands:
+      - chmod +x yarn.cjs
+      - 'echo "yarnPath: yarn.cjs" >> .yarnrc.yml'
+      - yarn plugin import $FLATPAK_BUILDER_BUILDDIR/flatpak-node/flatpak-yarn.js
+      - yarn convertToZip $(which yarn)
+      - yarn install
+      - yarn build-linux-unpacked
+      - cp -r dist/electron/Packaged/linux-unpacked/* /app/
+      - install -Dm644 src/assets/icon/128x128.png
+        /app/share/icons/hicolor/128x128/apps/io.github.ebkr.r2modman.png
+      - install -Dm644 src/assets/icon/256x256.png
+        /app/share/icons/hicolor/256x256/apps/io.github.ebkr.r2modman.png
+      - install -Dm644 flatpak/io.github.ebkr.r2modman.desktop
+        /app/share/applications/io.github.ebkr.r2modman.desktop
+      - install -Dm644 flatpak/io.github.ebkr.r2modman.metainfo.xml
+        /app/share/metainfo/io.github.ebkr.r2modman.metainfo.xml
+      - install -Dm755 flatpak/io.github.ebkr.r2modman
+        /app/bin/io.github.ebkr.r2modman
