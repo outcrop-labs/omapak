@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/Slicer/Slicer
+summary: 3D Slicer, the free open-source medical imaging platform used in hospitals and research labs
+description: >-
+  Continuity submission. 3D Slicer (2,625 stars, MIT) is hospital-grade
+  medical imaging software. Its Flathub submission (flathub/flathub#9202,
+  by mathiser) was closed by bot with not one human comment in the thread —
+  no reviewer ever looked. omapak picked it up. Manifest from that PR
+  unchanged.
+license: MIT
+homepage: https://www.slicer.org/
+tags: [science, medical, imaging]
