@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/App-Lab-Hub/formato
+summary: Formato, a local universal data converter for 60+ formats with TTS and STT
+license: MIT
+tags: [utility, converter]
+description: >-
+  Continuity submission. Formato, a 100%-local universal data converter for
+  60+ formats (Rust + Svelte + Tauri, with speech synthesis and recognition),
+  had its Flathub submission (flathub/flathub#9978) closed after repeated
+  attempts by the author. omapak picked it up; manifest from that PR
+  unchanged (final com.applabhub.formato app-id; the PR's stale
+  io.github.applabhub variant was dropped).
