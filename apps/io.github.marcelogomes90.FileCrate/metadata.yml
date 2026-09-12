@@ -1,0 +1,10 @@
+submitter: jon
+source_repo: https://github.com/marcelogomes90/filecrate
+summary: FileCrate, an actively developed iced-based desktop app
+tags: [utility]
+description: >-
+  Continuity submission. FileCrate is an iced-based (Rust) desktop app under
+  active development. Its Flathub submission (flathub/flathub#10008) was
+  denied with "Looking at the repository, this is only 12 days old... too
+  young under our Insufficient Development History policy." omapak judges the
+  artifact, not the birthday. Manifest from that PR unchanged.
