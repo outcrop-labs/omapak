@@ -1,0 +1,10 @@
+submitter: jon
+source_repo: https://github.com/comicdeed/jots
+summary: Jots, lightweight sticky notes for Linux with Markdown and AI/MCP integration
+license: GPL-3.0
+tags: [utility, notes]
+description: >-
+  Continuity submission. Jots, lightweight sticky notes with Markdown and
+  AI/MCP integration (modernized fork of elly-code/jorts), had its Flathub
+  submission (flathub/flathub#9918) closed. omapak picked it up; manifest
+  from that PR unchanged.
