@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/digidigital/CoverUP
+summary: CoverUP, a tool for finding and redacting sensitive content in PDFs
+license: GPL-3.0
+homepage: https://coverup.digidigital.de/
+tags: [utility, office]
+description: >-
+  Continuity submission. CoverUP (65 stars, GPL-3.0), a PDF redaction tool,
+  had its Flathub submission (flathub/flathub#7611) closed after the author
+  raised a legitimate Tk/Tcl runtime problem — Tcl/Tk was removed from the
+  49 runtime — and was told "No. You have to solve the headaches." omapak
+  picked it up. Manifest from that PR unchanged, pinned to runtime 48 where
+  Tk still ships.
