@@ -1,0 +1,10 @@
+submitter: jon
+source_repo: https://github.com/gonzaroman/superinstall
+summary: superinstall, a universal installer GUI for Linux packages
+description: >-
+  Continuity submission. superinstall (61 stars, GPL-3.0) had its Flathub
+  submission (flathub/flathub#7727) closed after the author asked "Can you
+  help me?" and the entire reply was "It doesn't." omapak picked it up.
+  Manifest from that PR unchanged.
+license: GPL-3.0
+tags: [utility, system]
