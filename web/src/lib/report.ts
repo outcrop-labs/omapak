@@ -122,8 +122,8 @@ export interface FlathubIndex {
 }
 
 export const VERDICT_LABEL: Record<Verdict, string> = {
-  published: "published",
-  build_failed: "build failed",
+  published: "recommend: accept",
+  build_failed: "recommend: changes",
 };
 
 export function advisoryAverage(rubric: Rubric): number {

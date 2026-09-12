@@ -184,13 +184,13 @@ fn main() -> Result<()> {
     std::fs::write(&md_path, render_markdown(&report))?;
 
     eprintln!(
-        "✦ {} → {}{} (report: {})",
+        "judge {} — recommendation: {}{} (report: {})",
         report.app_id,
         match verdict {
-            Verdict::Published => "PUBLISHED",
-            Verdict::BuildFailed => "BUILD FAILED",
+            Verdict::Published => "accept",
+            Verdict::BuildFailed => "changes requested",
         },
-        if certified { " [CERTIFIED]" } else { "" },
+        if certified { " [certified]" } else { "" },
         json_path.display()
     );
 

@@ -1,14 +1,11 @@
-use crate::schema::{RubricScore, Severity, Verdict};
+use crate::schema::{Severity, Verdict};
 
 /// Render a report as the PR comment. Scores are shown with a bar so a skim
 /// reads the shape of the app before any prose does.
 pub fn render_markdown(report: &crate::schema::Report) -> String {
     let mut out = String::new();
     out.push_str(&format!("## omapak judge · `{}`\n\n", report.app_id));
-
-    if !report.build.ok {
-        out.push_str("**Build failed.** Fix the manifest and push.\n\n");
-    }
+    out.push_str(&format!("**{}**\n\n", verdict_label(report.verdict)));
 
     if let Some(rubric) = &report.rubric {
         // Compact score lines, no bars, no decoration
@@ -79,18 +76,11 @@ fn first_sentence(text: &str) -> String {
 
 fn verdict_label(v: Verdict) -> &'static str {
     match v {
-        Verdict::Published => "📦 PUBLISHED",
-        Verdict::BuildFailed => "🔧 BUILD FAILED (fix and resubmit)",
+        Verdict::Published => "Recommendation: accept",
+        Verdict::BuildFailed => {
+            "Recommendation: changes requested — build failed, fix and resubmit"
+        }
     }
-}
-
-fn rubric_row(name: &str, s: &RubricScore) -> String {
-    format!("| {} | {} | {} |\n", name, bar(s.score), escape_table(&s.rationale))
-}
-
-fn bar(score: u8) -> String {
-    let score = score.min(5);
-    format!("{} {}/5", "■".repeat(score as usize) + &"□".repeat((5 - score) as usize), score)
 }
 
 fn escape_table(text: &str) -> String {
