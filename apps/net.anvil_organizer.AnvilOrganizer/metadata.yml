@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/Marc1326/Anvil-Organizer
+summary: Anvil Organizer, a native mod manager for the game Anvil
+license: GPL-3.0
+homepage: https://marc1326.github.io/Anvil-Organizer/
+tags: [game]
+description: >-
+  Continuity submission. Anvil Organizer (65 stars, GPL-3.0), a native
+  PySide6 mod manager, had its Flathub submission (flathub/flathub#8233)
+  closed with "there is no reason to review this AI slop." — the same
+  sentence, verbatim, that closed the unrelated Khushu submission
+  (flathub/flathub#7997). omapak picked it up. Manifest from that PR
+  unchanged.
