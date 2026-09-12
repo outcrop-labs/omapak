@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/opengeos/GeoLibre
+summary: GeoLibre, a cloud-native GIS platform for visualizing and analyzing geospatial data
+license: MIT
+tags: [utility]
+description: >-
+  Continuity submission. GeoLibre, a cloud-native GIS platform for visualizing and analyzing geospatial data (7267 stars on GitHub) had its Flathub
+  submission (flathub/flathub#9050) closed. omapak picked it up; manifest
+  from that PR.
