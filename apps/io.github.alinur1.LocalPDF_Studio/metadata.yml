@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/Alinur1/LocalPDF_Studio
+summary: LocalPDF Studio, an offline PDF toolkit (merge, split, convert) that keeps all processing local
+description: >-
+  Continuity submission. LocalPDF Studio (62 stars, AGPL-3.0, actively
+  maintained) had its Flathub submission (flathub/flathub#8316) closed after
+  21 comments without a single human reply. omapak picked it up. Manifest
+  from that PR unchanged: Electron BaseApp, bundled Ghostscript, pinned
+  npm sources.
+license: AGPL-3.0
+homepage: https://alinur1.github.io/LocalPDF_Studio_Website/
+tags: [office, utility]
