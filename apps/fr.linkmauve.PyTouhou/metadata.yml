@@ -1,0 +1,14 @@
+submitter: jon
+source_repo: https://pytouhou.linkmauve.fr
+summary: PyTouhou, a libre reimplementation of the Touhou 6 engine in Python and Rust
+license: GPL-3.0+
+homepage: https://pytouhou.linkmauve.fr
+tags: [game]
+description: >-
+  Continuity submission. PyTouhou, linkmauve's long-running libre
+  reimplementation of the Touhou 6 engine, had its Flathub submission
+  (flathub/flathub#9136) closed by the stale bot with no human reply. The
+  project self-hosts its Mercurial repository at pytouhou.linkmauve.fr;
+  every source in the manifest is pinned and verified reachable (the hg
+  bundle and icon on linkmauve.fr both resolve). omapak picked it up;
+  manifest from that PR unchanged.
