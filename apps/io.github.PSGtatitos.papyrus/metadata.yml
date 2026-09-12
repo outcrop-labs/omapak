@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/PSGtatitos/papyrus
+summary: Papyrus, animated wallpapers for COSMIC and Wayland built on mpvpaper
+description: >-
+  Continuity submission. Papyrus (57 stars, GPL-3.0, active) had its Flathub
+  submission (flathub/flathub#8546) closed with zero comments of any kind.
+  omapak picked it up. Manifest from that PR unchanged: GNOME runtime,
+  bundled libmpv and mpvpaper.
+license: GPL-3.0
+homepage: https://psgtatitos.github.io/papyrus-website/
+tags: [utility, desktop]
