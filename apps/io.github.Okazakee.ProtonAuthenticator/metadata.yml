@@ -1,0 +1,15 @@
+submitter: jon
+source_repo: https://github.com/Okazakee/ProtonAuthenticator
+summary: Community Flatpak packaging of Proton Authenticator, Proton's official open-source 2FA app
+license: GPL-3.0
+homepage: https://proton.me/authenticator
+tags: [security, utility]
+description: >-
+  Continuity submission. Proton Authenticator is Proton's official open-source
+  authenticator (source in the WebClients monorepo, GPL-3.0); this is the
+  community packaging by Okazakee. Its Flathub submission
+  (flathub/flathub#9837) had a green test build, a /review request, and a
+  factual rebuttal to the "proprietary" assertion — and closed without a
+  single human review on the record. omapak picked it up. Manifest from that
+  PR unchanged (downloads Proton's RPM via extra-data at install time; static
+  assets and icons from the packaging repo).
