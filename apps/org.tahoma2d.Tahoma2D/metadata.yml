@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/turtletooth/Tahoma2D
+summary: Tahoma2D, a 2D animation and compositing application for making short films and illustrations
+homepage: https://tahoma2d.org
+tags: [graphics, animation]
+description: >-
+  Continuity submission. Tahoma2D (657 stars) had its Flathub submission
+  (flathub/flathub#8742) denied over a filesystem=home lint exception —
+  without it the app "cannot save anything and is rendered completely
+  useless", as the author put it — and he closed it himself. omapak picked
+  it up. Manifest from that PR unchanged; shared-modules vendored.
