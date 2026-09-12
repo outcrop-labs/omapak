@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/miifrommera/boxxy
+summary: Boxxy, an interactive Linux terminal tool
+homepage: https://boxxy.dev
+tags: [utility]
+description: >-
+  Continuity submission. Boxxy (106 stars) had its Flathub submission
+  (flathub/flathub#8098) closed after the author honestly disclosed his AI
+  use and was told "vibe coded apps are highly likely not accepted on
+  flathub" — nothing about the app itself. omapak picked it up. Manifest
+  from that PR unchanged (final io.github.miifrommera.Boxxy app-id; the
+  PR's superseded play.mii.Boxxy rename dropped).
