@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/ProtonMail/WebClients
+summary: Proton Meet, official Proton AG video meetings packaged from the WebClients monorepo
+description: >-
+  Continuity submission. Official packaging of Proton Meet (Proton AG,
+  WebClients monorepo, GPL-3.0). Its Flathub submission
+  (flathub/flathub#8632, by the-narwhal) was closed by a moderator with the
+  entire review: "Don't need these AI slop PRs thanks. Next one will be a
+  block." omapak picked it up. Manifest from that PR unchanged; shared
+  flathub repo automation (source-update workflow) not carried over.
+license: GPL-3.0-only
+homepage: https://proton.me/meet
+tags: [network, video, meetings]
