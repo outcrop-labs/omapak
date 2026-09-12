@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/MCCORG/MCCompanion
+summary: MCCompanion, a Minecraft launcher companion published on Google, Apple, and Microsoft stores
+description: >-
+  Continuity submission. MCCompanion (GPL-3.0, active daily development,
+  live on the Google/Apple/Microsoft stores; MCCORG) had its Flathub
+  submission (flathub/flathub#9798, by hasankayra04) closed after the
+  reviewer fabricated a quote, declared "You will not get an exception",
+  and hoped "it is another reviewer taking this one in". omapak picked it
+  up. Manifest from that PR unchanged.
+license: GPL-3.0
+tags: [game, utility]
