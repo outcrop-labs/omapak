@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/fossasia/badgemagic-app
+summary: Badge Magic, FOSSASIA's tool for controlling LED name badges via USB and Bluetooth
+homepage: https://badgemagic.fossasia.org
+tags: [utility, hardware]
+description: >-
+  Continuity submission. Badge Magic (FOSSASIA, 2k stars) had its Flathub
+  submission (flathub/flathub#9587) closed with "Please fix the issues
+  instead of stupidly repeating failing builds / However i am not approving
+  an app that is vibecoded." omapak picked it up. Manifest from that PR
+  unchanged: Flutter SDK module, generated pubspec sources, llvm20.
