@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/nicx17/mimick
+summary: Mimick, a system-tray sync client for Immich servers
+license: GPL-3.0
+homepage: https://mimick.nicx.dev/
+tags: [network, utility]
+description: >-
+  Continuity submission. Mimick (129 stars, GPL-3.0), an Immich sync client
+  with system-tray integration, had its Flathub submission
+  (flathub/flathub#8080) closed as "Background daemons are not suitable" —
+  after the author posted a video proving it is a tray app, not a daemon.
+  omapak picked it up. Manifest from that PR unchanged.
