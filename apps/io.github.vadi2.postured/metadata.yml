@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/vadi2/postured
+summary: postured, a posture-reminder break tool by the creator of Mudlet
+description: >-
+  Continuity submission. postured (24 stars, GPL-3.0) is by vadi2, the
+  creator of Mudlet. His Flathub submission (flathub/flathub#7690) drew
+  "So if github tells you to `rm -fr /` you will do it?" from a reviewer.
+  omapak picked it up. Manifest from that PR unchanged: PyQt BaseApp,
+  pinned commits, vendored Python dependencies.
+license: GPL-3.0
+tags: [utility, health]
