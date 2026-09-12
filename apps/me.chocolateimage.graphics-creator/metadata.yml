@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/chocolateimage/graphics-creator
+summary: graphics-creator, a Qt-based image and graphics editor
+description: >-
+  Continuity submission. graphics-creator (28 stars, GPL-3.0, very active)
+  had its Flathub submission (flathub/flathub#9726) closed with the review
+  "Im not dealing with that." omapak picked it up. Manifest from that PR
+  unchanged: pinned Qt Advanced Docking System and app commits.
+license: GPL-3.0
+homepage: https://graphicscreator.chocolateimage.me/
+tags: [graphics, utility]
