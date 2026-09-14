@@ -1,0 +1,34 @@
+app-id: io.github.comicdeed.jots
+runtime: org.gnome.Platform
+runtime-version: '49'
+sdk: org.gnome.Sdk
+base: io.elementary.BaseApp
+base-version: 'circe-25.08'
+command: io.github.comicdeed.jots
+
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --device=dri
+
+cleanup:
+  - /include
+  - /lib/girepository-1.0
+  - /lib/pkgconfig
+  - /share/gir-1.0
+  - /share/vala
+
+cleanup-commands:
+  - /app/cleanup-BaseApp.sh
+
+modules:
+  - name: jots
+    buildsystem: meson
+    config-opts:
+      - --buildtype=release
+      - -Dicon_variant=default
+    sources:
+      - type: archive
+        url: https://github.com/comicdeed/jots/archive/refs/tags/1.0.0.tar.gz
+        sha256: cd6d35f17f8e583c3e6d3588b3306bfe7a0f150bf7dafcd139df8b0715e66d7a
