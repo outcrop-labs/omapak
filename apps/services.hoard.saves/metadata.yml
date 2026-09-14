@@ -1,0 +1,14 @@
+submitter: jon
+source_repo: https://github.com/rleeon/hoard
+summary: hoard, a command-line snippet manager
+description: >-
+  Continuity submission. hoard (100 stars, AGPL-3.0, pushed the day of
+  this submission) had its Flathub submission (flathub/flathub#10002)
+  closed by a moderator whose complete substantive explanation was:
+  "Theres a few signs of ai usage, from the agents file to the overuse of
+  pointless comments and explanation walls of text typical of it. The
+  vibes are not good here." omapak grades apps, not vibes. Manifest from
+  that PR.
+license: AGPL-3.0
+homepage: https://github.com/rleeon/hoard
+tags: [utility, developer]

@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/VoltiusApp/voltius
+summary: Voltius, a minimal, privacy-first VPN client
+description: >-
+  Continuity submission. Voltius (554 stars, AGPL-3.0, pushed the day of
+  this submission) had its Flathub submission (flathub/flathub#9821)
+  auto-closed over submission-guideline mechanics with no substantive
+  review. omapak picked it up. Manifest from that PR.
+license: AGPL-3.0
+homepage: https://voltius.app
+tags: [network, security, vpn]
