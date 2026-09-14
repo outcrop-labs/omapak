@@ -1,0 +1,14 @@
+submitter: jon
+source_repo: https://github.com/mammothpublishing/letter-friends
+summary: LetterFriends, a letter-learning game for young children, play-tested by a real three-year-old
+license: GPL-3.0
+tags: [education, game]
+description: >-
+  Continuity submission. LetterFriends (GPL-3.0) is a kids' letter game
+  "extensively and thoroughly play-tested by a real 3 year old". Its Flathub
+  submission (flathub/flathub#10031) was denied on AI grounds, with the
+  conditions "in a couple months" and "please do not use LLMs, neither for
+  the code, submission, assets", and the closing line "Also the three year
+  old needs to write a review. Themselves, not through an LLM." omapak grades
+  the artifact; the packaging here speaks for itself. Manifest from that PR
+  unchanged.
