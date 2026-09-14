@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/hyprismteam/HyPrism
+summary: HyPrism, a GPU-accelerated screen capture and annotation tool
+license: GPL-3.0
+homepage: https://github.com/hyprismteam/HyPrism
+tags: [utility, graphics]
+description: >-
+  Continuity submission. HyPrism (550 stars, GPL-3.0, pushed the day of
+  this submission) had its Flathub submission (flathub/flathub#8057)
+  blocked for 9 days over a linter finding, then auto-closed by the
+  stale-blocked bot before the author could respond. omapak picked it up.
