@@ -1,0 +1,10 @@
+submitter: jon
+source_repo: https://github.com/Sirulex/cursor-clip
+summary: Cursor Clip, a Wayland-native clipboard manager written in Rust with GTK4
+license: GPL-3.0
+tags: [utility]
+description: >-
+  Continuity submission. Cursor Clip (115 stars, GPL-3.0), a Wayland-native
+  GTK4 clipboard manager in Rust, had its Flathub submission
+  (flathub/flathub#9557) closed without review. omapak picked it up.
+  Manifest from that PR unchanged.
