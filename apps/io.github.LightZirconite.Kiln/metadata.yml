@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/LightZirconite/Kiln
+summary: Kiln, a Roblox-on-Linux client built with Qt/WebEngine
+license: GPL-3.0
+tags: [game, utility]
+description: >-
+  Continuity submission. Kiln (GPL-3.0) is a young but serious Roblox client
+  for Linux. Its Flathub submission (flathub/flathub#9877) passed Flathub's
+  own test build and was denied anyway on "insufficient development history"
+  — "You are welcome to resubmit it in 3-4 months." omapak picks it up now;
+  we ship what builds. Manifest from that PR unchanged.
