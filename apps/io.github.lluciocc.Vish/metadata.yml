@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/Lluciocc/Vish
+summary: Vish, visual scripting for Bash — build shell pipelines as node graphs
+description: >-
+  Continuity submission. Vish (301 stars, MIT) is the third app by Lluciocc
+  denied by Flathub this quarter, after Shapebound (#8952) and Groovia
+  (#9703). omapak picked it up. Manifest from that PR, pinned to the
+  current v1.1.4 release (upstream moved its desktop/metainfo paths since
+  the flathub attempt).
+license: MIT
+tags: [development, utility]

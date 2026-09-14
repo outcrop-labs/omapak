@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.lluciocc.Vish</id>
+  <name>Vish</name>
+  <summary>Visual Bash Editor</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <description>
+    <p>
+        Vish is an editor for creating Bash scripts using a node interface. 
+        It allows users to design their scripts by connecting nodes that represent different 
+        Bash commands and basic programming concepts.
+        Vish is made for educational purposes and to simplify the process of creating Bash scripts.
+    </p>
+  </description>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#3a4a55</color>
+    <color type="primary" scheme_preference="dark">#1f2a31</color>
+  </branding>
+
+  <launchable type="desktop-id">io.github.lluciocc.Vish.desktop</launchable>
+
+  <url type="homepage">https://codeberg.org/Lluciocc/Vish</url>
+  <url type="bugtracker">https://codeberg.org/Lluciocc/Vish/issues</url>
+  <url type="vcs-browser">https://codeberg.org/Lluciocc/Vish</url>
+  <url type="contribute">https://codeberg.org/Lluciocc/Vish/wiki/Contributing</url>
+  <url type="translate">https://codeberg.org/Lluciocc/Vish/wiki/Contributing#translating</url>
+  <url type="donation">https://github.com/Lluciocc/Vish?sponsor=1</url>
+  
+  <developer id="io.github.lluciocc">
+    <name>Lluciocc</name>
+  </developer>
+
+  <content_rating type="oars-1.1"/>
+  
+  <screenshots>
+    <screenshot type="default">
+      <caption>Node scripting workflow (1)</caption>
+      <image>https://raw.githubusercontent.com/Lluciocc/vish-utils/main/screenshots/screenshots1.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Node scripting workflow (2)</caption>
+      <image>https://raw.githubusercontent.com/Lluciocc/vish-utils/main/screenshots/screenshots2.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Node scripting workflow (3)</caption>
+      <image>https://raw.githubusercontent.com/Lluciocc/vish-utils/main/screenshots/screenshots3.png</image>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="1.1.4" date="2026-09-13">
+      <description>
+        <ul>
+          <li>Redesigned the interface with responsive layouts, unified dialogs, and a customizable toolbar</li>
+          <li>Added a new theme engine with built-in and user-defined themes</li>
+          <li>Improved edge reconnection, replacement, deletion, and visual feedback</li>
+          <li>Expanded comments with body text, title resizing, locking, and z-order management</li>
+          <li>Improved translations, keyboard shortcuts, project loading, and logging</li>
+          <li>Fixed node registration and configuration saving</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.1.3" date="2026-04-03">
+      <description>
+        <p>Fix bugs, improve performance, adding czech translation, improved logging system</p>
+      </description>
+    </release>
+    <release version="1.1.2" date="2026-04-03">
+      <description>
+        <p>Fix bugs and improve performance</p>
+      </description>
+    </release>
+    <release version="1.1.1" date="2026-03-30">
+      <description>
+        <p>Improve icons, Adding custom themes and fix bugs</p>
+      </description>
+    </release>
+    <release version="1.1.0" date="2026-03-22">
+      <description>
+        <p>Improve stablity and icons for visuals</p>
+      </description>
+    </release>
+    <release version="1.0.4" date="2026-03-17">
+      <description>
+        <p>Improve UI/UX and stablity</p>
+      </description>
+    </release>
+    <release version="1.0.3" date="2026-03-03">
+      <description>
+        <p>Improve UI and stablity</p>
+      </description>
+    </release>
+    <release version="1.0.2" date="2026-02-18">
+      <description>
+        <p>Initial Flathub release.</p>
+      </description>
+    </release>
+  </releases>
+</component>
