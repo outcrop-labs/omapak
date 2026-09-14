@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/wusel1007/clamav-gui
+summary: ClamAV-GUI, a Qt front-end for the ClamAV antivirus engine
+license: GPL-3.0
+tags: [security, utility]
+description: >-
+  Continuity submission. ClamAV-GUI, a Qt front-end for ClamAV (61 stars),
+  had its Flathub submission (flathub/flathub#10140) closed as "AV software
+  is inherently system-level software, and is not a good fit for Flathub" —
+  even though the comparable ClamUI ships there. omapak picked it up;
+  manifest from that PR unchanged, including its org.freedesktop.Flatpak
+  talk permission, which the omapak judge scores and reports rather than
+  gate on.
