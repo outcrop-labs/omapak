@@ -1,0 +1,9 @@
+submitter: jon
+source_repo: https://github.com/denislupookov/altersend
+summary: altersend, send files directly between devices over the internet
+license: NOASSERTION
+tags: [utility]
+description: >-
+  Continuity submission. altersend, send files directly between devices over the internet (1660 stars on GitHub) had its Flathub
+  submission (flathub/flathub#9256) closed. omapak picked it up; manifest
+  from that PR.
