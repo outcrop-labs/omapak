@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://gitlab.com/OpenRGBDevelopers/OpenRGBVisualMapPlugin
+summary: OpenRGB VisualMap plugin — virtual device layouts for mapping LEDs across monitors and accessories
+homepage: https://openrgb.org
+tags: [extension, utility]
+description: >-
+  Continuity submission. The OpenRGB VisualMap plugin was submitted to
+  Flathub by OpenRGB's own creator (flathub/flathub#9727) alongside the
+  Effects and E131 Receiver plugins. After he fixed every request within a
+  day, all three were closed — this one with the one-liner "Same reason
+  applies to #9724" — and the stale bot finished them off. omapak picked it
+  up. Manifest from that PR unchanged.
