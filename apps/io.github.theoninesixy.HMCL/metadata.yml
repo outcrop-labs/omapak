@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/HMCL-dev/HMCL
+summary: HMCL, the Hello Minecraft! Launcher (10k stars)
+description: >-
+  Continuity submission. HMCL (10,036 stars, GPL-3.0, pushed the day of
+  this submission) had its Flathub submission (flathub/flathub#9967)
+  closed: the test build succeeded, the submitter contacted upstream as
+  asked, and the PR was then auto-closed on a checklist technicality.
+  omapak picked it up. Manifest from that PR, sources pinned to upstream
+  releases.
+license: GPL-3.0
+homepage: https://hmcl.huangyuhui.net
+tags: [game, launcher]
