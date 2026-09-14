@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/reville/lighttable-digital-darkroom
+summary: LightTable, an open-source digital darkroom for RAW photographs with non-destructive editing and film simulation
+license: GPL-3.0
+tags: [graphics, photography]
+description: >-
+  Continuity submission. LightTable (Rust, GPL-3.0) is a digital darkroom for
+  RAW photographs with non-destructive editing and photographic film
+  simulation, with a serious dependency tree for a young project. Its Flathub
+  submission (flathub/flathub#10174) was auto-closed for "files not in the
+  right place"; the author posted /review and no human ever looked. omapak
+  picked it up. Manifest from that PR unchanged (builds from pinned sources
+  with vendored locks).
