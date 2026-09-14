@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/sniper1720/khushu
+summary: Khushu, a Muslim companion app for prayer and dhikr (GTK4/libadwaita, Rust)
+description: >-
+  Continuity submission. Khushu (34 stars, GPL-3.0, active, Arabic +
+  multilingual) had its Flathub submission (flathub/flathub#7997) closed
+  with the one-line review "there is no reason to review this AI slop" —
+  word-identical to the review another app received the same week. omapak
+  picked it up. Manifest from that PR unchanged: pinned release tarball,
+  vendored cargo sources.
+license: GPL-3.0
+tags: [utility, education]
