@@ -1,0 +1,10 @@
+submitter: jon
+source_repo: https://github.com/edneyosf/Edconv
+summary: Edconv, a cross-platform multimedia converter built with Go and Fyne
+description: >-
+  Continuity submission. Edconv (763 stars) had its Flathub submission
+  (flathub/flathub#7048) closed without a single human comment across 36
+  bot-and-author messages. omapak picked it up. Manifest from that PR
+  unchanged, pinned to its 1.4.0 source tarball.
+license: MIT
+tags: [utility, audio, video]
