@@ -1,0 +1,10 @@
+submitter: jon
+source_repo: https://github.com/qarmin/czkawka
+summary: Krokiet, fast image duplicate and similarity finder with a Slint GUI, by the czkawka author
+description: >-
+  Continuity submission. Krokiet is the newer GUI from the author of czkawka
+  (33k+ stars). Its Flathub submission (flathub/flathub#7717) was closed
+  automatically — not a single human comment in the thread. omapak picked it
+  up. Manifest from that PR unchanged.
+license: GPL-3.0
+tags: [utility, graphics]
