@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/andrewbenington/OpenHome
+summary: OpenHome, a native Linux home-server dashboard for your services
+description: >-
+  Continuity submission. OpenHome (377 stars, very active — pushed within
+  the last week) got a single stale-bot comment on its Flathub submission
+  (flathub/flathub#6350) and closure; no human ever replied. omapak
+  picked it up. Manifest from that PR with one fix: the metainfo install
+  path ended in .xml2 and never landed where appstream parsers look.
+license: MIT
+tags: [network, utility]
