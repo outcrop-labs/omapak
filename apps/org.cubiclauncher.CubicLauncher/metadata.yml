@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/CubicLauncherDevs/CubicLauncher
+summary: CubicLauncher, an open-source Minecraft launcher built with Tauri and SvelteKit
+license: GPL-3.0-only
+homepage: https://cubiclauncher.org
+tags: [game, utility]
+description: >-
+  Continuity submission. CubicLauncher (young but very active, Tauri +
+  SvelteKit) had its Flathub submission (flathub/flathub#9668) bot-closed
+  without a single human review. omapak picked it up. Manifest from that PR
+  unchanged, with vendored cargo/node sources.
