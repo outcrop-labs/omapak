@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/Kesomannen/gale
+summary: Gale, a modern mod manager for Thunderstore and the successor to r2modman
+license: GPL-3.0-only
+homepage: https://kesomannen.com/gale
+tags: [game, utility]
+description: >-
+  Continuity submission. Gale (750 stars, r2modman's successor by the same
+  community) had its Flathub submission (flathub/flathub#8747) receive zero
+  human replies of any kind until the author gave up and self-closed. omapak
+  picked it up. Manifest from that PR unchanged.
