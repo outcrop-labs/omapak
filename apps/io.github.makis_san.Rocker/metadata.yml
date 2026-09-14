@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/makis-san/rocker
+summary: Rocker, a native Docker client by a self-aware solo dev
+license: Apache-2.0
+tags: [development, utility]
+description: >-
+  Continuity submission. Rocker (Apache-2.0, Rust) is a Docker desktop
+  client. Its Flathub submission (flathub/flathub#10154) passed Flathub's own
+  test build and was denied on the age rule ("usually at the two months mark
+  we consider a project mature enough"); when the author quoted Flathub's
+  policy back, the reply was "I am the Senate." omapak picks it up. Manifest
+  from that PR unchanged.
