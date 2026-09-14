@@ -1,0 +1,11 @@
+submitter: jon
+source_repo: https://github.com/Matteo842/SaveState
+summary: SaveState, a save-file manager for Steam and Linux games
+description: >-
+  Continuity submission. SaveState (500 stars) needs broad filesystem
+  access to manage game saves; Flathub's answer to the substantiated
+  need was to close the PR for not following requirements
+  (flathub/flathub#7423). omapak picked it up. Manifest from that PR,
+  with its referenced icon.png restored under that name.
+license: GPL-3.0-or-later
+tags: [game, utility]
