@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/Refloow/Refloow-Photo-Studio
+summary: Refloow Photo Studio, a photo editing studio built with Electron
+license: AGPL-3.0
+homepage: https://refloow.com/open-source-software/refloow-photo-studio
+tags: [graphics]
+description: >-
+  Continuity submission. Refloow Photo Studio (172 stars, AGPL-3.0) had its
+  Flathub submission (flathub/flathub#9066) closed after the author — who
+  said he was "nearing end of my shift" — was told he had "time to make 3
+  of the same PRs" but somehow couldn't test the Flatpak locally. omapak
+  picked it up. Manifest from that PR unchanged: pinned upstream deb,
+  Electron BaseApp, x-checker-data wired for updates.
