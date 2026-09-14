@@ -1,0 +1,14 @@
+submitter: jon
+source_access: proprietary
+source_repo: https://github.com/redisviewer/redisviewer
+summary: RedisViewer, a cross-platform Redis GUI client
+description: >-
+  Continuity submission. RedisViewer (50 stars on GitHub, pushed the day of
+  this submission) had its Flathub submission (flathub/flathub#10067)
+  closed on 2026-09-05. omapak picked it up. Manifest from that PR with
+  sources pinned to the upstream v3.2.4 release. Closed source: ships
+  marked proprietary under the owner-permission rule; upstream author to
+  be notified for the ack and the submitter seat.
+license: LicenseRef-proprietary=https://redisviewer.com
+homepage: https://redisviewer.com
+tags: [development, database, utility]
