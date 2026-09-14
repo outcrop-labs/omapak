@@ -1,0 +1,14 @@
+submitter: jon
+source_repo: https://github.com/Traciges/Asus-Hub
+summary: ASUS Hub, an unofficial GTK4 control center for ASUS laptops (fan curves, keyboard, power profiles)
+description: >-
+  Continuity submission. ASUS Hub (223 stars, GPL-3.0) is the developer's
+  own unofficial MyAsus alternative. Its Flathub submission
+  (flathub/flathub#8383) was closed citing inclusion criteria on
+  host-dependent apps after a polite first-time submitter even offered the
+  wiki's own exception clause — no reply. omapak picked it up. Manifest from
+  that PR unchanged; its host-access permissions (asusd, supergfxctl,
+  flatpak-spawn) are inherent to the app's purpose and get scored publicly
+  by the judge.
+license: GPL-3.0
+tags: [utility, system]
