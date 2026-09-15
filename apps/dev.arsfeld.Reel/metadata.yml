@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/arsfeld/gnome-reel
+summary: Reel, a GTK4/libadwaita image gallery client for Immich
+description: >-
+  Continuity submission. Reel (196 stars, actively developed — v0.7.8
+  out last week) was told at Flathub "don't use a chatbot to submit PR,
+  it's offensive", complied with every request, and was finally waved
+  off with "It's easier for us to ignore it." (flathub/flathub#6848).
+  omapak picked it up. Manifest from that PR unchanged (v0.1.0 pin with
+  vendored cargo sources).
+license: MIT
+tags: [graphics, utility]
