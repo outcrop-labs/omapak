@@ -1,0 +1,12 @@
+submitter: jon
+source_repo: https://github.com/flyingpie/windows-terminal-quake
+summary: WTQ, a Quake-style dropdown terminal for Linux — multi-monitor, configurable
+description: >-
+  Continuity submission. WTQ (785 stars, MIT) passed Flathub's own test
+  build (flathub#6718), then was blocked on a desktop-environment rule
+  that exists nowhere in the submission requirements; when the author
+  asked where it was written, the answer was "Two wrongs don't make a
+  right." omapak picked it up. Manifest from that PR unchanged, with the
+  flathub shared-modules libappindicator vendored.
+license: MIT
+tags: [utility]
