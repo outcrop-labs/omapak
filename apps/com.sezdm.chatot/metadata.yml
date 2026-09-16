@@ -1,0 +1,15 @@
+submitter: sezaru
+source_repo: https://github.com/sezaru/chatot
+summary: Chatot, a native GTK4 WhatsApp client that links to your phone like WhatsApp Web
+license: GPL-3.0-or-later
+homepage: https://github.com/sezaru/chatot
+tags: [chat, messaging, gnome]
+description: >-
+  Unofficial WhatsApp client for the Linux desktop, written in Go with GTK4
+  and libadwaita on top of the whatsmeow library. It links to a phone as a
+  companion device and covers chats, groups, communities, channels and
+  status updates: text, replies, reactions, media with an in-app viewer,
+  voice notes (recording, playback, optional on-device transcripts with
+  whisper.cpp), locations, message search, desktop notifications and a tray
+  item. Not affiliated with WhatsApp or Meta. Built from the tagged release
+  with the Go modules vendored, so the build is offline.

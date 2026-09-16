@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.sezdm.chatot</id>
+  <name>Chatot</name>
+  <summary>Unofficial WhatsApp client</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="com.sezdm">
+    <name>Eduardo Barreto Alexandre</name>
+  </developer>
+  <update_contact>chatot@sezdm.com</update_contact>
+
+  <description>
+    <p>
+      Chatot is a GTK4 native WhatsApp client for the desktop. It links to
+      your phone as a companion device, like WhatsApp Web, and keeps your
+      chats, groups, communities, channels and status updates.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Text, replies, reactions, forwards, edits and deletes</li>
+      <li>Photos, videos, voice notes, documents, stickers and GIFs, with an in-app viewer</li>
+      <li>Voice-note recording and playback</li>
+      <li>Locations with an inline map, live locations and place search</li>
+      <li>Groups, communities, channels and status updates</li>
+      <li>Full-text message search, archive, pins, mutes and starred messages</li>
+      <li>Several linked accounts in one window</li>
+      <li>Desktop notifications and a tray item with the unread count</li>
+    </ul>
+    <p>
+      Chatot is an unofficial client built on the whatsmeow library. It is not
+      affiliated with, endorsed by or supported by WhatsApp or Meta. Using an
+      unofficial client may be against WhatsApp's terms of service.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">com.sezdm.chatot.desktop</launchable>
+  <provides>
+    <binary>chatot</binary>
+  </provides>
+
+  <url type="homepage">https://github.com/sezaru/chatot</url>
+  <url type="bugtracker">https://github.com/sezaru/chatot/issues</url>
+  <url type="vcs-browser">https://github.com/sezaru/chatot</url>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#d9efe8</color>
+    <color type="primary" scheme_preference="dark">#0f3d33</color>
+  </branding>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/sezaru/chatot/v0.5.0-beta/data/screenshots/chat.png</image>
+      <caption>A chat with a link preview, a live location, an event and a voice note</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/sezaru/chatot/v0.5.0-beta/data/screenshots/media.png</image>
+      <caption>Photos, clips, voice notes and documents in a chat</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/sezaru/chatot/v0.5.0-beta/data/screenshots/group.png</image>
+      <caption>A group conversation with replies and mentions</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/sezaru/chatot/v0.5.0-beta/data/screenshots/chat-dark.png</image>
+      <caption>The dark style</caption>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-audio">intense</content_attribute>
+    <content_attribute id="social-location">intense</content_attribute>
+  </content_rating>
+
+  <requires>
+    <internet>always</internet>
+  </requires>
+  <recommends>
+    <display_length compare="ge">768</display_length>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </recommends>
+
+  <releases>
+    <release version="0.16.0-beta" date="2026-09-16">
+      <description>
+        <p>A voice note or audio keeps playing when you move to another chat: a mini-player under the chat list holds it with play/pause, a seekable track and a stop button, and its name takes you back to the note. The accounts menu's Relabel became Edit profile, setting the WhatsApp name, About text, profile picture and the account's badge colour. Chats can be deleted (synced to the phone), media not yet fetched has a Download row in its menu, contact and group cards can open the picture, status updates notify under the poster's name with a switch to silence them, group invite links open the Join group dialog, and the viewer gained a 1:1 zoom and no longer lags when opening or stepping through photos.</p>
+      </description>
+    </release>
+    <release version="0.15.0-beta" date="2026-09-12">
+      <description>
+        <p>Voice notes can be transcribed with a second, more accurate speech model: the download prompt offers whisper.cpp's Small (the default) and Large v3 Turbo side by side, with each one's download size, memory while transcribing, and speed, and Preferences → Network gained a Speech model row that opens the same prompt. Each model is downloaded once and both stay on disk, so switching back costs nothing. A model download that hits a passing server error is retried instead of failing.</p>
+      </description>
+    </release>
+    <release version="0.14.0-beta" date="2026-09-11">
+      <description>
+        <p>Photos and clips one sender posts together show as a single album bubble with a grid of up to four tiles and a "+N" for the rest, as WhatsApp groups them. A tile opens the viewer on its own picture, downloads on click, and offers that picture's menu on right-click; reactions on any picture of the run show under the album.</p>
+      </description>
+    </release>
+    <release version="0.13.0-beta" date="2026-09-11">
+      <description>
+        <p>Voice notes and audio can play at 1.5× or 2×: a pill on the playing note (and on the viewer's bar) picks the speed, which then holds for every audio. chatot follows the desktop's colours on DankMaterialShell and Omarchy, live as the theme changes, with a switch under Preferences › Appearance. The unread count on the account rail is centred, and the filter chips line up with the search box and fade at their edges when there are more.</p>
+      </description>
+    </release>
+    <release version="0.12.0-beta" date="2026-09-11">
+      <description>
+        <p>Voice notes are transcribed as soon as they arrive when automatic transcription is on, instead of waiting for their chat to be opened. The forward dialog opens instantly and ticking a chat no longer stalls.</p>
+      </description>
+    </release>
+    <release version="0.11.0-beta" date="2026-09-11">
+      <description>
+        <p>Search now finds what was said in transcribed voice notes, marked with a mic in the results; an in-chat search highlights the words in the transcript. Opening a search result older than the newest messages lands on it instead of saying the message isn't available. After the computer wakes from sleep, or the connection drops, chatot reconnects within seconds instead of minutes. The Flatpak builds again.</p>
+      </description>
+    </release>
+    <release version="0.10.0-beta" date="2026-09-11">
+      <description>
+        <p>WhatsApp links open in chatot: the "open in app" button of a wa.me page lands in the chat with the message prefilled. Pressing Enter with the draft selected sends it instead of deleting it. A chat started from a number stays one chat when the person replies. A forwarded message moves its chat to the top of the list right away. Businesses that only appeared as numbers now show their verified name.</p>
+      </description>
+    </release>
+    <release version="0.9.3-beta" date="2026-09-11">
+      <description>
+        <p>Searching for a message no longer widens the chat list: a long chat name in a result used to push the sidebar past its size, and off the window at phone widths. Opening a result now lands on the matched message instead of the end of the chat.</p>
+      </description>
+    </release>
+    <release version="0.9.2-beta" date="2026-09-11">
+      <description>
+        <p>Tapping a business button or list option now reaches the business. WhatsApp had been refusing every reply, so a tap did nothing; the reply is sent the way the phone sends it, and a refused one says so in a toast instead of vanishing.</p>
+      </description>
+    </release>
+    <release version="0.9.1-beta" date="2026-09-11">
+      <description>
+        <p>Fixes a chat that broke its layout: a reply quoting a message with a long unbroken token (a Pix key, a hash, a link) pushed the whole pane past the window's edge as soon as it scrolled into view. Quotes and every other label that shows text from the network now wrap inside the bubble.</p>
+        <p>Business buttons and lists are now real buttons: tap a reply to send it, a link to open it, a number or code to copy it, and a list to pick from it. A WhatsApp Flow button says it only opens on the phone. In a narrow window, an open attachment tray hides the chat header so the files cannot be left behind, the hover reaction and menu pair keeps its size, and a group's media rows fit 360px.</p>
+      </description>
+    </release>
+    <release version="0.9.0-beta" date="2026-09-10">
+      <description>
+        <p>Chatot now fits a narrow window. Below 720px the chat list and the open chat take turns, with a back button in the header, and every screen fits down to 360px wide: long chat titles end in an ellipsis, and the attach tray, the attachment viewer's header and cards and its filmstrip all shrink with the pane instead of running off its edge.</p>
+        <p>Voice transcripts: one button starts, stops and folds a transcript; your own notes are transcribed too; a running transcription says how long it has been going. A run of voice notes fetches the next note instead of stopping at it.</p>
+        <p>Faster: the thread reuses a bubble's contents instead of rebuilding them, the chat list looks up each chat's last message once, and a tapped reaction shows at once. The chat list shows the whole message on hover when the row cuts it, and the chat header says typing the way the list does.</p>
+      </description>
+    </release>
+    <release version="0.8.2-beta" date="2026-09-10">
+      <description>
+        <p>Relink is no longer offered for an account that is still linked. Pairing replaces a session, so the card could only ever answer that the account was already linked; it now appears only for an account that has actually been signed out.</p>
+      </description>
+    </release>
+    <release version="0.8.1-beta" date="2026-09-10">
+      <description>
+        <p>Unlinking this device now takes effect. The window returns to the pairing screen with a fresh code instead of carrying on as though nothing had happened, and a code appears again without restarting chatot.</p>
+        <p>Fixes: the Relink card under Accounts shows a code rather than waiting for one that never arrived; removing the only account signs it out and returns it to pairing instead of doing nothing at all; an unlink WhatsApp does not confirm is reported rather than passing silently; red text, such as a signed-out account's "scan to relink", is legible in dark mode.</p>
+      </description>
+    </release>
+    <release version="0.8.0-beta" date="2026-09-09">
+      <description>
+        <p>Voice notes can be transcribed on this computer with whisper.cpp: a button on the note, or automatically for new notes with a setting, with the speech model downloaded on first use. Transcripts fold under the note like WhatsApp's, with an option to keep them open.</p>
+        <p>Fixes: stickers show at once with a pending clock like other sends; your own reaction appears without switching chats; a group's typing notice names who is typing; a reply to a message that is not loaded quotes it instead of a bare "reply"; the attach tray hands focus back after a send and accepts a pasted image in its caption; a file dropped on the chat attaches; group notifications name the sender.</p>
+      </description>
+    </release>
+    <release version="0.7.2-beta" date="2026-09-09">
+      <description>
+        <p>Accents typed with dead keys now compose in the message input on GNOME and other desktops with an input method, as they already did in the search box.</p>
+      </description>
+    </release>
+    <release version="0.7.1-beta" date="2026-09-09">
+      <description>
+        <p>Diagnostics for typing accents: with CHATOT_TRACE=1 the app logs how dead keys are composed in the message input and the search box, and it always logs which input method it uses.</p>
+      </description>
+    </release>
+    <release version="0.7.0-beta" date="2026-09-09">
+      <description>
+        <p>The picture viewer pinch-zooms and drags to pan. Release builds: Flatpak bundles and AppImages for x86_64 and aarch64 are attached to every GitHub release.</p>
+      </description>
+    </release>
+    <release version="0.6.0-beta" date="2026-09-08">
+      <description>
+        <p>A chat wallpaper: pick any picture under Preferences, and override it per chat from the chat menu with a picture of its own or the plain background. On a wide window the messages and the input stop growing and stay centred, as on WhatsApp Web. The sticker picker fills with the phone's recent stickers, a sticker in a chat can be added to it, and notifications show the contact's or group's picture.</p>
+      </description>
+    </release>
+    <release version="0.5.0-beta" date="2026-09-08">
+      <description>
+        <p>First public release. Link previews under pasted links, sharp previews for pictures and clips that are not downloaded yet, and Copy image in the viewer. Voice notes remember their played state and position and advance to the next one. A reply quote jumps to the original message, and the chat list names who sent a group's last message. Sidebar refreshes and thread paging moved off the main loop, so long chats scroll smoothly.</p>
+      </description>
+    </release>
+    <release version="0.4.0-beta" date="2026-09-06">
+      <description>
+        <p>Calls are logged in the thread and the chat list, and a call that rang while the machine was asleep no longer rings on resume. Reactions to your messages notify and show as the chat preview. Sends show at once with a pending clock and offer a retry on failure. GIF search, a sticker library and WhatsApp favourites.</p>
+      </description>
+    </release>
+    <release version="0.3.0-beta" date="2026-09-04">
+      <description>
+        <p>The conversation thread is a GtkListView with relative scrolling, so older pages load without flicker. Preferences are fully wired: font size, window controls, notification sound and text privacy, message previews, tray icon, proxy, auto-download, storage and a log file. Packages can ship their own notification sound.</p>
+      </description>
+    </release>
+    <release version="0.2.0-beta" date="2026-09-04">
+      <description>
+        <p>Smooth scrolling in long chats and the chat list, avatars from the disk cache first, the pairing screen returns after a logout, and unread badges leave the archive out like the phone does.</p>
+      </description>
+    </release>
+    <release version="0.1.0-beta" date="2026-09-03">
+      <description>
+        <p>First public beta: chats, groups, communities, channels, status updates, media, voice notes, locations, search and multi-account support.</p>
+      </description>
+    </release>
+  </releases>
+</component>
