@@ -83,6 +83,26 @@
   </recommends>
 
   <releases>
+    <release version="0.16.4-beta" date="2026-09-17">
+      <description>
+        <p>Stepping through the attachment viewer no longer asks to download a document that was already downloaded from the chat.</p>
+      </description>
+    </release>
+    <release version="0.16.3-beta" date="2026-09-16">
+      <description>
+        <p>A pasted link's preview card shows up as soon as the message is sent, instead of only after the chat is reopened.</p>
+      </description>
+    </release>
+    <release version="0.16.2-beta" date="2026-09-16">
+      <description>
+        <p>The About card shows the running release again: the version is now stamped into the build from the metainfo instead of being kept by hand, so it can no longer fall behind.</p>
+      </description>
+    </release>
+    <release version="0.16.1-beta" date="2026-09-16">
+      <description>
+        <p>The chat header, with its name and ⋮ menu, comes back after a chat is deleted instead of staying hidden until the Chats tab is clicked. A status video no longer keeps playing behind another tab, an opened chat, or the narrow layout's list; it holds while off screen and resumes when the viewer returns.</p>
+      </description>
+    </release>
     <release version="0.16.0-beta" date="2026-09-16">
       <description>
         <p>A voice note or audio keeps playing when you move to another chat: a mini-player under the chat list holds it with play/pause, a seekable track and a stop button, and its name takes you back to the note. The accounts menu's Relabel became Edit profile, setting the WhatsApp name, About text, profile picture and the account's badge colour. Chats can be deleted (synced to the phone), media not yet fetched has a Download row in its menu, contact and group cards can open the picture, status updates notify under the poster's name with a switch to silence them, group invite links open the Join group dialog, and the viewer gained a 1:1 zoom and no longer lags when opening or stepping through photos.</p>

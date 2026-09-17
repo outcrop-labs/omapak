@@ -140,7 +140,8 @@ modules:
         GOCACHE: /run/build/chatot/.gocache
     build-commands:
       # sqlite_fts5: message search uses go-sqlite3's bundled SQLite with FTS5.
-      - go build -tags sqlite_fts5 -ldflags='-s -w' -o /app/bin/chatot ./cmd/chatot
+      # The About card's version is the newest <release> in the metainfo.
+      - go build -tags sqlite_fts5 -ldflags="-s -w -X chatot/internal/ui.aboutVersion=$(sed -n 's/.*<release version=\"\([^\"]*\)\".*/\1/p' data/com.sezdm.chatot.metainfo.xml | head -n1)" -o /app/bin/chatot ./cmd/chatot
       - install -Dm644 data/com.sezdm.chatot.desktop -t /app/share/applications
       - install -Dm644 data/com.sezdm.chatot.metainfo.xml -t /app/share/metainfo
       - install -Dm644 internal/ui/assets/chatot-icon.svg /app/share/icons/hicolor/scalable/apps/com.sezdm.chatot.svg
@@ -148,8 +149,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/sezaru/chatot.git
-        tag: v0.16.0-beta
-        commit: bb79175b6346adb27627006d748c181ba41f3cea
+        tag: v0.16.4-beta
+        commit: 788c63435d3dec75b98f39562018d09b01cf2117
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+(?:-beta)?)$
