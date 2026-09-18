@@ -1,0 +1,13 @@
+submitter: jon
+source_repo: https://github.com/mfat/systemd-pilot
+summary: systemd Pilot, a lightweight libadwaita manager for systemd services
+description: >-
+  Continuity submission. systemd Pilot (246 stars, MIT-licensed metadata,
+  GPL-3 app) was bot-closed at Flathub with zero comments of any kind
+  (flathub/flathub#5949). omapak picked it up. The flathub PR's manifest
+  carried an app-id that matched nothing else in the repo — aligned to
+  the io.github id used by upstream's own desktop and metainfo files,
+  runtime bumped from EOL GNOME 45 to 50, source pinned to v3.0, and the
+  upstream metainfo installed (the PR never installed one).
+license: GPL-3.0-or-later
+tags: [utility, system]
