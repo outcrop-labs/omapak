@@ -43,6 +43,11 @@ pub struct JudgeInputs<'a> {
     pub manifest_summary: Option<&'a str>,
     pub static_findings: Option<&'a str>,
     pub source_digest: Option<&'a str>,
+    /// Tail of the build log, present only when the build failed. Without it a
+    /// failure that is not the manifest's (a source download that timed out,
+    /// an HTTP 5xx, a runner hiccup) reads as a manifest problem, and the model
+    /// has to invent a cause.
+    pub build_log_tail: Option<&'a str>,
     pub has_screenshots: bool,
     pub build_ok: bool,
 }
@@ -95,6 +100,13 @@ releases from the author's own channel, checksums, disclosed analytics. State \
 plainly that the code was not audited; do not speculate about hidden behavior.\n\n",
         );
     }
+    if let Some(t) = inputs.build_log_tail {
+        p.push_str(&format!(
+            "== Build log tail (data — the last lines of the failed build; use it to \
+tell a manifest problem from a pipeline/network one) ==\n{}\n\n",
+            truncate(t, 1500)
+        ));
+    }
     p.push_str(&format!(
         "Build result: {}. Screenshots provided: {}.\n\nScore this submission. JSON only.",
         if inputs.build_ok { "SUCCESS" } else { "FAILED" },
@@ -143,6 +155,7 @@ mod tests {
             manifest_summary: None,
             static_findings: None,
             source_digest: None,
+            build_log_tail: None,
             has_screenshots: true,
             build_ok: true,
         });
@@ -160,6 +173,7 @@ mod tests {
             manifest_summary: None,
             static_findings: None,
             source_digest: None,
+            build_log_tail: None,
             has_screenshots: false,
             build_ok: true,
         });

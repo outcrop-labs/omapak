@@ -125,6 +125,7 @@ fn main() -> Result<()> {
         &static_report,
         build_ok,
         has_screenshots,
+        &build_report.log_tail,
         config.as_ref(),
     )?;
 
@@ -229,6 +230,7 @@ fn finish_judging(
     static_report: &StaticReport,
     build_ok: bool,
     has_screenshots: bool,
+    build_log_tail: &[String],
     config: Option<&judge_stage::JudgeConfig>,
 ) -> Result<(Option<Rubric>, Option<omapak_core::JudgeInfo>)> {
     let Some(config) = config else {
@@ -251,6 +253,13 @@ fn finish_judging(
     // appstream presence, advisories, and source stats to judge honestly.
     let mut stripped = static_report.clone(); stripped.linters = vec![]; let static_findings = serde_json::to_string_pretty(&stripped).ok();
 
+    // Only on a failed build, and only the tail: a build can fail for reasons
+    // that are not the manifest's (measured: a transient HTTP 504 downloading a
+    // pinned source), and without the log the model has to guess which it was —
+    // it guessed wrong and scored the manifest down for it.
+    let failed_build_log = (!build_ok && !build_log_tail.is_empty())
+        .then(|| build_log_tail.join("\n"));
+
     let inputs = prompt::JudgeInputs {
         app_id: static_report
             .manifest
@@ -261,6 +270,7 @@ fn finish_judging(
         manifest_summary: manifest_summary.as_deref(),
         static_findings: static_findings.as_deref(),
         source_digest: source_digest.as_deref(),
+        build_log_tail: failed_build_log.as_deref(),
         has_screenshots,
         build_ok,
     };

@@ -10,7 +10,16 @@ pub struct ManifestInfo {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub runtime: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub runtime_version: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sdk: Option<String>,
+    /// Base app and its branch (`base:`/`base-version:`). Carried because the
+    /// summary is what the model sees: without them a manifest that declares
+    /// them reads as one that forgot to.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub base: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub base_version: Option<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub finish_args: Vec<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -26,6 +35,22 @@ pub struct ModuleInfo {
     pub sources: Vec<SourceRef>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub buildsystem: Option<String>,
+    /// The module's own build commands. Part of the summary for the same
+    /// reason as `base`: otherwise a module that installs its payload with
+    /// `build-commands` reads as a module with no way to install anything.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub build_commands: Vec<String>,
+    /// True when the manifest entry was a bare string — a *path to another
+    /// module file* (`- python3-requirements.json`), which flatpak-builder
+    /// expands in place. Such an entry has no fields, so requiring a `name`
+    /// dropped it, and the summary then read as if nothing consumed that
+    /// file. Its contents are not resolved here; the entry itself is listed.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub include: bool,
+}
+
+fn is_false(b: &bool) -> bool {
+    !*b
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -77,6 +102,20 @@ pub fn parse_manifest(text: &str) -> anyhow::Result<ManifestInfo> {
         .map(|arr| {
             arr.iter()
                 .filter_map(|m| {
+                    // A module entry can be a bare string: a path to another
+                    // module file (`- python3-requirements.json`), which
+                    // flatpak-builder expands in place. It has no `name`, so
+                    // the old `m.get("name")?` dropped it and the summary read
+                    // as though nothing consumed that file.
+                    if let Some(included) = m.as_str() {
+                        return Some(ModuleInfo {
+                            name: included.to_string(),
+                            sources: vec![],
+                            buildsystem: None,
+                            build_commands: vec![],
+                            include: true,
+                        });
+                    }
                     let name = m.get("name")?.as_str()?.to_string();
                     let sources = m
                         .get("sources")
@@ -100,6 +139,16 @@ pub fn parse_manifest(text: &str) -> anyhow::Result<ManifestInfo> {
                         name,
                         sources,
                         buildsystem: m.get("buildsystem").and_then(|v| v.as_str()).map(String::from),
+                        build_commands: m
+                            .get("build-commands")
+                            .and_then(|v| v.as_array())
+                            .map(|a| {
+                                a.iter()
+                                    .filter_map(|v| v.as_str().map(String::from))
+                                    .collect()
+                            })
+                            .unwrap_or_default(),
+                        include: false,
                     })
                 })
                 .collect()
@@ -109,7 +158,16 @@ pub fn parse_manifest(text: &str) -> anyhow::Result<ManifestInfo> {
     Ok(ManifestInfo {
         app_id,
         runtime: value.get("runtime").and_then(|v| v.as_str()).map(String::from),
+        runtime_version: value
+            .get("runtime-version")
+            .and_then(|v| v.as_str())
+            .map(String::from),
         sdk: value.get("sdk").and_then(|v| v.as_str()).map(String::from),
+        base: value.get("base").and_then(|v| v.as_str()).map(String::from),
+        base_version: value
+            .get("base-version")
+            .and_then(|v| v.as_str())
+            .map(String::from),
         finish_args: str_vec("finish-args"),
         modules,
         command: value.get("command").and_then(|v| v.as_str()).map(String::from),
@@ -267,5 +325,50 @@ modules:
             find_manifest(&base).unwrap().file_name().unwrap().to_str().unwrap(),
             "manifest.yml"
         );
+    }
+
+    /// The shape of a real submission (io.github.alexwest1981.OmaAmp, judged
+    /// 2026-09-18): the summary carried none of `runtime-version`, `base`,
+    /// `base-version` or a module's `build-commands`, and it dropped the
+    /// `- python3-requirements.json` include entirely — so a build that failed
+    /// on a transient HTTP 504 was read by the model as "no runtime-version,
+    /// no build-commands, nothing consuming the requirements file" and the
+    /// app was scored as if its manifest were broken.
+    #[test]
+    fn carries_the_fields_the_model_needs_to_verify_a_manifest() {
+        const PYQT_YAML: &str = r#"
+app-id: io.example.PyQtApp
+runtime: org.kde.Platform
+runtime-version: "6.11"
+sdk: org.kde.Sdk
+base: com.riverbankcomputing.PyQt.BaseApp
+base-version: "6.11"
+command: app
+finish-args:
+  - --socket=pulseaudio
+modules:
+  - python3-requirements.json
+  - name: app
+    buildsystem: simple
+    build-commands:
+      - mkdir -p ${FLATPAK_DEST}/app
+      - install -Dm755 app.sh ${FLATPAK_DEST}/bin/app
+    sources:
+      - type: git
+        url: https://github.com/example/app
+        commit: 7d630f8543e8226cb6e291fdd548fca5f08056c1
+"#;
+        let m = parse_manifest(PYQT_YAML).unwrap();
+        assert_eq!(m.runtime_version.as_deref(), Some("6.11"));
+        assert_eq!(m.base.as_deref(), Some("com.riverbankcomputing.PyQt.BaseApp"));
+        assert_eq!(m.base_version.as_deref(), Some("6.11"));
+
+        assert_eq!(m.modules.len(), 2, "the bare-string include must survive");
+        assert!(m.modules[0].include);
+        assert_eq!(m.modules[0].name, "python3-requirements.json");
+
+        assert!(!m.modules[1].include);
+        assert_eq!(m.modules[1].build_commands.len(), 2);
+        assert!(m.modules[1].build_commands[1].contains("${FLATPAK_DEST}/bin/app"));
     }
 }
