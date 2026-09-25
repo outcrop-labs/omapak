@@ -16,7 +16,7 @@
     </p>
   </description>
   <launchable type="desktop-id">io.github.brdweb.MaTui.desktop</launchable>
-  <icon type="stock">audio-speakers</icon>
+  <icon type="stock">ma-tui</icon>
   <developer id="io.github.brdweb">
     <name>brdweb</name>
   </developer>
@@ -34,6 +34,18 @@
   </categories>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="1.1.0" date="2026-09-25">
+      <description>
+        <p>
+          Add editable multi-track queue actions and direct queue clearing.
+          Local playback accepts Music Assistant's cached stream-start audio
+          burst with bounded memory and reports a real queue bound failure
+          instead of reconnecting indefinitely. Add the MA-TUI application icon,
+          compact audio file metadata and Omarchy palette support in the Flatpak.
+        </p>
+      </description>
+    </release>
+
     <release version="0.9.3" date="2026-09-17">
       <description>
         <p>
