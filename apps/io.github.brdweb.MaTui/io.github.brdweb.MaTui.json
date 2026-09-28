@@ -2,7 +2,7 @@
     "id": "io.github.brdweb.MaTui",
     "branch": "stable",
     "runtime": "org.freedesktop.Platform",
-    "runtime-version": "25.08",
+    "runtime-version": "26.08",
     "sdk": "org.freedesktop.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable"
@@ -12,7 +12,10 @@
         "--command=ma-tui",
         "--share=network",
         "--socket=pulseaudio",
+        "--unset-env=NO_COLOR",
         "--talk-name=org.freedesktop.secrets",
+        "--own-name=org.mpris.MediaPlayer2.ma_tui",
+        "--talk-name=org.freedesktop.Notifications",
         "--filesystem=~/.local/state/omarchy/current:ro"
     ],
     "build-options": {
@@ -77,6 +80,7 @@
                 "install -Dm755 target/release/ma-tui /app/bin/ma-tui",
                 "install -Dm644 packaging/flatpak/io.github.brdweb.MaTui.desktop /app/share/applications/io.github.brdweb.MaTui.desktop",
                 "desktop-file-validate /app/share/applications/io.github.brdweb.MaTui.desktop",
+                "install -Dm644 packaging/ma-tui.svg /app/share/icons/hicolor/scalable/apps/ma-tui.svg",
                 "install -Dm644 io.github.brdweb.MaTui.metainfo.xml /app/share/metainfo/io.github.brdweb.MaTui.metainfo.xml",
                 "install -Dm644 LICENSE /app/share/licenses/ma-tui/LICENSE"
             ],
@@ -84,8 +88,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/brdweb/ma-tui.git",
-                    "tag": "v0.9.3",
-                    "commit": "4cd3b229a5aefa47f37404a2e5c3e672cdb3fcc3"
+                    "tag": "v1.1.0",
+                    "commit": "ed8bf8aca05493c079b986494e10d6ca37f99b50"
                 },
                 {
                     "type": "file",

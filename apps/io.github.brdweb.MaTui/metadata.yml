@@ -3,7 +3,7 @@ source_repo: https://github.com/brdweb/ma-tui
 summary: Terminal controller and local speaker for Music Assistant
 description: >-
   Builds ma-tui from source (Rust/Cargo, vendored via cargo-sources.json) at
-  tag v0.9.3. Two extra modules: alsa-lib (org.freedesktop.Platform ships the
+  tag v1.1.0. Two extra modules: alsa-lib (org.freedesktop.Platform ships the
   runtime .so but not headers/pkg-config, which the alsa-sys build needs) and
   libsecret built with -Dcrypto=disabled (secret-tool only, plain D-Bus
   Secret Service negotiation, no gcrypt/gnutls module needed).
