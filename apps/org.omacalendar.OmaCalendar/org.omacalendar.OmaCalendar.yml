@@ -1,4 +1,4 @@
-# OmaCalendar v1.1.1 is built from the public source revision below.  The
+# OmaCalendar v2.0.1 is built from the public source revision below.  The
 # pinned archives and full Git commit make every network-fetched input
 # reproducible.
 app-id: org.omacalendar.OmaCalendar
@@ -129,4 +129,4 @@ modules:
     sources:
       - type: git
         url: https://github.com/brdweb/omacalendar.git
-        commit: aa8b2c4f4559de88ea2577f956fde85f4525fe2b
+        commit: 38fda8b2e06d253279a54c09ac6348537795630c
