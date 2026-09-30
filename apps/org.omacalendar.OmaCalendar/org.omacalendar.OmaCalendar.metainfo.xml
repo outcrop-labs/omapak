@@ -40,6 +40,12 @@
   </recommends>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="2.0.1" date="2026-09-30" type="stable">
+      <description><p>No change to the calendar itself. In native Arch/Omarchy installations, the built-in widget installer now installs the Omarchy bar widget 0.2.0, which adds a Tasks view and connects once the calendar service starts after the bar.</p></description>
+    </release>
+    <release version="2.0.0" date="2026-09-29" type="stable">
+      <description><p>Tasks synced with CalDAV and Google Tasks, guests' availability with a find-next-free-time helper, undo and redo, a second time zone column, search by guest and time, printing to PDF, attachments and Google Meet links, a structured recurrence editor, natural-language quick add, and faster views and sync on large calendars. Google accounts sign in again once for the new permissions.</p></description>
+    </release>
     <release version="1.1.1" date="2026-09-22" type="stable">
       <description><p>A correctness fix for all-day events published with an inclusive end date: the Google and iCalendar read paths normalize the span to the exclusive next day, an iCalendar payload with a backwards all-day span no longer fails to parse as a whole, and already-cached events are repaired on read.</p></description>
     </release>
