@@ -1,0 +1,17 @@
+submitter: jon
+source_repo: https://github.com/storytold/pdfcraft
+summary: Read, organize, combine, split and secure PDFs
+license: MIT OR Apache-2.0
+homepage: https://getartcraft.com/apps/pdfcraft
+tags: [office, pdf, viewer]
+description: >-
+  PdfCraft is a PDF reader and editor that combines, splits and secures
+  documents, part of the ArtCraft Crafting Apps: a clean-room suite
+  written in Rust by Learning Machines LLC.
+
+  Packaged from upstream's release tarball at v0.4.0
+  (pdfcraft-0.4.0-linux-x86_64.tar.gz and the aarch64 build), the same
+  artifact their own single-file .flatpak is built from, using their own
+  bundle manifest unchanged. x-checker-data tracks the GitHub release
+  feed, so a new upstream tag arrives here as an automatic version-bump PR
+  and is judged like any other submission.
