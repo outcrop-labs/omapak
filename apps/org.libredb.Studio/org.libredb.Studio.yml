@@ -74,7 +74,22 @@ modules:
       # directory as <exe dir>/../lib/<product name>, hence usr/bin next to
       # usr/lib/libredb-studio-desktop.
       - install -Dm755 squashfs-root/usr/bin/libredb-studio-desktop ${FLATPAK_DEST}/libredb-studio/usr/bin/libredb-studio-desktop
-      - install -Dm755 squashfs-root/usr/bin/node ${FLATPAK_DEST}/libredb-studio/usr/bin/node
+
+      # 0.9.62 renamed the bundled Node sidecar to libredb-studio-node so the
+      # sibling GUI .deb does not claim /usr/bin/node, which the distro nodejs
+      # package owns (issue #241). Either name is accepted so this manifest also
+      # builds against an AppImage from before the rename; the shell probes both
+      # (desktop/src-tauri/src/layout.rs).
+      - |
+        for candidate in libredb-studio-node node; do
+          if [ -f "squashfs-root/usr/bin/$candidate" ]; then
+            install -Dm755 "squashfs-root/usr/bin/$candidate" \
+              "${FLATPAK_DEST}/libredb-studio/usr/bin/$candidate"
+            exit 0
+          fi
+        done
+        echo "no bundled Node sidecar found in the AppImage" >&2
+        exit 1
       - install -d ${FLATPAK_DEST}/libredb-studio/usr/lib
       - cp -r squashfs-root/usr/lib/libredb-studio-desktop ${FLATPAK_DEST}/libredb-studio/usr/lib/libredb-studio-desktop
 
@@ -86,8 +101,8 @@ modules:
       - type: file
         only-arches:
           - x86_64
-        url: https://github.com/libredb/libredb-studio/releases/download/0.9.60/libredb-studio-desktop-0.9.60-linux-x64.AppImage
-        sha256: "ec7a9e8c700a944f5e046e9f8e405afc0f8874a8965dc2960193a39bee052bdc"
+        url: https://github.com/libredb/libredb-studio/releases/download/0.17.0/libredb-studio-desktop-0.17.0-linux-x64.AppImage
+        sha256: "343ec10165d341499d0544d8e7072277d3a36f6f844827de6784f1a3134947de"
         dest-filename: libredb-studio.AppImage
         x-checker-data:
           type: json
@@ -99,8 +114,8 @@ modules:
       - type: file
         only-arches:
           - aarch64
-        url: https://github.com/libredb/libredb-studio/releases/download/0.9.60/libredb-studio-desktop-0.9.60-linux-arm64.AppImage
-        sha256: "931d7cdc78189c0d523f70e2c00bc3b0893f7c28715420226e24ec6b2a83326e"
+        url: https://github.com/libredb/libredb-studio/releases/download/0.17.0/libredb-studio-desktop-0.17.0-linux-arm64.AppImage
+        sha256: "e9684304f7ecea470d14b3f04ab0c7fcbb25cf42d3e3a0dc18dceabef0750596"
         dest-filename: libredb-studio.AppImage
         x-checker-data:
           type: json
