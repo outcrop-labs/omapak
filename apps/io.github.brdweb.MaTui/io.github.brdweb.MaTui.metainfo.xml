@@ -16,7 +16,7 @@
     </p>
   </description>
   <launchable type="desktop-id">io.github.brdweb.MaTui.desktop</launchable>
-  <icon type="stock">ma-tui</icon>
+  <icon type="stock">io.github.brdweb.MaTui</icon>
   <developer id="io.github.brdweb">
     <name>brdweb</name>
   </developer>
@@ -34,6 +34,20 @@
   </categories>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="1.1.1" date="2026-10-09">
+      <description>
+        <p>
+          Target Music Assistant 2.10.5 with the existing Sendspin 0.3.7 client.
+          Update compatibility guidance and verify sandbox, keyring, terminal
+          controls and silent audio output using disposable-container fixtures.
+          Keep bounded audio reservations compatible with newer Rust toolchains.
+          Export the catalog package icon under its Flatpak application ID.
+          Use the platform ALSA runtime so PulseAudio plugins remain discoverable.
+          Physical desktop output and media-key qualification remain unperformed.
+        </p>
+      </description>
+    </release>
+
     <release version="1.1.0" date="2026-09-25">
       <description>
         <p>

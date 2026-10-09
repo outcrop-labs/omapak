@@ -34,6 +34,11 @@
             "cleanup": [
                 "/include",
                 "/lib/pkgconfig",
+                "/lib/libasound.so*",
+                "/lib/libasound.la",
+                "/lib/libatopology.so*",
+                "/lib/libatopology.la",
+                "/share/alsa",
                 "/share/aclocal"
             ],
             "sources": [
@@ -79,8 +84,9 @@
                 "cargo --offline build --release --locked",
                 "install -Dm755 target/release/ma-tui /app/bin/ma-tui",
                 "install -Dm644 packaging/flatpak/io.github.brdweb.MaTui.desktop /app/share/applications/io.github.brdweb.MaTui.desktop",
+                "desktop-file-edit --set-icon=io.github.brdweb.MaTui /app/share/applications/io.github.brdweb.MaTui.desktop",
                 "desktop-file-validate /app/share/applications/io.github.brdweb.MaTui.desktop",
-                "install -Dm644 packaging/ma-tui.svg /app/share/icons/hicolor/scalable/apps/ma-tui.svg",
+                "install -Dm644 packaging/ma-tui.svg /app/share/icons/hicolor/scalable/apps/io.github.brdweb.MaTui.svg",
                 "install -Dm644 io.github.brdweb.MaTui.metainfo.xml /app/share/metainfo/io.github.brdweb.MaTui.metainfo.xml",
                 "install -Dm644 LICENSE /app/share/licenses/ma-tui/LICENSE"
             ],
@@ -88,8 +94,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/brdweb/ma-tui.git",
-                    "tag": "v1.1.0",
-                    "commit": "ed8bf8aca05493c079b986494e10d6ca37f99b50"
+                    "tag": "v1.1.1",
+                    "commit": "ef4c9237fa056603c1f8e796e60ba36a07230f2f"
                 },
                 {
                     "type": "file",
