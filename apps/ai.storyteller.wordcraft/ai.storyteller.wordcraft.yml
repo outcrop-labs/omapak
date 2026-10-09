@@ -1,0 +1,75 @@
+# WordCraft for omapak, repackaged from upstream's own release tarball.
+#
+# storytold/wordcraft ships a flatpak-builder manifest and a full set of release
+# artifacts for every tag, including a single-file .flatpak built by
+# packaging/linux/flatpak/ai.storyteller.wordcraft.bundle.yml. That bundle
+# manifest repackages the release's Linux tarball instead of compiling Rust
+# inside flatpak-builder; this manifest is that same file, so what omapak ships
+# is byte-for-byte the binaries upstream published.
+#
+# Everything below — runtime, command, finish-args, install steps — is
+# upstream's and is meant to stay identical to their bundle manifest. The one
+# omapak-side change is the source: the tarball per arch, pinned by sha256 and
+# annotated with x-checker-data, so update-apps.yml
+# (flatpak-external-data-checker) bumps the version, URL and digest by itself
+# when upstream tags a release and opens a PR that goes through the judge.
+#
+# The installed metainfo is the one inside the tarball, where upstream's
+# package.sh has already substituted the release's version and date. The copy
+# in this directory is what the judge lints and the site catalog reads.
+id: ai.storyteller.wordcraft
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: wordcraft
+finish-args:
+  # Display: Wayland first; X11 only when no Wayland compositor is running.
+  - --socket=wayland
+  - --socket=fallback-x11
+  # X11 shared memory (MIT-SHM). Without it the X11 fallback is slow or fails.
+  - --share=ipc
+  # GPU access for the wgpu renderer (Vulkan, or GL as a fallback).
+  - --device=dri
+  # Open/Save dialogs go through the file-chooser portal (rfd's xdg-portal backend) and
+  # drag-and-drop through the document portal, so picked files work anywhere without broad
+  # filesystem access. Documents and Pictures are granted so files passed by path (the command
+  # line, Open Recent, "Save" next to the original) work in the usual places.
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-pictures
+  # Deliberately not granted: network (the optional --control server listens on 127.0.0.1 in
+  # the sandbox; `flatpak override --user --share=network ai.storyteller.wordcraft` exposes it to
+  # host agents) and home/host filesystem access.
+modules:
+  - name: wordcraft
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 bin/wordcraft /app/bin/wordcraft
+      - install -Dm755 bin/wordcraft-cli /app/bin/wordcraft-cli
+      - install -Dm644 share/applications/ai.storyteller.wordcraft.desktop /app/share/applications/ai.storyteller.wordcraft.desktop
+      - install -Dm644 share/mime/packages/ai.storyteller.wordcraft.xml /app/share/mime/packages/ai.storyteller.wordcraft.xml
+      # Already has the release's version and date substituted by package.sh.
+      - install -Dm644 share/metainfo/ai.storyteller.wordcraft.metainfo.xml /app/share/metainfo/ai.storyteller.wordcraft.metainfo.xml
+      # Docs include the licences of the embedded craft-fonts (OFL-*.txt).
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/wordcraft /app/share/doc/
+    sources:
+      - type: archive
+        url: https://github.com/storytold/wordcraft/releases/download/v0.3.0/wordcraft-0.3.0-linux-x86_64.tar.gz
+        sha256: c0b3a4b61afe0e8891b1386f73dc94adf528d8d87360f3fb71a97ba03381aec2
+        only-arches: [x86_64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/wordcraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/wordcraft/releases/download/v" + $version + "/wordcraft-" + $version + "-linux-x86_64.tar.gz"'
+          is-main-source: true
+      - type: archive
+        url: https://github.com/storytold/wordcraft/releases/download/v0.3.0/wordcraft-0.3.0-linux-aarch64.tar.gz
+        sha256: c3bd964e73e7cd2c556a9d0eba04acd41aefac8dbce39ec7223360a7d1fbcd36
+        only-arches: [aarch64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/wordcraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/wordcraft/releases/download/v" + $version + "/wordcraft-" + $version + "-linux-aarch64.tar.gz"'
