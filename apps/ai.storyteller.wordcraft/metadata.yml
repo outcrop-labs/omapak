@@ -1,0 +1,17 @@
+submitter: jon
+source_repo: https://github.com/storytold/wordcraft
+summary: Write and design documents; open and save Word files
+license: MIT OR Apache-2.0
+homepage: https://getartcraft.com/apps/wordcraft
+tags: [office, writing, editor]
+description: >-
+  WordCraft is a word processor that opens and saves Word documents, part
+  of the ArtCraft Crafting Apps: a clean-room suite written in Rust by
+  Learning Machines LLC.
+
+  Packaged from upstream's release tarball at v0.3.0
+  (wordcraft-0.3.0-linux-x86_64.tar.gz and the aarch64 build), the same
+  artifact their own single-file .flatpak is built from, using their own
+  bundle manifest unchanged. x-checker-data tracks the GitHub release
+  feed, so a new upstream tag arrives here as an automatic version-bump PR
+  and is judged like any other submission.
