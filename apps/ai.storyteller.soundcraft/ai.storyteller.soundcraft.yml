@@ -1,0 +1,97 @@
+# SoundCraft for omapak, repackaged from upstream's own release tarball.
+#
+# storytold/soundcraft ships a flatpak-builder manifest and a full set of release
+# artifacts for every tag, including a single-file .flatpak built by
+# packaging/linux/flatpak/ai.storyteller.soundcraft.bundle.yml. That bundle
+# manifest repackages the release's Linux tarball instead of compiling Rust
+# inside flatpak-builder; this manifest is that same file, so what omapak ships
+# is byte-for-byte the binaries upstream published.
+#
+# Everything below — runtime, command, finish-args, install steps — is
+# upstream's and is meant to stay identical to their bundle manifest. The one
+# omapak-side change is the source: the tarball per arch, pinned by sha256 and
+# annotated with x-checker-data, so update-apps.yml
+# (flatpak-external-data-checker) bumps the version, URL and digest by itself
+# when upstream tags a release and opens a PR that goes through the judge.
+#
+# The installed metainfo is the one inside the tarball, where upstream's
+# package.sh has already substituted the release's version and date. The copy
+# in this directory is what the judge lints and the site catalog reads.
+id: ai.storyteller.soundcraft
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: soundcraft
+finish-args:
+  # Display: Wayland first; X11 only when no Wayland compositor is running.
+  - --socket=wayland
+  - --socket=fallback-x11
+  # X11 shared memory (MIT-SHM). Without it the X11 fallback is slow or fails.
+  - --share=ipc
+  # GPU access for the wgpu UI (Vulkan, or GL as a fallback).
+  - --device=dri
+  # Playback and recording. cpal talks to ALSA; the runtime's alsa-lib routes ALSA through its
+  # PulseAudio plugin to this socket, which PipeWire's pulse server provides on modern desktops
+  # (and PulseAudio itself on older ones). Deliberately not granted: --device=all (raw /dev/snd
+  # for direct ALSA hardware access, which would bypass the sound server) and JACK, which
+  # SoundCraft doesn't use (cpal's jack feature is off; there is no live MIDI I/O either).
+  - --socket=pulseaudio
+  # Open/Save dialogs use the file-chooser portal (rfd) and drag-and-drop the document portal,
+  # so broad filesystem access isn't needed. Music is granted for sessions and their
+  # "Audio Files" folders opened by path from the command line.
+  - --filesystem=xdg-music
+  # VST3 and CLAP plugin hosts. The per-user plugin folders the hosts scan, read-only.
+  # System folders (/usr/lib/vst3, /usr/lib/clap) aren't reachable from the sandbox, and plugins
+  # there are linked against the host's libraries rather than the runtime's; sandboxed plugins
+  # come from Flatpak extensions instead (add-extensions below), found through these paths.
+  - --filesystem=~/.vst3:ro
+  - --filesystem=~/.clap:ro
+  - --env=VST3_PATH=/app/extensions/Plugins/vst3
+  - --env=CLAP_PATH=/app/extensions/Plugins/clap
+# Flathub's shared audio-plugin extension point (org.freedesktop.LinuxAudio.Plugins.*, the one
+# Ardour, Bitwig and friends use). Optional: nothing is downloaded unless the user installs a
+# plugin extension; merge-dirs lets every installed one appear under .../Plugins/{vst3,clap}.
+add-extensions:
+  org.freedesktop.LinuxAudio.Plugins:
+    directory: extensions/Plugins
+    version: '25.08'
+    add-ld-path: lib
+    merge-dirs: vst3;clap
+    subdirectories: true
+    no-autodownload: true
+modules:
+  - name: soundcraft
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 bin/soundcraft /app/bin/soundcraft
+      - install -Dm755 bin/soundcraft-cli /app/bin/soundcraft-cli
+      - install -Dm644 share/applications/ai.storyteller.soundcraft.desktop /app/share/applications/ai.storyteller.soundcraft.desktop
+      # Session files; the runtime's shared-mime-info already knows WAV, AIFF, FLAC, MP3 and MIDI.
+      - install -Dm644 share/mime/packages/ai.storyteller.soundcraft.xml /app/share/mime/packages/ai.storyteller.soundcraft.xml
+      # Already has the release's version and date substituted by package.sh.
+      - install -Dm644 share/metainfo/ai.storyteller.soundcraft.metainfo.xml /app/share/metainfo/ai.storyteller.soundcraft.metainfo.xml
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/soundcraft /app/share/doc/
+      # Mount point for the plugin extensions (add-extensions).
+      - install -d /app/extensions/Plugins
+    sources:
+      - type: archive
+        url: https://github.com/storytold/soundcraft/releases/download/v0.3.0/soundcraft-0.3.0-linux-x86_64.tar.gz
+        sha256: 31d4a3e4efe88aa47291b2b5aa85e45679fd73988eb951015ddb24eb2bba9322
+        only-arches: [x86_64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/soundcraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/soundcraft/releases/download/v" + $version + "/soundcraft-" + $version + "-linux-x86_64.tar.gz"'
+          is-main-source: true
+      - type: archive
+        url: https://github.com/storytold/soundcraft/releases/download/v0.3.0/soundcraft-0.3.0-linux-aarch64.tar.gz
+        sha256: a4d8bdaab7f13343843c8c2fa48f2389543ffa74e87358bb9a9b1559605e660b
+        only-arches: [aarch64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/soundcraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/soundcraft/releases/download/v" + $version + "/soundcraft-" + $version + "-linux-aarch64.tar.gz"'
