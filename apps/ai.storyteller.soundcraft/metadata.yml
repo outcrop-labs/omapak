@@ -1,0 +1,21 @@
+submitter: jon
+source_repo: https://github.com/storytold/soundcraft
+summary: Record, edit and mix audio and MIDI
+license: MIT OR Apache-2.0
+homepage: https://getartcraft.com/apps/soundcraft
+tags: [audio, daw, music]
+description: >-
+  SoundCraft is a digital audio workstation for audio and MIDI, part of
+  the ArtCraft Crafting Apps: a clean-room suite written in Rust by
+  Learning Machines LLC.
+
+  Packaged from upstream's release tarball at v0.3.0
+  (soundcraft-0.3.0-linux-x86_64.tar.gz and the aarch64 build), the same
+  artifact their own single-file .flatpak is built from, using their own
+  bundle manifest unchanged. x-checker-data tracks the GitHub release
+  feed, so a new upstream tag arrives here as an automatic version-bump PR
+  and is judged like any other submission.
+
+  Carries upstream's org.freedesktop.LinuxAudio.Plugins extension point,
+  so system VST3 and CLAP plugins load into the sandbox; ~/.vst3 and
+  ~/.clap come in read-only.
