@@ -1,0 +1,74 @@
+# GridCraft for omapak, repackaged from upstream's own release tarball.
+#
+# storytold/gridcraft ships a flatpak-builder manifest and a full set of release
+# artifacts for every tag, including a single-file .flatpak built by
+# packaging/linux/flatpak/ai.storyteller.gridcraft.bundle.yml. That bundle
+# manifest repackages the release's Linux tarball instead of compiling Rust
+# inside flatpak-builder; this manifest is that same file, so what omapak ships
+# is byte-for-byte the binaries upstream published.
+#
+# Everything below — runtime, command, finish-args, install steps — is
+# upstream's and is meant to stay identical to their bundle manifest. The one
+# omapak-side change is the source: the tarball per arch, pinned by sha256 and
+# annotated with x-checker-data, so update-apps.yml
+# (flatpak-external-data-checker) bumps the version, URL and digest by itself
+# when upstream tags a release and opens a PR that goes through the judge.
+#
+# The installed metainfo is the one inside the tarball, where upstream's
+# package.sh has already substituted the release's version and date. The copy
+# in this directory is what the judge lints and the site catalog reads.
+id: ai.storyteller.gridcraft
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: gridcraft
+finish-args:
+  # Display: Wayland first; X11 only when no Wayland compositor is running.
+  - --socket=wayland
+  - --socket=fallback-x11
+  # X11 shared memory (MIT-SHM). Without it the X11 fallback is slow or fails.
+  - --share=ipc
+  # GPU access for rendering.
+  - --device=dri
+  # Open/Save dialogs use the file-chooser portal (rfd), and drag-and-drop uses the document
+  # portal, so broad filesystem access isn't needed. Documents and Downloads are granted for
+  # opening workbooks by path from the command line.
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-download
+  # Deliberately not granted: network (the optional --control channel listens on 127.0.0.1 in
+  # the sandbox; `flatpak override --user --share=network ai.storyteller.gridcraft` exposes it to
+  # host agents) and home/host filesystem access.
+modules:
+  - name: gridcraft
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 bin/gridcraft /app/bin/gridcraft
+      # Headless CLI and MCP server: `flatpak run --command=gridcraft-cli ai.storyteller.gridcraft`.
+      - install -Dm755 bin/gridcraft-cli /app/bin/gridcraft-cli
+      - install -Dm644 share/applications/ai.storyteller.gridcraft.desktop /app/share/applications/ai.storyteller.gridcraft.desktop
+      - install -Dm644 share/mime/packages/ai.storyteller.gridcraft.xml /app/share/mime/packages/ai.storyteller.gridcraft.xml
+      # Already has the release's version and date substituted by package.sh.
+      - install -Dm644 share/metainfo/ai.storyteller.gridcraft.metainfo.xml /app/share/metainfo/ai.storyteller.gridcraft.metainfo.xml
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/gridcraft /app/share/doc/
+    sources:
+      - type: archive
+        url: https://github.com/storytold/gridcraft/releases/download/v0.3.0/gridcraft-0.3.0-linux-x86_64.tar.gz
+        sha256: e515ae88ae2480a04a4b5d249540ee82ac521d0be8b86bbca8f56547bc8154ff
+        only-arches: [x86_64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/gridcraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/gridcraft/releases/download/v" + $version + "/gridcraft-" + $version + "-linux-x86_64.tar.gz"'
+          is-main-source: true
+      - type: archive
+        url: https://github.com/storytold/gridcraft/releases/download/v0.3.0/gridcraft-0.3.0-linux-aarch64.tar.gz
+        sha256: c200cf6af2b5da99239f10e836a6e7ad9c4dc4c50ca44983700d1d960bf50e2b
+        only-arches: [aarch64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/gridcraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/gridcraft/releases/download/v" + $version + "/gridcraft-" + $version + "-linux-aarch64.tar.gz"'
