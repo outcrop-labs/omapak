@@ -1,0 +1,23 @@
+submitter: jon
+source_repo: https://github.com/storytold/filmcraft
+summary: Edit video, color and sound
+license: MIT OR Apache-2.0
+homepage: https://getartcraft.com/apps/filmcraft
+tags: [video, audiovideo, editor]
+description: >-
+  FilmCraft is a non-linear video editor with colour and audio work in the
+  same timeline, part of the ArtCraft Crafting Apps: a clean-room suite
+  written in Rust by Learning Machines LLC.
+
+  Packaged from upstream's release tarball at v0.4.0
+  (filmcraft-0.4.0-linux-x86_64.tar.gz and the aarch64 build), the same
+  artifact their own single-file .flatpak is built from, using their own
+  bundle manifest unchanged. x-checker-data tracks the GitHub release
+  feed, so a new upstream tag arrives here as an automatic version-bump PR
+  and is judged like any other submission.
+
+  Upstream's finish-args are wider here than in its sibling apps
+  (--filesystem=home plus /media, /run/media and /mnt): a video editor has
+  to reopen project media by the absolute paths stored in the project
+  file, including footage on external drives. Kept as upstream ships it
+  rather than narrowed behind their back.

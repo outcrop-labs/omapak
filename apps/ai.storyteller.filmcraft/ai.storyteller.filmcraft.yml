@@ -1,0 +1,83 @@
+# FilmCraft for omapak, repackaged from upstream's own release tarball.
+#
+# storytold/filmcraft ships a flatpak-builder manifest and a full set of release
+# artifacts for every tag, including a single-file .flatpak built by
+# packaging/linux/flatpak/ai.storyteller.filmcraft.bundle.yml. That bundle
+# manifest repackages the release's Linux tarball instead of compiling Rust
+# inside flatpak-builder; this manifest is that same file, so what omapak ships
+# is byte-for-byte the binaries upstream published.
+#
+# Everything below — runtime, command, finish-args, install steps — is
+# upstream's and is meant to stay identical to their bundle manifest. The one
+# omapak-side change is the source: the tarball per arch, pinned by sha256 and
+# annotated with x-checker-data, so update-apps.yml
+# (flatpak-external-data-checker) bumps the version, URL and digest by itself
+# when upstream tags a release and opens a PR that goes through the judge.
+#
+# The installed metainfo is the one inside the tarball, where upstream's
+# package.sh has already substituted the release's version and date. The copy
+# in this directory is what the judge lints and the site catalog reads.
+id: ai.storyteller.filmcraft
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: filmcraft
+finish-args:
+  # X11 shared memory (MIT-SHM). Without it the X11 fallback is slow or fails.
+  - --share=ipc
+  # Display: Wayland first; X11 only when no Wayland compositor is running.
+  - --socket=wayland
+  - --socket=fallback-x11
+  # Audio playback and the mixer's meters (cpal over ALSA, which the runtime routes to the
+  # host's PulseAudio or PipeWire server).
+  - --socket=pulseaudio
+  # GPU access for the wgpu compositor, scopes and effects (Vulkan, or GL as a fallback).
+  - --device=dri
+  # A project refers to its media by absolute path (docs/project-files.md), and the document
+  # portal only exposes the file it was handed, not the media beside it: a project opened from
+  # ~/Videos found none of its clips (#107). So, as other video editors do, FilmCraft reads and
+  # writes the home directory (media, projects, exports, autosave next to the project) and the
+  # usual mount points of external drives, where footage often lives. Open/Save dialogs still go
+  # through the file-chooser portal; nothing outside these locations is granted.
+  - --filesystem=home
+  - --filesystem=/media
+  - --filesystem=/run/media
+  - --filesystem=/mnt
+  # Deliberately not granted: network (the optional --control server listens on 127.0.0.1 in
+  # the sandbox; `flatpak override --user --share=network ai.storyteller.filmcraft` exposes it
+  # to host agents) and host-wide filesystem access.
+modules:
+  - name: filmcraft
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 bin/filmcraft /app/bin/filmcraft
+      - install -Dm755 bin/filmcraft-cli /app/bin/filmcraft-cli
+      - install -Dm644 share/applications/ai.storyteller.filmcraft.desktop /app/share/applications/ai.storyteller.filmcraft.desktop
+      # The same MIME file the deb/rpm install (no types of its own yet; the runtime's
+      # shared-mime-info already knows the video and audio formats).
+      - install -Dm644 share/mime/packages/ai.storyteller.filmcraft.xml /app/share/mime/packages/ai.storyteller.filmcraft.xml
+      # Already has the release's version and date substituted by package.sh.
+      - install -Dm644 share/metainfo/ai.storyteller.filmcraft.metainfo.xml /app/share/metainfo/ai.storyteller.filmcraft.metainfo.xml
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/filmcraft /app/share/doc/
+    sources:
+      - type: archive
+        url: https://github.com/storytold/filmcraft/releases/download/v0.4.0/filmcraft-0.4.0-linux-x86_64.tar.gz
+        sha256: 841790ff6649f0d49daa4a8ade1cb18d948e5ca43d00771046663e06c8d8ce83
+        only-arches: [x86_64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/filmcraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/filmcraft/releases/download/v" + $version + "/filmcraft-" + $version + "-linux-x86_64.tar.gz"'
+          is-main-source: true
+      - type: archive
+        url: https://github.com/storytold/filmcraft/releases/download/v0.4.0/filmcraft-0.4.0-linux-aarch64.tar.gz
+        sha256: 3fbfc9b49a02bfa8a6ba6bd7f1841773b626a2adf0918f5e6164299d3f12f144
+        only-arches: [aarch64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/filmcraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/filmcraft/releases/download/v" + $version + "/filmcraft-" + $version + "-linux-aarch64.tar.gz"'
