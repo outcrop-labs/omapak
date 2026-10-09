@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Rendered from upstream's packaging/linux/ai.storyteller.gridcraft.metainfo.xml.in
+     at v0.3.0. omapak keeps this copy so the judge can lint it and the site
+     catalog can read it; the flatpak installs the identical file that ships
+     inside the release tarball.
+
+     Screenshot URLs are pinned to the release tag rather than main, and any
+     screenshot upstream's template pointed at a missing file was replaced
+     with a real one from that repo's docs/images. -->
+<component type="desktop-application">
+  <id>ai.storyteller.gridcraft</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT OR Apache-2.0</project_license>
+  <name>GridCraft</name>
+  <summary>Calculate, analyse and chart data in workbooks</summary>
+  <developer id="ai.storyteller">
+    <name>Learning Machines LLC</name>
+  </developer>
+  <description>
+    <p>
+      GridCraft is an open-source, native spreadsheet. It opens and saves .xlsx workbooks and
+      CSV/TSV files, evaluates hundreds of worksheet functions, and formats, sorts, filters and
+      charts your data.
+    </p>
+    <p>
+      Every action is a command that the included gridcraft-cli tool and AI agents (over MCP)
+      can run too, so workbooks can be built and checked without opening a window.
+    </p>
+  </description>
+  <launchable type="desktop-id">ai.storyteller.gridcraft.desktop</launchable>
+  <icon type="stock">ai.storyteller.gridcraft</icon>
+  <!-- Only url types known to appstream 0.15 (Ubuntu 22.04, where CI validates): no vcs-browser. -->
+  <url type="homepage">https://getartcraft.com/apps/gridcraft</url>
+  <url type="bugtracker">https://github.com/storytold/gridcraft/issues</url>
+  <url type="help">https://github.com/storytold/gridcraft</url>
+  <url type="contact">https://discord.gg/artcraft</url>
+  <categories>
+    <category>Office</category>
+    <category>Spreadsheet</category>
+  </categories>
+  <keywords>
+    <keyword>spreadsheet</keyword>
+    <keyword>workbook</keyword>
+    <keyword>formula</keyword>
+    <keyword>xlsx</keyword>
+    <keyword>csv</keyword>
+  </keywords>
+  <screenshots>
+    <screenshot type="default">
+      <caption>A quarterly sales workbook with a formatted table, conditional formatting and two charts</caption>
+      <image>https://raw.githubusercontent.com/storytold/gridcraft/v0.3.0/docs/images/hero-sales.png</image>
+    </screenshot>
+  </screenshots>
+  <!-- Proposed app colour (GridCraft green #1f9d55 / ink #147a40); see assets/app-icon/README.md. -->
+  <branding>
+    <color type="primary" scheme_preference="light">#a7e3bf</color>
+    <color type="primary" scheme_preference="dark">#147a40</color>
+  </branding>
+  <requires>
+    <display_length compare="ge">760</display_length>
+  </requires>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </supports>
+  <provides>
+    <binary>gridcraft</binary>
+    <binary>gridcraft-cli</binary>
+    <mediatype>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</mediatype>
+    <mediatype>application/vnd.ms-excel.sheet.macroEnabled.12</mediatype>
+    <mediatype>text/csv</mediatype>
+    <mediatype>text/tab-separated-values</mediatype>
+  </provides>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.3.0" date="2026-10-08"/>
+  </releases>
+</component>
