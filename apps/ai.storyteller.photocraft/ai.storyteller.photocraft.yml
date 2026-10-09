@@ -1,0 +1,75 @@
+# PhotoCraft for omapak, repackaged from upstream's own release tarball.
+#
+# storytold/photocraft ships a flatpak-builder manifest and a full set of release
+# artifacts for every tag, including a single-file .flatpak built by
+# packaging/linux/flatpak/ai.storyteller.photocraft.bundle.yml. That bundle
+# manifest repackages the release's Linux tarball instead of compiling Rust
+# inside flatpak-builder; this manifest is that same file, so what omapak ships
+# is byte-for-byte the binaries upstream published.
+#
+# Everything below — runtime, command, finish-args, install steps — is
+# upstream's and is meant to stay identical to their bundle manifest. The one
+# omapak-side change is the source: the tarball per arch, pinned by sha256 and
+# annotated with x-checker-data, so update-apps.yml
+# (flatpak-external-data-checker) bumps the version, URL and digest by itself
+# when upstream tags a release and opens a PR that goes through the judge.
+#
+# The installed metainfo is the one inside the tarball, where upstream's
+# package.sh has already substituted the release's version and date. The copy
+# in this directory is what the judge lints and the site catalog reads.
+id: ai.storyteller.photocraft
+runtime: org.freedesktop.Platform
+runtime-version: '26.08'
+sdk: org.freedesktop.Sdk
+command: photocraft
+finish-args:
+  # Display: Wayland first; X11 only when no Wayland compositor is running.
+  - --socket=wayland
+  - --socket=fallback-x11
+  # X11 shared memory (MIT-SHM). Without it the X11 fallback is slow or fails.
+  - --share=ipc
+  # GPU access for the wgpu compositor (Vulkan, or GL as a fallback).
+  - --device=dri
+  # Open/Save dialogs go through the file-chooser portal (rfd's xdg-portal backend) and
+  # drag-and-drop through the document portal, so picked files work anywhere without broad
+  # filesystem access. Pictures and Documents are granted so files passed by path (the command
+  # line, Open Recent, "Save" next to the original) work in the usual places.
+  - --filesystem=xdg-pictures
+  - --filesystem=xdg-documents
+  # Deliberately not granted: network (the optional --control server listens on 127.0.0.1 in
+  # the sandbox; `flatpak override --user --share=network ai.storyteller.photocraft` exposes it to
+  # host agents) and home/host filesystem access.
+modules:
+  - name: photocraft
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 bin/photocraft /app/bin/photocraft
+      - install -Dm755 bin/photocraft-cli /app/bin/photocraft-cli
+      - install -Dm644 share/applications/ai.storyteller.photocraft.desktop /app/share/applications/ai.storyteller.photocraft.desktop
+      # .pcraft, .psb and .qoi; the runtime's shared-mime-info already knows PSD and the rest.
+      - install -Dm644 share/mime/packages/ai.storyteller.photocraft.xml /app/share/mime/packages/ai.storyteller.photocraft.xml
+      # Already has the release's version and date substituted by package.sh.
+      - install -Dm644 share/metainfo/ai.storyteller.photocraft.metainfo.xml /app/share/metainfo/ai.storyteller.photocraft.metainfo.xml
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/photocraft /app/share/doc/
+    sources:
+      - type: archive
+        url: https://github.com/storytold/photocraft/releases/download/v0.5.0/photocraft-0.5.0-linux-x86_64.tar.gz
+        sha256: e044101b2da5522896e1d8336b81087cbecbf6b78b7685315f58dd4f3dfa4ce0
+        only-arches: [x86_64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/photocraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/photocraft/releases/download/v" + $version + "/photocraft-" + $version + "-linux-x86_64.tar.gz"'
+          is-main-source: true
+      - type: archive
+        url: https://github.com/storytold/photocraft/releases/download/v0.5.0/photocraft-0.5.0-linux-aarch64.tar.gz
+        sha256: 3904fc9cab45b083d5870a8d4fab90b3a94c3ba5547a636bb7bf5a398da9c552
+        only-arches: [aarch64]
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/storytold/photocraft/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          timestamp-query: .published_at
+          url-query: '"https://github.com/storytold/photocraft/releases/download/v" + $version + "/photocraft-" + $version + "-linux-aarch64.tar.gz"'
