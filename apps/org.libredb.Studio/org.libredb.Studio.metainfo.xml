@@ -13,7 +13,7 @@
 <component type="desktop-application">
   <id>org.libredb.Studio</id>
   <name>LibreDB Studio</name>
-  <summary>AI-powered SQL IDE for PostgreSQL, MySQL, MongoDB and more</summary>
+  <summary>Open-source SQL IDE for PostgreSQL, MySQL, MongoDB and more</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
 
@@ -49,15 +49,24 @@
       <li>Apache Cassandra and ScyllaDB</li>
       <li>Prometheus (read-only)</li>
       <li>Apache Kafka (read-only)</li>
+      <li>IBM Db2 for Linux, UNIX and Windows</li>
+      <li>Databend</li>
+      <li>etcd</li>
+      <li>Milvus (read-only, with admin Load and Release)</li>
+      <li>Neo4j (read-only)</li>
+      <li>Qdrant (read-only)</li>
+      <li>Oxia (read-only)</li>
+      <li>InfluxDB (InfluxQL, read-only)</li>
+      <li>InfluxDB 3 (SQL, read-only)</li>
     </ul>
     <p>What you get:</p>
     <ul>
       <li>A Monaco-based SQL editor with schema-aware completion and formatting</li>
-      <li>A virtualized results grid built for large result sets, with CSV and JSON export</li>
+      <li>A virtualized results grid built for large result sets, with CSV, JSON, SQL, Markdown and HTML export</li>
       <li>Schema browser, entity-relationship diagrams and index advice</li>
       <li>Query plans, slow-query and session monitoring</li>
       <li>Optional AI query explanation on PostgreSQL, MySQL, SQLite, libSQL, DuckDB,
-      Couchbase, ClickHouse, Apache Druid and Trino, through Gemini, OpenAI, a local
+      Couchbase, ClickHouse, Apache Druid, Trino and Databend, through Gemini, OpenAI, a local
       Ollama or your own endpoint</li>
       <li>An embedded sample database, so there is something to query on first launch</li>
     </ul>
@@ -112,6 +121,24 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="0.18.2" date="2026-10-09">
+      <description>
+        <p>A patch release. Databend shows its official icon, a new connection starts unlabeled instead of Local, Generate Test Data leaves foreign-key columns out and keeps unique values distinct, and a Source tab re-reads the table or view it is showing when you reopen it.</p>
+      </description>
+      <url type="details">https://github.com/libredb/libredb-studio/releases/tag/0.18.2</url>
+    </release>
+    <release version="0.18.1" date="2026-10-08">
+      <description>
+        <p>Databend becomes a connection type of its own, over Databend's HTTP query API, and is the twenty-seventh driver. Query results export as Markdown or HTML and the object tree gains a filter box. It also fixes one account's saved workspace being reachable by another on shared server storage, so anyone running Studio as a multi-user server on sqlite or postgres storage should upgrade (GHSA-jwvh-6phv-j9jh). The desktop app keeps its workspace on your own machine.</p>
+      </description>
+      <url type="details">https://github.com/libredb/libredb-studio/releases/tag/0.18.1</url>
+    </release>
+    <release version="0.18.0" date="2026-10-05">
+      <description>
+        <p>Eight connection types for seven engines arrive: etcd, IBM Db2, Neo4j with a Graph tab for Cypher results, Qdrant, Milvus, InfluxDB as two connection types, and Oxia. That takes the coverage to twenty-six drivers reaching fifty-four named engines. Local sign-in gains passkeys, and a self-hosted server on sqlite or postgres storage can hold more than one account. A session bypass in OIDC sign-in is also fixed (GHSA-8gc9-2gm6-5c7f); it reached self-hosted servers from 0.7.0 through 0.17.0 configured with an OIDC provider, and not the desktop build.</p>
+      </description>
+      <url type="details">https://github.com/libredb/libredb-studio/releases/tag/0.18.0</url>
+    </release>
     <release version="0.17.0" date="2026-09-26">
       <description>
         <p>Studio can now serve the Model Context Protocol at /api/mcp, so an AI client reads only the connections an operator opts in, through three read-only tools, while the database credentials stay on the server. Prometheus and Apache Kafka join as read-only engines, which takes the coverage to eighteen drivers reaching forty-six named engines.</p>

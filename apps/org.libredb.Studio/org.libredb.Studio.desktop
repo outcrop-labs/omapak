@@ -2,7 +2,7 @@
 Type=Application
 Name=LibreDB Studio
 GenericName=SQL IDE
-Comment=AI-powered SQL IDE for PostgreSQL, MySQL, MongoDB and more
+Comment=Open-source SQL IDE for PostgreSQL, MySQL, MongoDB and more
 Exec=libredb-studio
 Icon=org.libredb.Studio
 Terminal=false
