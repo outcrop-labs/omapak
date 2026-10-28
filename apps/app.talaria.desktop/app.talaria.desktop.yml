@@ -27,8 +27,7 @@ finish-args:
   # 4.18, which speaks the legacy org.freedesktop.Notifications interface
   # directly — it has no portal path, so without this the show() call fails
   # inside the sandbox and no banner ever appears. Upstream's own manifest
-  # does not grant it yet (outcrop-labs/talaria, desktop/packaging/flatpak);
-  # this is the one place this submission deliberately differs from it.
+  # (desktop/packaging/flatpak) grants the same name since desktop-v0.11.0.
   - --talk-name=org.freedesktop.Notifications
 
 # No sdk-extensions, deliberately: rust-stable and node are date-versioned
@@ -51,8 +50,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/outcrop-labs/talaria
-        tag: desktop-v0.10.0
-        commit: 6700fec27e7cf39eecbdc9d99a325c5faeead541
+        tag: desktop-v0.11.0
+        commit: be5929d027ff17f91fbb73c0c335bd6d8a08d55a
       # rust 1.97.1: desktop/src-tauri/rust-toolchain.toml pins it (edition
       # 2024 + the tauri `unstable` multiwebview feature). Self-contained
       # dist tarball; the wrapper dir is auto-stripped on extract.
