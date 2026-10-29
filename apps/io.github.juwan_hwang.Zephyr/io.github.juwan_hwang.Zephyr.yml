@@ -11,8 +11,6 @@ finish-args:
   # Display (X11 & Wayland)
   - --socket=fallback-x11
   - --socket=wayland
-  # Audio (if needed)
-  - --socket=pulseaudio
   # Tray notification support
   - --talk-name=org.kde.StatusNotifierWatcher
   - --talk-name=org.freedesktop.Notifications
@@ -38,8 +36,8 @@ modules:
       - ln -sf /app/usr/bin/Zephyr /app/bin/zephyr
     sources:
       - type: file
-        url: https://github.com/Juwan-Hwang/Zephyr/releases/download/v2.4.3/Zephyr_2.4.3_amd64-full.deb
-        sha256: 09cae645e0f1cffe40344b800e45e5808f2b7c0a4e9909bd241fb4a953615bdc
+        url: https://github.com/Juwan-Hwang/Zephyr/releases/download/v2.5.0/Zephyr_2.5.0_linux-x86_64-full.deb
+        sha256: 5f103f38a9aac9265a8d7cab5290e2fbc596f7a873663abad3c76619ea47d88c
         dest-filename: package.deb
         only-arches:
           - x86_64
@@ -47,10 +45,10 @@ modules:
           type: json
           url: https://api.github.com/repos/Juwan-Hwang/Zephyr/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: '"https://github.com/Juwan-Hwang/Zephyr/releases/download/v" + $version + "/Zephyr_" + $version + "_amd64-full.deb"'
+          url-query: '"https://github.com/Juwan-Hwang/Zephyr/releases/download/v" + $version + "/Zephyr_" + $version + "_linux-x86_64-full.deb"'
       - type: file
-        url: https://github.com/Juwan-Hwang/Zephyr/releases/download/v2.4.3/Zephyr_2.4.3_arm64-full.deb
-        sha256: 34ec89f4a5d0e03e86c259d11afb145dcaae58120d95f15141580e1e89b60e76
+        url: https://github.com/Juwan-Hwang/Zephyr/releases/download/v2.5.0/Zephyr_2.5.0_linux-aarch64-full.deb
+        sha256: b556986af44a939da31f9a16314efa3ac554f4a1298b6e96e69f079b0fec99fc
         dest-filename: package.deb
         only-arches:
           - aarch64
@@ -58,6 +56,6 @@ modules:
           type: json
           url: https://api.github.com/repos/Juwan-Hwang/Zephyr/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: '"https://github.com/Juwan-Hwang/Zephyr/releases/download/v" + $version + "/Zephyr_" + $version + "_arm64-full.deb"'
+          url-query: '"https://github.com/Juwan-Hwang/Zephyr/releases/download/v" + $version + "/Zephyr_" + $version + "_linux-aarch64-full.deb"'
       - type: file
         path: io.github.juwan_hwang.Zephyr.metainfo.xml
