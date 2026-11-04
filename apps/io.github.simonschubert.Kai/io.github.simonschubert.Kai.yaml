@@ -29,14 +29,15 @@ modules:
 
     sources:
       - type: file
-        url: https://github.com/SimonSchubert/Kai/releases/download/v1.7.9/Kai-1.7.9-linux-x86_64.tar.gz
-        sha256: 74aac32ff00c2d061caa15a6977cb75afc53b8f9de5d3c208ff3de188397ca29
+        url: https://github.com/SimonSchubert/Kai/releases/download/v3.3.0/Kai-3.3.0-linux-x86_64.tar.gz
+        sha256: aaf111532900f674a75c963721d027179d07faace520e6a02a23c33ead2d7330
         dest-filename: Kai-linux-x86_64.tar.gz
         x-checker-data:
           type: json
           url: https://api.github.com/repos/SimonSchubert/Kai/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: .assets[] | select(.name | test("linux-x86_64\\.tar\\.gz$")) | .browser_download_url
+          url-query: .assets[] | select(.name | test("linux-x86_64\\.tar\\.gz$"))
+            | .browser_download_url
 
       - type: file
         path: io.github.simonschubert.Kai.desktop
