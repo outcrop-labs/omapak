@@ -173,6 +173,9 @@ jobs:
       - name: Clone upstream sources for the digest
         if: "!cancelled()"
         run: |
+          # No apps.txt: an earlier step failed first. Don't add a second,
+          # misleading red step on top of the real one.
+          [ -f apps.txt ] || exit 0
           while read -r app; do
             [ -f "$app/metadata.yml" ] || continue
             repo=$(grep -m1 '^source_repo:' "$app/metadata.yml" | sed 's/^source_repo:[[:space:]]*//')
