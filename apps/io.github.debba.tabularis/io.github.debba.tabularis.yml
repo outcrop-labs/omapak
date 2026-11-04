@@ -1,6 +1,6 @@
 id: io.github.debba.tabularis
 runtime: org.gnome.Platform
-runtime-version: "49"
+runtime-version: '49'
 sdk: org.gnome.Sdk
 command: tabularis
 
@@ -22,22 +22,28 @@ modules:
       - install -Dm755 squashfs-root/usr/bin/tabularis /app/bin/tabularis
       - install -Dm644 squashfs-root/usr/share/applications/tabularis.desktop /app/share/applications/io.github.debba.tabularis.desktop
       - desktop-file-edit --set-key=Icon --set-value=io.github.debba.tabularis /app/share/applications/io.github.debba.tabularis.desktop
-      - desktop-file-edit --set-key=Categories --set-value="Development;Database;" /app/share/applications/io.github.debba.tabularis.desktop
-      - install -Dm644 squashfs-root/usr/share/icons/hicolor/32x32/apps/tabularis.png /app/share/icons/hicolor/32x32/apps/io.github.debba.tabularis.png
-      - install -Dm644 squashfs-root/usr/share/icons/hicolor/64x64/apps/tabularis.png /app/share/icons/hicolor/64x64/apps/io.github.debba.tabularis.png
-      - install -Dm644 squashfs-root/usr/share/icons/hicolor/128x128/apps/tabularis.png /app/share/icons/hicolor/128x128/apps/io.github.debba.tabularis.png
-      - install -Dm644 squashfs-root/usr/share/icons/hicolor/512x512/apps/tabularis.png /app/share/icons/hicolor/512x512/apps/io.github.debba.tabularis.png
+      - desktop-file-edit --set-key=Categories --set-value="Development;Database;"
+        /app/share/applications/io.github.debba.tabularis.desktop
+      - install -Dm644 squashfs-root/usr/share/icons/hicolor/32x32/apps/tabularis.png
+        /app/share/icons/hicolor/32x32/apps/io.github.debba.tabularis.png
+      - install -Dm644 squashfs-root/usr/share/icons/hicolor/64x64/apps/tabularis.png
+        /app/share/icons/hicolor/64x64/apps/io.github.debba.tabularis.png
+      - install -Dm644 squashfs-root/usr/share/icons/hicolor/128x128/apps/tabularis.png
+        /app/share/icons/hicolor/128x128/apps/io.github.debba.tabularis.png
+      - install -Dm644 squashfs-root/usr/share/icons/hicolor/512x512/apps/tabularis.png
+        /app/share/icons/hicolor/512x512/apps/io.github.debba.tabularis.png
       - install -Dm644 io.github.debba.tabularis.metainfo.xml /app/share/metainfo/io.github.debba.tabularis.metainfo.xml
     sources:
       - type: file
-        url: https://github.com/debba/tabularis/releases/download/v0.9.2/tabularis_0.9.2_amd64.AppImage
-        sha256: 4306ceb7a6baae5938f0efeb58ba535aa5c6e192c3061d2f7adebcd5d9bfc924
+        url: https://github.com/debba/tabularis/releases/download/v0.31.0/tabularis_0.31.0_amd64.AppImage
+        sha256: 09eb2192aae7afdf2179424599319eb33376c023bd6778c0db520dcc0a5d71bf
         dest-filename: tabularis.AppImage
         x-checker-data:
           type: json
           url: https://api.github.com/repos/debba/tabularis/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: '"https://github.com/debba/tabularis/releases/download/v" + $version + "/tabularis_" + $version + "_amd64.AppImage"'
+          url-query: '"https://github.com/debba/tabularis/releases/download/v" + $version
+            + "/tabularis_" + $version + "_amd64.AppImage"'
           is-main-source: true
       - type: file
         path: io.github.debba.tabularis.metainfo.xml

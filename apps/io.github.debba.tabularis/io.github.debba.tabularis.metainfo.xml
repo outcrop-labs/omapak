@@ -24,11 +24,14 @@
       <image>https://raw.githubusercontent.com/TabularisDB/website/main/public/img/overview.gif</image>
     </screenshot>
   </screenshots>
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
 
   <releases>
-    <release version="0.9.2" date="2026-02-26" />
-    <release version="0.9.1" date="2026-02-25" />
-    <release version="0.9.0" date="2026-02-23" />
+    <release version="0.31.0" date="2026-11-03">
+      <description></description>
+    </release>
+    <release version="0.9.2" date="2026-02-26"/>
+    <release version="0.9.1" date="2026-02-25"/>
+    <release version="0.9.0" date="2026-02-23"/>
   </releases>
 </component>
