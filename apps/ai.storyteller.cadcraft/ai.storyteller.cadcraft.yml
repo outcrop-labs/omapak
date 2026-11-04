@@ -50,26 +50,29 @@ modules:
       - install -Dm644 share/mime/packages/ai.storyteller.cadcraft.xml /app/share/mime/packages/ai.storyteller.cadcraft.xml
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.cadcraft.metainfo.xml /app/share/metainfo/ai.storyteller.cadcraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/cadcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/cadcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/cadcraft/releases/download/v0.3.0/cadcraft-0.3.0-linux-x86_64.tar.gz
-        sha256: 4239b0545c0006c13f6419fe9bc20462d727096912cf3cb1eb2523934102bd78
+        url: https://github.com/storytold/cadcraft/releases/download/v0.17.0/cadcraft-0.17.0-linux-x86_64.tar.gz
+        sha256: 89996b1764ff15696857e0894d60b84569051051818f6480e9b7f823c76a46e4
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/cadcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/cadcraft/releases/download/v" + $version + "/cadcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/cadcraft/releases/download/v"
+            + $version + "/cadcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/cadcraft/releases/download/v0.3.0/cadcraft-0.3.0-linux-aarch64.tar.gz
-        sha256: ee14c1c99e092b46f6efe7e809d4a9ea41a77a436d21ddd2f35ae3f154293563
+        url: https://github.com/storytold/cadcraft/releases/download/v0.17.0/cadcraft-0.17.0-linux-aarch64.tar.gz
+        sha256: a417ed6d9ab946c2849725b20d8fdad0bfb098e7a73d6118f35e19567387cb9e
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/cadcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/cadcraft/releases/download/v" + $version + "/cadcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/cadcraft/releases/download/v"
+            + $version + "/cadcraft-" + $version + "-linux-aarch64.tar.gz"'
