@@ -1,10 +1,18 @@
 name: update-apps
 
 # Daily sweep for upstream releases. Runs flatpak-external-data-checker
-# (flathub's own bot) over every manifest's x-checker-data; it edits,
-# commits to a branch, and opens a PR per app with updates. Those PRs go
-# through the judge like any submission: a version bump that fails to
+# (flathub's own bot) over every manifest's x-checker-data; with --update
+# it edits, commits to a branch, and opens a PR per app with updates. Those
+# PRs go through the judge like any submission: a version bump that fails to
 # build or trips a gate does not merge. Auto-updates never bypass review.
+#
+# Until 2026-11 this job never ran the checker. `pip install` of the git
+# repo installs no `flatpak-external-data-checker` command (upstream ships
+# it as a script inside its OCI image, not as a console entry point), so
+# every manifest hit "command not found", which the per-manifest warning
+# turned into a green run; and without --update it could only have
+# reported. It went red on 2026-10-29 only because upstream's dependency
+# bump (PyGObject 3.58) stopped the pip install itself from building.
 on:
   schedule:
     - cron: "17 6 * * *"
@@ -14,24 +22,37 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  # Upstream's own image, pinned: it pushes branches with this job's token.
+  # Bump deliberately (`latest` as of 2026-11-03).
+  CHECKER_IMAGE: ghcr.io/flathub/flatpak-external-data-checker@sha256:7655139def88daf69d8c2bb8dda6a198a06214c0122fb058e3cd3163c049158d
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      # No persisted GITHUB_TOKEN header: the checker pushes with the token
+      # passed below, and git would otherwise send the persisted one first.
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
         with:
-          # the checker pins aiohttp==3.8.4, which has no 3.12 wheels
-          python-version: "3.11"
+          persist-credentials: false
 
-      - name: Install flatpak-external-data-checker
+      # Fail in seconds on an expired, revoked or read-only token. Otherwise
+      # only apps that have an update fail, and the sweep still passes.
+      - name: Verify the bot token can push
+        env:
+          TOKEN: ${{ secrets.UPDATE_BOT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          sudo apt-get update
-          # PyGObject and lxml (dependencies) compile from source on noble
-          sudo apt-get install -y pkg-config libcairo2-dev \
-            libgirepository1.0-dev libglib2.0-dev libxml2-dev libxslt-dev
-          pip install "git+https://github.com/flathub-infra/flatpak-external-data-checker.git"
+          git push --dry-run --quiet \
+            "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}" \
+            HEAD:refs/heads/update-apps-token-check
+
+      # Fail in seconds if the image or its entrypoint is unusable: the
+      # silent "command not found" class above.
+      - name: Pull checker image
+        run: |
+          docker pull "$CHECKER_IMAGE"
+          docker run --rm "$CHECKER_IMAGE" --help >/dev/null
 
       - name: Configure git for bot commits
         run: |
@@ -40,14 +61,47 @@ jobs:
 
       - name: Check manifests for upstream updates
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # PRs opened with GITHUB_TOKEN trigger no workflows, so the judge
+          # would never run on them. Set UPDATE_BOT_TOKEN (fine-grained PAT
+          # or App token: contents + pull-requests write on this repo) and
+          # bot PRs are judged like any other. Without it they still open,
+          # but a maintainer must close/reopen one to start the judge.
+          GITHUB_TOKEN: ${{ secrets.UPDATE_BOT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          shopt -s nullglob
-          for manifest in apps/*/*.yml apps/*/*.yaml apps/*/*.json; do
+          ok=0
+          failed=""
+          for dir in apps/*/; do
+            id=$(basename "$dir")
+            manifest=""
+            for ext in yml yaml json; do
+              [ -f "$dir$id.$ext" ] && { manifest="$dir$id.$ext"; break; }
+            done
+            [ -n "$manifest" ] || continue
             echo "::group::check $manifest"
-            flatpak-external-data-checker --never-fork "$manifest" || \
+            # As the runner user, so the checkout stays runner-owned for the
+            # host-side git below (and git's safe.directory check passes).
+            if docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
+                -v "$PWD:$PWD" -w "$PWD" \
+                -e GITHUB_TOKEN -e GITHUB_REPOSITORY -e GITHUB_RUN_ID \
+                "$CHECKER_IMAGE" --update --never-fork "$manifest"; then
+              ok=$((ok+1))
+            else
               echo "::warning::checker failed for $manifest"
-            git checkout main 2>/dev/null || git checkout master
-            git pull --ff-only origin "${GITHUB_REF_NAME:-main}" 2>/dev/null || true
+              failed="$failed $id"
+            fi
+            # The checker leaves HEAD on its update branch (or mid-edit on
+            # failure); the next app must start from a clean base.
+            git checkout -q -f "$GITHUB_REF_NAME"
             echo "::endgroup::"
           done
+          {
+            echo "### update-apps"
+            echo "checked OK: $ok"
+            echo "failed:${failed:- none}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          # One app's dead upstream URL is a warning; every app failing is
+          # the checker itself broken, and must not read as green again.
+          if [ "$ok" -eq 0 ] && [ -n "$failed" ]; then
+            echo "::error::checker failed for every manifest:$failed"
+            exit 1
+          fi

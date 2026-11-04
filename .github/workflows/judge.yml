@@ -73,16 +73,26 @@ jobs:
       # in current manifests. Build the current release instead; its only
       # build-time hazard is an appstreamcli probe that noble's appstreamcli
       # 1.0.2 fails, patched out below (compose features unused by us).
+      #
+      # The key carries the Ubuntu release: the binary links system libs,
+      # and when ubuntu-latest moved to 26.04 (libxml2.so.2 -> .so.16) a
+      # release-blind key kept restoring the noble build, which died with
+      # "libxml2.so.2: cannot open shared object file" on every PR.
+      - name: Runner OS release
+        id: osrel
+        run: echo "version=$(. /etc/os-release && echo "$VERSION_ID")" >> "$GITHUB_OUTPUT"
       - name: Cache flatpak-builder 1.4.11
         id: fbcache
         uses: actions/cache@v4
         with:
           path: /usr/local/bin/flatpak-builder
-          key: flatpak-builder-1.4.11-v1
+          key: flatpak-builder-1.4.11-ubuntu${{ steps.osrel.outputs.version }}-v1
       - name: Build flatpak-builder 1.4.11
         if: steps.fbcache.outputs.cache-hit != 'true'
         run: |
-          sudo apt-get install -y meson ninja-build build-essential \
+          # debugedit: meson setup requires it; noble's image preinstalled
+          # it, a bare 26.04 does not.
+          sudo apt-get install -y meson ninja-build build-essential debugedit \
             libflatpak-dev libcurl4-openssl-dev libyaml-dev libjson-glib-dev libelf-dev
           curl -sL -o /tmp/fb.tar.xz \
             https://github.com/flatpak/flatpak-builder/releases/download/1.4.11/flatpak-builder-1.4.11.tar.xz
@@ -163,6 +173,9 @@ jobs:
       - name: Clone upstream sources for the digest
         if: "!cancelled()"
         run: |
+          # No apps.txt: an earlier step failed first. Don't add a second,
+          # misleading red step on top of the real one.
+          [ -f apps.txt ] || exit 0
           while read -r app; do
             [ -f "$app/metadata.yml" ] || continue
             repo=$(grep -m1 '^source_repo:' "$app/metadata.yml" | sed 's/^source_repo:[[:space:]]*//')
