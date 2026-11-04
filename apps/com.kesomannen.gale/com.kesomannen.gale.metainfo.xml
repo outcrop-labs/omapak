@@ -27,7 +27,7 @@
         <color type="primary" scheme_preference="light">#475569</color>
         <color type="primary" scheme_preference="dark">#475569</color>
     </branding>
-    <content_rating type="oars-1.1" />
+    <content_rating type="oars-1.1"/>
     <url type="bugtracker">https://github.com/Kesomannen/gale/issues</url>
     <url type="homepage">https://kesomannen.com/gale</url>
     <url type="donation">https://ko-fi.com/kesomannen</url>
@@ -55,6 +55,9 @@
         <control>pointing</control>
     </recommends>
     <releases>
+        <release version="1.23.3" date="2026-10-30">
+            <description></description>
+        </release>
         <release version="1.22.3" date="2026-09-16">
             <description>
                 <p>Updated to the latest upstream release</p>
@@ -144,10 +147,8 @@
                 </ul>
                 <p>Fixed</p>
                 <ul>
-                    <li>Duplicate mods causing the profile screen to freeze the UI (thanks <a
-                            href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
-                    <li>Replaced some unlocalized text (thanks <a
-                            href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
+                    <li>Duplicate mods causing the profile screen to freeze the UI (thanks <a href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
+                    <li>Replaced some unlocalized text (thanks <a href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
                     <li>Weird text appearing in the unknown-mods banner</li>
                     <li>Launch mode settings not persisting after switching tabs</li>
                 </ul>
@@ -157,10 +158,8 @@
             <description>
                 <p>Fixed</p>
                 <ul>
-                    <li>Config page not working for some profiles (thanks <a
-                            href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
-                    <li>Various localization issues (thanks <a
-                            href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
+                    <li>Config page not working for some profiles (thanks <a href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
+                    <li>Various localization issues (thanks <a href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
                 </ul>
             </description>
         </release>
@@ -195,17 +194,14 @@
                 <p>Fixed</p>
                 <ul>
                     <li>Config editor resetting on each mod fetch</li>
-                    <li>Launch arguments resetting when toggled (thanks <a
-                            href="https://github.com/Kesomannen/gale/issues?q=is%3Apr+is%3Aopen+author%3Ahazre">
+                    <li>Launch arguments resetting when toggled (thanks <a href="https://github.com/Kesomannen/gale/issues?q=is%3Apr+is%3Aopen+author%3Ahazre">
                         @hazre</a>)</li>
                     <li>BepInEx shell scripts not being set as executable on Linux</li>
-                    <li>Extra margins between images in mod readmes and changelogs (thanks <a
-                            href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
+                    <li>Extra margins between images in mod readmes and changelogs (thanks <a href="https://github.com/TianMengLucky">@TianMengLucky</a>)</li>
                     <li>Readmes and changelogs not being loaded from local mods</li>
                     <li>Local mod icons sometimes breaking when the mod is disabled</li>
                     <li>Local mod icons not showing in the mod details section</li>
-                    <li>Thunderstore deep link import not working (thanks <a
-                            href="https://github.com/DaXcess">@DaXcess</a>)</li>
+                    <li>Thunderstore deep link import not working (thanks <a href="https://github.com/DaXcess">@DaXcess</a>)</li>
                     <li>Steam installation not being found on certain Linux setups</li>
                 </ul>
                 <p>Removed</p>
@@ -478,8 +474,7 @@
                 <p>Added</p>
                 <ul>
                     <li>Beta profile sync feature<ul>
-                            <li>Read more on <a
-                                    href="https://github.com/Kesomannen/gale/wiki/Profile-sync">the
+                            <li>Read more on <a href="https://github.com/Kesomannen/gale/wiki/Profile-sync">the
                         wiki</a></li>
                         </ul>
                     </li>
@@ -522,7 +517,7 @@
             <description>
                 <p>Fixed</p>
                 <ul>
-                    <li>&quot;Invalid signature&quot; error when updating</li>
+                    <li>"Invalid signature" error when updating</li>
                 </ul>
             </description>
         </release>
@@ -639,7 +634,7 @@
             <description>
                 <p>Fixed</p>
                 <ul>
-                    <li>&quot;Invalid signature&quot; error when updating</li>
+                    <li>"Invalid signature" error when updating</li>
                     <li>Mod installation state not updating when switching profiles</li>
                 </ul>
             </description>
@@ -760,8 +755,7 @@
                         </ul>
                     </li>
                     <li>Telementry data collection on app startup<ul>
-                            <li>By updating to this version, you agree to the <a
-                                    href="https://github.com/Kesomannen/gale/blob/master/privacy_policy.md">Privacy
+                            <li>By updating to this version, you agree to the <a href="https://github.com/Kesomannen/gale/blob/master/privacy_policy.md">Privacy
                         Policy</a>.</li>
                         </ul>
                     </li>
@@ -902,7 +896,7 @@
                 <p>Fixed</p>
                 <ul>
                     <li>Modpack export causing the app to freeze on games without a
-                        &quot;Modpack&quot; category</li>
+                        "Modpack" category</li>
                     <li>Arcus Chroma and Subnautica Below Zero not working at all</li>
                 </ul>
             </description>
@@ -1076,7 +1070,7 @@
             <description>
                 <p>Added</p>
                 <ul>
-                    <li>&quot;Uninstall disabled mods&quot; button to Profile menu</li>
+                    <li>"Uninstall disabled mods" button to Profile menu</li>
                     <li>Code highlighting to markdown code blocks</li>
                 </ul>
                 <p>Changed</p>
@@ -1090,7 +1084,7 @@
                 <p>Fixed</p>
                 <ul>
                     <li>Local mods not showing in the mod list until the page is refreshed</li>
-                    <li>The &quot;Install date&quot; sorting mode being affected by mod updates</li>
+                    <li>The "Install date" sorting mode being affected by mod updates</li>
                 </ul>
             </description>
         </release>
@@ -1185,7 +1179,7 @@
                 <p>Fixed</p>
                 <ul>
                     <li>Re-added CLI (oops)</li>
-                    <li>FINALLY fixed the &quot;Install with Mod Manager&quot; button on
+                    <li>FINALLY fixed the "Install with Mod Manager" button on
                         Thunderstore</li>
                     <li>Various issues related to config file names with non-UTF8 characters</li>
                     <li>Multiple config files from the same mod being displayed with the same name</li>
@@ -1241,7 +1235,7 @@
                 <p>Added</p>
                 <ul>
                     <li>Option to disable automatic thunderstore fetching</li>
-                    <li>Option to ignore updates for the &quot;Update all&quot; banner</li>
+                    <li>Option to ignore updates for the "Update all" banner</li>
                 </ul>
                 <p>Changed</p>
                 <ul>
@@ -1282,7 +1276,7 @@
             <description>
                 <p>Fixed</p>
                 <ul>
-                    <li>&quot;Invalid type: map ...&quot; errors when importing profile from file
+                    <li>"Invalid type: map ..." errors when importing profile from file
                         and editing path settings</li>
                 </ul>
             </description>
@@ -1297,8 +1291,7 @@
                     <li>Changelog field and automatic changelog generation in modpack exporter</li>
                     <li>More game icons (<a href="https://github.com/Kesomannen/gale/pull/58">#58</a>
                         and <a href="https://github.com/Kesomannen/gale/pull/61">#61</a>)</li>
-                    <li>Local mod import from zip (<a
-                            href="https://github.com/Kesomannen/gale/pull/57">#57</a>)</li>
+                    <li>Local mod import from zip (<a href="https://github.com/Kesomannen/gale/pull/57">#57</a>)</li>
                 </ul>
                 <p>Changed</p>
                 <ul>
@@ -1306,18 +1299,18 @@
                 </ul>
                 <p>Fixed</p>
                 <ul>
-                    <li>Restricted profile names further, which should fix &quot;failed to read
-                        profile manifest&quot; error on startup</li>
-                    <li>&quot;BepInEx preloader not found&quot; error when launching IL2CPP games</li>
+                    <li>Restricted profile names further, which should fix "failed to read
+                        profile manifest" error on startup</li>
+                    <li>"BepInEx preloader not found" error when launching IL2CPP games</li>
                     <li>Window size and position not persisting between sessions</li>
                     <li>Having many profiles causing the profile dropdown to go off-screen</li>
                     <li>Crash when changing the version of certain mods</li>
                     <li>Dependencies not being installed when changing the version of a mod</li>
                     <li>Local mod icons not being displayed (finally)</li>
-                    <li>&quot;Failed to execute 'query_mods_in_profile'&quot; error when viewing a
+                    <li>"Failed to execute 'query_mods_in_profile'" error when viewing a
                         profile with deleted mods</li>
-                    <li>&quot;Visiting&quot; a new game and immediately switching back causing a
-                        &quot;Failed to read game save data&quot; on the next launch</li>
+                    <li>"Visiting" a new game and immediately switching back causing a
+                        "Failed to read game save data" on the next launch</li>
                 </ul>
             </description>
         </release>
@@ -1497,9 +1490,9 @@
                 <p>Added</p>
                 <ul>
                     <li>README to mod details menu, shown if the window is large enough</li>
-                    <li>&quot;Edit config&quot; button to mod details menu</li>
+                    <li>"Edit config" button to mod details menu</li>
                     <li>Quick install button in mod list</li>
-                    <li>&quot;Open directory&quot; options to profile mod dropdown</li>
+                    <li>"Open directory" options to profile mod dropdown</li>
                 </ul>
                 <p>Changed</p>
                 <ul>
@@ -1524,7 +1517,7 @@
             <description>
                 <p>Added</p>
                 <ul>
-                    <li>&quot;Change version&quot; option to profile mod dropdown</li>
+                    <li>"Change version" option to profile mod dropdown</li>
                     <li>Icon in the top right to indicate if an app update is available</li>
                     <li>Disable and enable all mods button</li>
                     <li>Open Gale log button</li>
@@ -1566,7 +1559,7 @@
                 <ul>
                     <li>Moving the window while a dialog is open</li>
                     <li>Improve startup time by not parsing config files immediately</li>
-                    <li>&quot;steam_exe_path pref not found&quot; error when opening settings</li>
+                    <li>"steam_exe_path pref not found" error when opening settings</li>
                     <li>Config sliders with large ranges causing performance issues or freezing</li>
                     <li>Zoom factor not being applied when reopening the app</li>
                     <li>Open log file button</li>
@@ -1587,7 +1580,7 @@
                 </ul>
                 <p>Changed</p>
                 <ul>
-                    <li>Moved &quot;New Profile&quot; to the profile list, instead of the menubar</li>
+                    <li>Moved "New Profile" to the profile list, instead of the menubar</li>
                     <li>Various UI improvements</li>
                 </ul>
                 <p>Fixed</p>
@@ -1627,7 +1620,7 @@
                     <li>Improve performance for dependency trees</li>
                     <li>Improve performance of config parsing</li>
                     <li>Parsing config entries without a value</li>
-                    <li>&quot;Update all&quot; banner showing the wrong number of mods</li>
+                    <li>"Update all" banner showing the wrong number of mods</li>
                     <li>Config files being copied from other profiles when importing from code</li>
                     <li>Launching games with doorstop v4</li>
                     <li>Uninstalled mods sometimes not being deleted from the file system</li>
