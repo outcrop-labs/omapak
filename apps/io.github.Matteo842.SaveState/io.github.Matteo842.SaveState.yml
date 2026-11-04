@@ -23,16 +23,17 @@ modules:
     buildsystem: simple
     build-commands:
       # 1. Creazione cartelle standard
-      - mkdir -p /app/bin /app/share/applications /app/share/icons/hicolor/256x256/apps /app/share/doc/savestate
-      
+      - mkdir -p /app/bin /app/share/applications /app/share/icons/hicolor/256x256/apps
+        /app/share/doc/savestate
+
       # 2. Installazione eseguibile (estrae dal tar.gz scaricato)
       # Nota: Sostituisci 'SaveState.AppImage' col nome esatto che c'è nel tar.gz
       - cp SaveState.AppImage /app/bin/SaveState-bin
       - chmod +x /app/bin/SaveState-bin
-      
+
       # 3. Installazione Documentazione e Licenza
       - cp README.md LICENSE /app/share/doc/savestate/ || true
-      
+
       # 4. Wrapper per evitare errori FUSE
       - |
         cat <<EOF > /app/bin/SaveState-wrapper
@@ -40,7 +41,7 @@ modules:
         exec /app/bin/SaveState-bin --appimage-extract-and-run "\$@"
         EOF
       - chmod +x /app/bin/SaveState-wrapper
-      
+
       # 5. Icona e Menu
       - cp io.github.Matteo842.SaveState.png /app/share/icons/hicolor/256x256/apps/
       - |
@@ -58,16 +59,17 @@ modules:
     sources:
       - type: archive
         # LINK DIRETTO: Aggiornalo ogni volta che fai una nuova release
-        url: https://github.com/Matteo842/SaveState/releases/download/v2.1b/SaveState_linux.tar.gz
+        url: https://github.com/Matteo842/SaveState/releases/download/v3.2/SaveState_v3.2_Linux.tar.xz
         # SHA256: Importante per la sicurezza (Flathub lo esige)
-        sha256: 43755e51c5a19272ea8f10f6a6a013d70bef8b0919b44e38abd544b45803ec91
+        sha256: 1ade98946166b3730c131001a6d86e7ccdb32f174f5ef69734a57acc159d44f3
         # v3.0 renamed the asset to SaveState_v<version>_Linux.tar.xz; the
         # checker will carry the jump (and the judge validates the repack).
         x-checker-data:
           type: json
           url: https://api.github.com/repos/Matteo842/SaveState/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: '"https://github.com/Matteo842/SaveState/releases/download/v" + $version + "/SaveState_v" + $version + "_Linux.tar.xz"'
+          url-query: '"https://github.com/Matteo842/SaveState/releases/download/v"
+            + $version + "/SaveState_v" + $version + "_Linux.tar.xz"'
           is-main-source: true
       - type: file
         path: icon.png
