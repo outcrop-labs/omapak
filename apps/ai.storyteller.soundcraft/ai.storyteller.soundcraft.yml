@@ -70,28 +70,31 @@ modules:
       - install -Dm644 share/mime/packages/ai.storyteller.soundcraft.xml /app/share/mime/packages/ai.storyteller.soundcraft.xml
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.soundcraft.metainfo.xml /app/share/metainfo/ai.storyteller.soundcraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/soundcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/soundcraft /app/share/doc/
       # Mount point for the plugin extensions (add-extensions).
       - install -d /app/extensions/Plugins
     sources:
       - type: archive
-        url: https://github.com/storytold/soundcraft/releases/download/v0.3.0/soundcraft-0.3.0-linux-x86_64.tar.gz
-        sha256: 31d4a3e4efe88aa47291b2b5aa85e45679fd73988eb951015ddb24eb2bba9322
+        url: https://github.com/storytold/soundcraft/releases/download/v0.17.0/soundcraft-0.17.0-linux-x86_64.tar.gz
+        sha256: 309bfecbb3044c16f0a200d64b58b341834089fa78211f722afb50eb05566d71
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/soundcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/soundcraft/releases/download/v" + $version + "/soundcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/soundcraft/releases/download/v"
+            + $version + "/soundcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/soundcraft/releases/download/v0.3.0/soundcraft-0.3.0-linux-aarch64.tar.gz
-        sha256: a4d8bdaab7f13343843c8c2fa48f2389543ffa74e87358bb9a9b1559605e660b
+        url: https://github.com/storytold/soundcraft/releases/download/v0.17.0/soundcraft-0.17.0-linux-aarch64.tar.gz
+        sha256: 6188c76afd0434fe032fdc458eeaa9e88d5c286f5d03cfc3507e372030102ae6
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/soundcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/soundcraft/releases/download/v" + $version + "/soundcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/soundcraft/releases/download/v"
+            + $version + "/soundcraft-" + $version + "-linux-aarch64.tar.gz"'
