@@ -51,26 +51,29 @@ modules:
       - install -Dm644 share/mime/packages/ai.storyteller.deckcraft.xml /app/share/mime/packages/ai.storyteller.deckcraft.xml
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.deckcraft.metainfo.xml /app/share/metainfo/ai.storyteller.deckcraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/deckcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/deckcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/deckcraft/releases/download/v0.3.0/deckcraft-0.3.0-linux-x86_64.tar.gz
-        sha256: 179d6ce47401ba37c233c3fc0a18034126aed81ac36a49c4df6ecdaca9b5ab7f
+        url: https://github.com/storytold/deckcraft/releases/download/v0.15.0/deckcraft-0.15.0-linux-x86_64.tar.gz
+        sha256: 4e39a80452c42ec2e00122586f088a9ab27503249ae67cf4bdb13910d4a3aee4
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/deckcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/deckcraft/releases/download/v" + $version + "/deckcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/deckcraft/releases/download/v"
+            + $version + "/deckcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/deckcraft/releases/download/v0.3.0/deckcraft-0.3.0-linux-aarch64.tar.gz
-        sha256: fe1d936c7e67371aba2e3ed86ffe9bc20720a6e1ff5b0a390c82283bb94c243f
+        url: https://github.com/storytold/deckcraft/releases/download/v0.15.0/deckcraft-0.15.0-linux-aarch64.tar.gz
+        sha256: 59c886bda7bb9133d77926a53282024c33a1f82f4e929f54eb8f9fa39c9220db
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/deckcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/deckcraft/releases/download/v" + $version + "/deckcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/deckcraft/releases/download/v"
+            + $version + "/deckcraft-" + $version + "-linux-aarch64.tar.gz"'
