@@ -60,7 +60,8 @@ modules:
       - install -Dm755 ipfs-desktop.sh "${FLATPAK_DEST}/bin/ipfs-desktop"
 
       # Provide ipfs CLI command in /app/bin
-      - ln -sf "${FLATPAK_DEST}/ipfs-desktop/resources/app.asar.unpacked/node_modules/kubo/kubo/ipfs" "${FLATPAK_DEST}/bin/ipfs"
+      - ln -sf "${FLATPAK_DEST}/ipfs-desktop/resources/app.asar.unpacked/node_modules/kubo/kubo/ipfs"
+        "${FLATPAK_DEST}/bin/ipfs"
 
       # Patch app.asar desktop filename for proper WM_CLASS and notifications
       - patch-electron-desktop-filename "${FLATPAK_DEST}/ipfs-desktop/resources/app.asar"
@@ -68,8 +69,8 @@ modules:
       - type: file
         only-arches: [x86_64]
         dest-filename: ipfs-desktop.deb
-        url: https://github.com/ipfs/ipfs-desktop/releases/download/v0.50.0/ipfs-desktop-0.50.0-linux-amd64.deb
-        sha256: 93332777997fba8d5011d3cd2a21a1d89ede8c4af752ff969ed6c671b0bc29c8
+        url: https://github.com/ipfs/ipfs-desktop/releases/download/v0.50.1/ipfs-desktop-0.50.1-linux-amd64.deb
+        sha256: cfed0de90ab1b451b6b01e2fc9e80eeddf8b16112d8ff9259de83e91bda256a1
         x-checker-data:
           type: json
           url: https://api.github.com/repos/ipfs/ipfs-desktop/releases/latest
