@@ -95,17 +95,21 @@ jobs:
       # expand bare-string source includes ("modules: [ foo.json ]"),
       # which 1.4.11 accepts — OmaAmp passed the judge and then failed
       # here with "sdk not specified" (2026-09-16). One builder version
-      # everywhere ends that drift class.
+      # everywhere ends that drift class. The key carries the Ubuntu
+      # release for the same reason as the judge's (see judge.yml).
+      - name: Runner OS release
+        id: osrel
+        run: echo "version=$(. /etc/os-release && echo "$VERSION_ID")" >> "$GITHUB_OUTPUT"
       - name: Cache flatpak-builder 1.4.11
         id: fbcache
         uses: actions/cache@v4
         with:
           path: /usr/local/bin/flatpak-builder
-          key: flatpak-builder-1.4.11-v1
+          key: flatpak-builder-1.4.11-ubuntu${{ steps.osrel.outputs.version }}-v1
       - name: Build flatpak-builder 1.4.11
         if: steps.fbcache.outputs.cache-hit != 'true'
         run: |
-          sudo apt-get install -y meson ninja-build build-essential \
+          sudo apt-get install -y meson ninja-build build-essential debugedit \
             libflatpak-dev libcurl4-openssl-dev libyaml-dev libjson-glib-dev libelf-dev
           curl -sL -o /tmp/fb.tar.xz \
             https://github.com/flatpak/flatpak-builder/releases/download/1.4.11/flatpak-builder-1.4.11.tar.xz
