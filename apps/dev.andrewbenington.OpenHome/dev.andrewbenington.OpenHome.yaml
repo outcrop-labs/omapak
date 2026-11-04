@@ -17,28 +17,30 @@ modules:
     buildsystem: simple
     sources:
       - type: file
-        url: https://github.com/andrewbenington/OpenHome/releases/download/v1.4.4/OpenHome_1.4.4_arm64.deb
-        sha256: 202a36152be5d0900255e0575a67d79a13bcbb84c6675e1491b53e2b099237f5
+        url: https://github.com/andrewbenington/OpenHome/releases/download/v1.18.1/OpenHome_1.18.1_arm64.deb
+        sha256: 1334575ef433412afb99462cb5961c4e66f80c5571a80ecf307521fb91b4cfda
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/andrewbenington/OpenHome/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: '"https://github.com/andrewbenington/OpenHome/releases/download/v" + $version + "/OpenHome_" + $version + "_arm64.deb"'
+          url-query: '"https://github.com/andrewbenington/OpenHome/releases/download/v"
+            + $version + "/OpenHome_" + $version + "_arm64.deb"'
       - type: file
-        url: https://github.com/andrewbenington/OpenHome/releases/download/v1.4.4/OpenHome_1.4.4_amd64.deb
-        sha256: 00f638a84d6510a55103c788a0b73a0cf6986e42fa09104f3691f6aa01a38488
+        url: https://github.com/andrewbenington/OpenHome/releases/download/v1.18.1/OpenHome_1.18.1_amd64.deb
+        sha256: 3b60f7beeaa93c3c2b1ab4265016eaf440d87874ffbca7c01f3be9aa4f9606cb
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/andrewbenington/OpenHome/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: '"https://github.com/andrewbenington/OpenHome/releases/download/v" + $version + "/OpenHome_" + $version + "_amd64.deb"'
+          url-query: '"https://github.com/andrewbenington/OpenHome/releases/download/v"
+            + $version + "/OpenHome_" + $version + "_amd64.deb"'
           is-main-source: true
     build-commands:
       - ar -x *.deb
       - tar -xf data.tar.gz
-      - 'install -Dm755 usr/bin/OpenHome /app/bin/OpenHome'
+      - install -Dm755 usr/bin/OpenHome /app/bin/OpenHome
       - install -Dm644 usr/share/applications/OpenHome.desktop /app/share/applications/dev.andrewbenington.OpenHome.desktop
       - install -Dm644 usr/share/icons/hicolor/128x128/apps/OpenHome.png /app/share/icons/hicolor/128x128/apps/dev.andrewbenington.OpenHome.png
       - install -Dm644 usr/share/icons/hicolor/32x32/apps/OpenHome.png /app/share/icons/hicolor/32x32/apps/dev.andrewbenington.OpenHome.png
