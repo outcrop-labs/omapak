@@ -1,9 +1,9 @@
 app-id: io.github.lluciocc.Vish
 runtime: org.kde.Platform
-runtime-version: "6.10"
+runtime-version: '6.10'
 sdk: org.kde.Sdk
 base: io.qt.PySide.BaseApp
-base-version: "6.10"
+base-version: '6.10'
 command: vish
 
 finish-args:
@@ -29,9 +29,10 @@ modules:
     sources:
       - type: git
         url: https://github.com/Lluciocc/Vish.git
-        tag: v1.1.4
+        tag: v1.0.14
         # Anchored: the repo also cuts suffixed tags like v1.1.1.fix
         x-checker-data:
           type: git
           tag-pattern: ^v\d+(\.\d+)+$
           is-main-source: true
+        commit: bde9adad70370962fefe2c2ba3bd93262c7ab050
