@@ -61,9 +61,12 @@
     </screenshot>
   </screenshots>
 
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="3.6.1" date="2026-11-02">
+      <description></description>
+    </release>
     <release version="1.5.0" date="2026-06-20">
       <url type="details">https://github.com/opengeos/GeoLibre/releases/tag/v1.5.0</url>
     </release>
