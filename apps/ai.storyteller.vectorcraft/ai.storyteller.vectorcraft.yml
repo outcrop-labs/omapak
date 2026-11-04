@@ -47,26 +47,29 @@ modules:
       - install -Dm644 share/mime/packages/ai.storyteller.vectorcraft.xml /app/share/mime/packages/ai.storyteller.vectorcraft.xml
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.vectorcraft.metainfo.xml /app/share/metainfo/ai.storyteller.vectorcraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/vectorcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/vectorcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/vectorcraft/releases/download/v0.6.0/vectorcraft-0.6.0-linux-x86_64.tar.gz
-        sha256: 48b59a1db5a454e9b06d3bb2c22b5a01f86be47e9eb43c8c510768407803f1f7
+        url: https://github.com/storytold/vectorcraft/releases/download/v0.21.0/vectorcraft-0.21.0-linux-x86_64.tar.gz
+        sha256: 2ffd00fb349318e7e92e97af377cffd818f1726451b7f2189e92f2267eb34c21
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/vectorcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/vectorcraft/releases/download/v" + $version + "/vectorcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/vectorcraft/releases/download/v"
+            + $version + "/vectorcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/vectorcraft/releases/download/v0.6.0/vectorcraft-0.6.0-linux-aarch64.tar.gz
-        sha256: 65fd4a2685c6fb5b55a91c968e78856438712f2bb31306ea8677e706aff1ac5a
+        url: https://github.com/storytold/vectorcraft/releases/download/v0.21.0/vectorcraft-0.21.0-linux-aarch64.tar.gz
+        sha256: 64c9127683a7e97c7fa48f2ecc61e1bd40e3ec7db177926d34c9facd7e350c02
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/vectorcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/vectorcraft/releases/download/v" + $version + "/vectorcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/vectorcraft/releases/download/v"
+            + $version + "/vectorcraft-" + $version + "-linux-aarch64.tar.gz"'
