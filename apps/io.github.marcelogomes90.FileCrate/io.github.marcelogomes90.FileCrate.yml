@@ -37,8 +37,10 @@ modules:
       - install -Dm0644 ../../../../DOC/License.txt /app/share/licenses/io.github.marcelogomes90.FileCrate/7zip-License.txt
       - install -Dm0644 ../../../../DOC/copying.txt /app/share/licenses/io.github.marcelogomes90.FileCrate/7zip-LGPL.txt
     sources:
+      # snapshot, not deb.debian.org/pool: the pool deletes superseded origs
+      # (this one 404'd once Debian moved to 26.05). Same file, same sha256.
       - type: archive
-        url: https://deb.debian.org/debian/pool/main/7/7zip/7zip_26.03+dfsg.orig.tar.xz
+        url: https://snapshot.debian.org/archive/debian/20260904T203433Z/pool/main/7/7zip/7zip_26.03%2Bdfsg.orig.tar.xz
         sha256: 3be7a8ed179da76723b410f6a9bff72642d8acd1c5523c081f84bc4c164c4a9c
 
   - name: file-crate
