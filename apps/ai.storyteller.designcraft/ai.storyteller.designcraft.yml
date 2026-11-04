@@ -49,26 +49,29 @@ modules:
       - install -Dm644 share/mime/packages/ai.storyteller.designcraft.xml /app/share/mime/packages/ai.storyteller.designcraft.xml
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.designcraft.metainfo.xml /app/share/metainfo/ai.storyteller.designcraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/designcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/designcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/designcraft/releases/download/v0.4.0/designcraft-0.4.0-linux-x86_64.tar.gz
-        sha256: 4c0b68c0dc62081e455bf8d60dd54f022ff1624359d5e10d06ca2b18d73d4bb3
+        url: https://github.com/storytold/designcraft/releases/download/v0.17.0/designcraft-0.17.0-linux-x86_64.tar.gz
+        sha256: bb6f9cec404655350266e98ee10d9b5a154507ed998ad7af47b25335afad1872
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/designcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/designcraft/releases/download/v" + $version + "/designcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/designcraft/releases/download/v"
+            + $version + "/designcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/designcraft/releases/download/v0.4.0/designcraft-0.4.0-linux-aarch64.tar.gz
-        sha256: 1b5b9056959ada5290aa2cdaad850748c9f9f09a1c3b4136908bab996b2bb45c
+        url: https://github.com/storytold/designcraft/releases/download/v0.17.0/designcraft-0.17.0-linux-aarch64.tar.gz
+        sha256: 1bb183f2e3a3b2a0748fa657f1677c82986a766669379d4f3239dc3c98e2a905
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/designcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/designcraft/releases/download/v" + $version + "/designcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/designcraft/releases/download/v"
+            + $version + "/designcraft-" + $version + "-linux-aarch64.tar.gz"'
