@@ -9,7 +9,7 @@
 #     path: .
 app-id: io.github.dprietob.luma
 runtime: org.kde.Platform
-runtime-version: "6.11"
+runtime-version: '6.11'
 sdk: org.kde.Sdk
 command: luma
 
@@ -31,8 +31,8 @@ cleanup:
   - /lib/cmake
   - /share/man
   - /share/doc
-  - "*.a"
-  - "*.la"
+  - '*.a'
+  - '*.la'
 
 modules:
   - name: portaudio
@@ -59,7 +59,7 @@ modules:
     sources:
       - type: git
         url: https://codeberg.org/soundtouch/soundtouch.git
-        tag: "2.3.3"
+        tag: 2.3.3
         commit: e83424d5928ab8513d2d082779c275765dee31b9
 
   - name: luma
@@ -70,5 +70,5 @@ modules:
     sources:
       - type: git
         url: https://github.com/dprietob/luma.git
-        tag: "1.0.0"
-        commit: a035fe6f894a610266c9b84a9b40fb88eebf005d
+        tag: 1.0.0
+        commit: c9c1c5858dd96bf4fd3f6dc0bbe542b5e9b8a454
