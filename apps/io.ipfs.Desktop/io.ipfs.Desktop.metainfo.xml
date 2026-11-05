@@ -64,8 +64,11 @@
     <color type="primary" scheme_preference="light">#041727</color>
     <color type="primary" scheme_preference="dark">#041727</color>
   </branding>
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.50.1" date="2026-09-15">
+      <description></description>
+    </release>
     <release version="0.50.0" date="2026-08-03">
       <url type="details">https://github.com/ipfs/ipfs-desktop/releases/tag/v0.50.0</url>
       <description>
