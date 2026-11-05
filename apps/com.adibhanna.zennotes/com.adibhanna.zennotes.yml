@@ -35,27 +35,26 @@ modules:
       # Copy the unpacked Electron app into /app, dropping AppImage-only bits.
       - mkdir -p /app/zennotes
       - cp -a squashfs-root/. /app/zennotes/
-      - rm -rf /app/zennotes/usr /app/zennotes/AppRun /app/zennotes/.DirIcon
-          /app/zennotes/ZenNotes.png /app/zennotes/ZenNotes.desktop
+      - rm -rf /app/zennotes/usr /app/zennotes/AppRun /app/zennotes/.DirIcon /app/zennotes/ZenNotes.png
+        /app/zennotes/ZenNotes.desktop
       # The SUID chrome-sandbox is unusable in Flatpak; zypak handles sandboxing.
       - rm -f /app/zennotes/chrome-sandbox
       - chmod -R a+rX /app/zennotes
       - install -Dm755 zennotes.sh /app/bin/zennotes
-      - install -Dm644 com.adibhanna.zennotes.desktop
-          /app/share/applications/com.adibhanna.zennotes.desktop
-      - install -Dm644 com.adibhanna.zennotes.metainfo.xml
-          /app/share/metainfo/com.adibhanna.zennotes.metainfo.xml
+      - install -Dm644 com.adibhanna.zennotes.desktop /app/share/applications/com.adibhanna.zennotes.desktop
+      - install -Dm644 com.adibhanna.zennotes.metainfo.xml /app/share/metainfo/com.adibhanna.zennotes.metainfo.xml
     sources:
       # Tracked by the update sweep via x-checker-data.
       - type: file
-        url: https://github.com/ZenNotes/zennotes/releases/download/v2.51.1/ZenNotes-2.51.1-linux-x86_64.AppImage
-        sha256: bdbc3ba7603109431408e1166289f3f4dac70bf7a65a20865865d5c458b4a1b4
+        url: https://github.com/ZenNotes/zennotes/releases/download/v2.82.0/ZenNotes-2.82.0-linux-x86_64.AppImage
+        sha256: b384dc73f964ae355dc8d50b66c3562e19eaed582fa08a458fed028768549218
         dest-filename: ZenNotes.AppImage
         x-checker-data:
           type: json
           url: https://api.github.com/repos/ZenNotes/zennotes/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: '"https://github.com/ZenNotes/zennotes/releases/download/v" + $version + "/ZenNotes-" + $version + "-linux-x86_64.AppImage"'
+          url-query: '"https://github.com/ZenNotes/zennotes/releases/download/v" +
+            $version + "/ZenNotes-" + $version + "-linux-x86_64.AppImage"'
           is-main-source: true
       - type: file
         path: zennotes.sh
