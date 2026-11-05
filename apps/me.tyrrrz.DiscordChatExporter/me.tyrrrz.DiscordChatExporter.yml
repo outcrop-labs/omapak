@@ -1,6 +1,6 @@
 app-id: me.tyrrrz.DiscordChatExporter
 runtime: org.freedesktop.Platform
-runtime-version: "24.08"
+runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 command: DiscordChatExporter
 
@@ -30,8 +30,8 @@ modules:
     sources:
       - type: archive
         only-arches: [x86_64]
-        url: https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.47.1/DiscordChatExporter.linux-x64.zip
-        sha256: 63551e4411b50fa482e190ea52fef6ffe327e45a11a072ee1434112fbb2ad837
+        url: https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.48/DiscordChatExporter.linux-x64.zip
+        sha256: aafec3a2020c82a718f89123e864f9e7f9db756530bc8b8505ef7bb074134a61
         x-checker-data:
           type: json
           url: https://api.github.com/repos/Tyrrrz/DiscordChatExporter/releases/latest
@@ -41,8 +41,8 @@ modules:
 
       - type: archive
         only-arches: [arm]
-        url: https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.47.1/DiscordChatExporter.linux-arm.zip
-        sha256: 60acb28e1ec21731a9778b479d4ceba8daee06c76588cc7264b600e08dc45a97
+        url: https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.48/DiscordChatExporter.linux-arm.zip
+        sha256: f9ab96bf9b6225a145e5380c13b5a7fec79110c4bf391e02111ad784e7f394e4
         x-checker-data:
           type: json
           url: https://api.github.com/repos/Tyrrrz/DiscordChatExporter/releases/latest
@@ -52,8 +52,8 @@ modules:
 
       - type: archive
         only-arches: [aarch64]
-        url: https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.47.1/DiscordChatExporter.linux-arm64.zip
-        sha256: bfca736449a8c2c6265219989a197aaecb93a864055cb690265f55cdafe41c1b
+        url: https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.48/DiscordChatExporter.linux-arm64.zip
+        sha256: e6cd0c31319dddd57e3dbce710f977f95c5b5d71d8966b11ace4d5da698ee3f0
         x-checker-data:
           type: json
           url: https://api.github.com/repos/Tyrrrz/DiscordChatExporter/releases/latest

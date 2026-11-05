@@ -38,7 +38,7 @@
     <color type="primary" scheme_preference="light">#5865F2</color>
   </branding>
 
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
 
   <!-- Add real screenshots once the app is running in Flatpak -->
   <screenshots>
@@ -54,6 +54,9 @@
   </screenshots>
 
   <releases>
+    <release version="2.48" date="2026-08-27">
+      <description></description>
+    </release>
     <release version="2.47.1" date="2026-03-21">
       <description>
         <p>See the GitHub release page for full changelog.</p>
