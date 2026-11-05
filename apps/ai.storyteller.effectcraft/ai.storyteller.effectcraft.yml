@@ -56,26 +56,29 @@ modules:
       - install -Dm644 share/mime/packages/ai.storyteller.effectcraft.xml /app/share/mime/packages/ai.storyteller.effectcraft.xml
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.effectcraft.metainfo.xml /app/share/metainfo/ai.storyteller.effectcraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/effectcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/effectcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/effectcraft/releases/download/v0.6.0/effectcraft-0.6.0-linux-x86_64.tar.gz
-        sha256: 71810719903378cdab32a1fe328f23c874d38cd3d833abb19c6263dd2bad218c
+        url: https://github.com/storytold/effectcraft/releases/download/v0.21.1/effectcraft-0.21.1-linux-x86_64.tar.gz
+        sha256: ec39afa51fb0a2c0b58a8c1102325e2355016fe754563d24075fa29b3e1c5315
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/effectcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/effectcraft/releases/download/v" + $version + "/effectcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/effectcraft/releases/download/v"
+            + $version + "/effectcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/effectcraft/releases/download/v0.6.0/effectcraft-0.6.0-linux-aarch64.tar.gz
-        sha256: 77cc576b9b1c7b6436e997f24a8c50b05783f6cbe573aaeaa0ec7e105877458e
+        url: https://github.com/storytold/effectcraft/releases/download/v0.21.1/effectcraft-0.21.1-linux-aarch64.tar.gz
+        sha256: 77a91020eff524617fc9db4b7443c8fc22f7874f4b0c85b74b15fa0eebc825fe
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/effectcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/effectcraft/releases/download/v" + $version + "/effectcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/effectcraft/releases/download/v"
+            + $version + "/effectcraft-" + $version + "-linux-aarch64.tar.gz"'
