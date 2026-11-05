@@ -1,7 +1,7 @@
 id: com.kesomannen.gale
 
 runtime: org.gnome.Platform
-runtime-version: "49"
+runtime-version: '49'
 sdk: org.gnome.Sdk
 
 command: gale
@@ -42,9 +42,9 @@ modules:
         path: com.kesomannen.gale.metainfo.xml
 
       - type: file
-        url: https://github.com/Kesomannen/gale/releases/download/1.22.3/Gale_1.22.3_amd64.AppImage
+        url: https://github.com/Kesomannen/gale/releases/download/1.23.3/Gale_1.23.3_amd64.AppImage
         dest-filename: gale.AppImage
-        sha256: e99ae9c077b5bd662d63ab280d8698d3cf87a72535e1325005eead8bce4ac569
+        sha256: d2b035e4a4a5b8d77590353b9f7448b3ef5bcbf7668ef335e72e5e45716ac01d
         only-arches: [x86_64]
         # Lets update-apps.yml (flatpak-external-data-checker) keep this
         # pinned to the latest release automatically. Gale tags carry no
@@ -53,4 +53,5 @@ modules:
           type: json
           url: https://api.github.com/repos/Kesomannen/gale/releases/latest
           version-query: .tag_name
-          url-query: '"https://github.com/Kesomannen/gale/releases/download/" + $version + "/Gale_" + $version + "_amd64.AppImage"'
+          url-query: '"https://github.com/Kesomannen/gale/releases/download/" + $version
+            + "/Gale_" + $version + "_amd64.AppImage"'
