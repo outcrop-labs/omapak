@@ -40,13 +40,14 @@ modules:
       - install -Dm644 net.mccompanion.MCCompanion.metainfo.xml /app/share/metainfo/net.mccompanion.MCCompanion.metainfo.xml
     sources:
       - type: archive
-        url: https://github.com/MCCORG/MCCompanion/releases/download/v4.1.9/MCCompanion-linux-x64.tar.gz
-        sha256: 1155cb72484b6a4e42653ae2cd31a5a164edcea750a393467878a6c728a179fe
+        url: https://github.com/MCCORG/MCCompanion/releases/download/v5.2.0/MCCompanion-linux-x64.tar.gz
+        sha256: d03cd518bee7334b632f9d4fe492595308a987f88b137c55d47e6553cbbf73dd
         x-checker-data:
           type: json
           url: https://api.github.com/repos/MCCORG/MCCompanion/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: .assets[] | select(.name == "MCCompanion-linux-x64.tar.gz") | .browser_download_url
+          url-query: .assets[] | select(.name == "MCCompanion-linux-x64.tar.gz") |
+            .browser_download_url
           is-main-source: true
       # Vendored rather than fetched from the app's `main` branch. These three
       # are the submission's own packaging metadata, and pulling them live
