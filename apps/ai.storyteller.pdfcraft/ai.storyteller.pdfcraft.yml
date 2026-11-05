@@ -52,26 +52,29 @@ modules:
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.pdfcraft.metainfo.xml /app/share/metainfo/ai.storyteller.pdfcraft.metainfo.xml
       # Licences, including the embedded craft-fonts' OFL texts.
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/pdfcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/pdfcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/pdfcraft/releases/download/v0.4.0/pdfcraft-0.4.0-linux-x86_64.tar.gz
-        sha256: 4879b3cdb4d1261945af03b1c5f00f3e868d05e84e77911960cac505aa16c1db
+        url: https://github.com/storytold/pdfcraft/releases/download/v0.18.2/pdfcraft-0.18.2-linux-x86_64.tar.gz
+        sha256: 323bad7b373392076461e2cad5db63b22f47a032ba005a6c4a35f3483d05dae4
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/pdfcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/pdfcraft/releases/download/v" + $version + "/pdfcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/pdfcraft/releases/download/v"
+            + $version + "/pdfcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/pdfcraft/releases/download/v0.4.0/pdfcraft-0.4.0-linux-aarch64.tar.gz
-        sha256: 08b2ff6c538adb3cc08a88814a3cce6eee09cb98c9af934c393a5131a315590e
+        url: https://github.com/storytold/pdfcraft/releases/download/v0.18.2/pdfcraft-0.18.2-linux-aarch64.tar.gz
+        sha256: 6ac0f63a3b8ce422046053e601e44be6276d8e5576a084c0c709b0e3a3f65eb6
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/pdfcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/pdfcraft/releases/download/v" + $version + "/pdfcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/pdfcraft/releases/download/v"
+            + $version + "/pdfcraft-" + $version + "-linux-aarch64.tar.gz"'
