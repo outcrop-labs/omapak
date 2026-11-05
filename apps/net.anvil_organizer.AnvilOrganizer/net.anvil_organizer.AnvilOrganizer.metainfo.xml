@@ -47,9 +47,12 @@
     </screenshot>
   </screenshots>
 
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version=".9" date="2026-11-05">
+      <description></description>
+    </release>
     <release version="1.2.2" date="2026-03-28">
       <description>
         <p>Flatpak and packaging improvements, LOOT integration, deploy filter.</p>
