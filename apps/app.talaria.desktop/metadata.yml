@@ -2,7 +2,7 @@ submitter: joniler
 source_repo: https://github.com/outcrop-labs/talaria
 summary: Official desktop client for the workspace where agents work as teammates
 description: >-
-  Builds Talaria Desktop from source at tag desktop-v0.10.0: the Svelte/Vite
+  Builds Talaria Desktop from source at tag desktop-v0.11.0: the Svelte/Vite
   frontend is compiled offline from a vendored bun cache (node-sources.json)
   and the Tauri v2 shell from vendored crates (cargo-sources.json), linked
   against the WebKitGTK 4.1 that org.gnome.Platform//50 carries. Rust 1.97.1
