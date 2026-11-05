@@ -50,26 +50,29 @@ modules:
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.wordcraft.metainfo.xml /app/share/metainfo/ai.storyteller.wordcraft.metainfo.xml
       # Docs include the licences of the embedded craft-fonts (OFL-*.txt).
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/wordcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/wordcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/wordcraft/releases/download/v0.3.0/wordcraft-0.3.0-linux-x86_64.tar.gz
-        sha256: c0b3a4b61afe0e8891b1386f73dc94adf528d8d87360f3fb71a97ba03381aec2
+        url: https://github.com/storytold/wordcraft/releases/download/v0.15.2/wordcraft-0.15.2-linux-x86_64.tar.gz
+        sha256: 366e54e235b4631779c0c78c0777a880de511163de9130ab78ce59583f7a0b9a
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/wordcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/wordcraft/releases/download/v" + $version + "/wordcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/wordcraft/releases/download/v"
+            + $version + "/wordcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/wordcraft/releases/download/v0.3.0/wordcraft-0.3.0-linux-aarch64.tar.gz
-        sha256: c3bd964e73e7cd2c556a9d0eba04acd41aefac8dbce39ec7223360a7d1fbcd36
+        url: https://github.com/storytold/wordcraft/releases/download/v0.15.2/wordcraft-0.15.2-linux-aarch64.tar.gz
+        sha256: 645e8daa4785c3e68bfede740f55075ea60d45c9f428b26c9741e819082c0b1b
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/wordcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/wordcraft/releases/download/v" + $version + "/wordcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/wordcraft/releases/download/v"
+            + $version + "/wordcraft-" + $version + "-linux-aarch64.tar.gz"'
