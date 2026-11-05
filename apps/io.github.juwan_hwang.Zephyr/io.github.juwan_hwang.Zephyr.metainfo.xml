@@ -19,6 +19,9 @@
       <li>Full proxy protocol management, subscription parsing, and latency testing</li>
       <li>Real-time traffic oscilloscope monitoring and system tray integration</li>
     </ul>
+    <p>
+      A note on privileges: TUN mode and system-proxy management need administrator privileges on the host, and these features are limited inside the Flatpak sandbox. When using the Flatpak package, please update Zephyr through your system software center or with flatpak update instead of the built-in in-app updater.
+    </p>
   </description>
 
   <url type="homepage">https://github.com/Juwan-Hwang/Zephyr</url>
@@ -37,6 +40,14 @@
       <caption>Zephyr Main Interface</caption>
       <image>https://raw.githubusercontent.com/Juwan-Hwang/Zephyr/main/apps/desktop/assets/screenshot-home.png</image>
     </screenshot>
+    <screenshot>
+      <caption>Dark Mode Interface</caption>
+      <image>https://raw.githubusercontent.com/Juwan-Hwang/Zephyr/main/apps/desktop/assets/screenshot-dark.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Settings</caption>
+      <image>https://raw.githubusercontent.com/Juwan-Hwang/Zephyr/main/apps/desktop/assets/screenshot-settings.png</image>
+    </screenshot>
   </screenshots>
 
   <provides>
@@ -46,6 +57,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="2.5.0" date="2026-10-22">
+      <description>
+        <p>Zephyr v2.5.0.</p>
+      </description>
+    </release>
     <release version="2.4.3" date="2026-08-08">
       <description>
         <p>Zephyr v2.4.3 release with UI optimizations, multi-architecture Linux package improvements, and security enhancements.</p>
