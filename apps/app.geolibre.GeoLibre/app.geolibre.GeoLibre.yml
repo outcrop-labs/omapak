@@ -44,10 +44,8 @@ modules:
         [ -d "$src" ] || { echo "expected Tauri resource dir '$src' not found in the .deb" >&2; exit 1; }
         install -d "/app/lib"
         cp -r "$src" "/app/lib/"
-      - install -Dm644 app.geolibre.GeoLibre.desktop
-        /app/share/applications/app.geolibre.GeoLibre.desktop
-      - install -Dm644 app.geolibre.GeoLibre.metainfo.xml
-        /app/share/metainfo/app.geolibre.GeoLibre.metainfo.xml
+      - install -Dm644 app.geolibre.GeoLibre.desktop /app/share/applications/app.geolibre.GeoLibre.desktop
+      - install -Dm644 app.geolibre.GeoLibre.metainfo.xml /app/share/metainfo/app.geolibre.GeoLibre.metainfo.xml
       # Install the icons under the app-id name (Flathub convention).
       - |
         found=0
@@ -61,14 +59,15 @@ modules:
         [ "$found" -gt 0 ] || { echo "no PNG icons found in the .deb" >&2; exit 1; }
     sources:
       - type: file
-        url: https://github.com/opengeos/GeoLibre/releases/download/v1.5.0/GeoLibre.Desktop_1.5.0_amd64.deb
-        sha256: d1591ab243795fd51bf4653b20adec9836a21dea2d44b8ea403f70fb3bed2595
+        url: https://github.com/opengeos/GeoLibre/releases/download/v3.6.1/GeoLibre.Desktop_3.6.1_amd64.deb
+        sha256: daf3c38b6b1c8e9293e2865eb5bdfff5b0e51e68ffc6620668cc22db0b35b487
         dest-filename: geolibre.deb
         x-checker-data:
           type: json
           url: https://api.github.com/repos/opengeos/GeoLibre/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: '"https://github.com/opengeos/GeoLibre/releases/download/v" + $version + "/GeoLibre.Desktop_" + $version + "_amd64.deb"'
+          url-query: '"https://github.com/opengeos/GeoLibre/releases/download/v" +
+            $version + "/GeoLibre.Desktop_" + $version + "_amd64.deb"'
           is-main-source: true
       - type: file
         path: app.geolibre.GeoLibre.desktop
