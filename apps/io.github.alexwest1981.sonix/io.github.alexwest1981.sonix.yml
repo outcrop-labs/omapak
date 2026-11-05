@@ -54,14 +54,15 @@ modules:
       - type: archive
         only-arches:
           - x86_64
-        url: https://github.com/alexwest1981/sonix/releases/download/v0.9.0/sonix-0.9.0-x86_64-unknown-linux-gnu.tar.gz
-        sha256: 2c2957390a28c2acb8d80bd73600ff117b3afbc9ab1d35f7994880ab5cb8822e
+        url: https://github.com/alexwest1981/sonix/releases/download/v0.9.239/sonix-0.9.239-x86_64-unknown-linux-gnu.tar.gz
+        sha256: 34e7853de071f02d4f084bdf2662374d6b901144f3deb694f8f343055daea31f
         x-checker-data:
           type: json
           url: https://api.github.com/repos/alexwest1981/sonix/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: .assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url
+          url-query: .assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz"))
+            | .browser_download_url
       - type: file
         path: io.github.alexwest1981.sonix.desktop
       - type: file
