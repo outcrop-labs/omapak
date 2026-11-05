@@ -50,26 +50,29 @@ modules:
       - install -Dm644 share/mime/packages/ai.storyteller.photocraft.xml /app/share/mime/packages/ai.storyteller.photocraft.xml
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.photocraft.metainfo.xml /app/share/metainfo/ai.storyteller.photocraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/photocraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/photocraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/photocraft/releases/download/v0.5.0/photocraft-0.5.0-linux-x86_64.tar.gz
-        sha256: e044101b2da5522896e1d8336b81087cbecbf6b78b7685315f58dd4f3dfa4ce0
+        url: https://github.com/storytold/photocraft/releases/download/v0.20.2/photocraft-0.20.2-linux-x86_64.tar.gz
+        sha256: 09e013d68d8313eb0b1cd6f24612f5b5fd0d993fffe3a7c12cecdfe5cd131a46
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/photocraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/photocraft/releases/download/v" + $version + "/photocraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/photocraft/releases/download/v"
+            + $version + "/photocraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/photocraft/releases/download/v0.5.0/photocraft-0.5.0-linux-aarch64.tar.gz
-        sha256: 3904fc9cab45b083d5870a8d4fab90b3a94c3ba5547a636bb7bf5a398da9c552
+        url: https://github.com/storytold/photocraft/releases/download/v0.20.2/photocraft-0.20.2-linux-aarch64.tar.gz
+        sha256: a1c3761d132d9ec162691d50f06ed98473bcdc0aed7c171a097df9adcfc38072
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/photocraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/photocraft/releases/download/v" + $version + "/photocraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/photocraft/releases/download/v"
+            + $version + "/photocraft-" + $version + "-linux-aarch64.tar.gz"'
