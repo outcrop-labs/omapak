@@ -58,26 +58,29 @@ modules:
       - install -Dm644 share/mime/packages/ai.storyteller.filmcraft.xml /app/share/mime/packages/ai.storyteller.filmcraft.xml
       # Already has the release's version and date substituted by package.sh.
       - install -Dm644 share/metainfo/ai.storyteller.filmcraft.metainfo.xml /app/share/metainfo/ai.storyteller.filmcraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/filmcraft /app/share/doc/
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/
+        && cp -R share/doc/filmcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/filmcraft/releases/download/v0.4.0/filmcraft-0.4.0-linux-x86_64.tar.gz
-        sha256: 841790ff6649f0d49daa4a8ade1cb18d948e5ca43d00771046663e06c8d8ce83
+        url: https://github.com/storytold/filmcraft/releases/download/v0.17.1/filmcraft-0.17.1-linux-x86_64.tar.gz
+        sha256: 397ae9fece559b37863b4b076af46a63b6e4387c35f781709e4efad14fe71ebe
         only-arches: [x86_64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/filmcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/filmcraft/releases/download/v" + $version + "/filmcraft-" + $version + "-linux-x86_64.tar.gz"'
+          url-query: '"https://github.com/storytold/filmcraft/releases/download/v"
+            + $version + "/filmcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/filmcraft/releases/download/v0.4.0/filmcraft-0.4.0-linux-aarch64.tar.gz
-        sha256: 3fbfc9b49a02bfa8a6ba6bd7f1841773b626a2adf0918f5e6164299d3f12f144
+        url: https://github.com/storytold/filmcraft/releases/download/v0.17.1/filmcraft-0.17.1-linux-aarch64.tar.gz
+        sha256: 225d6d815fad8cdfb720b5ce382196b60edd6ee10a9216660bcdabb28beaaa95
         only-arches: [aarch64]
         x-checker-data:
           type: json
           url: https://api.github.com/repos/storytold/filmcraft/releases/latest
           version-query: .tag_name | sub("^v"; "")
           timestamp-query: .published_at
-          url-query: '"https://github.com/storytold/filmcraft/releases/download/v" + $version + "/filmcraft-" + $version + "-linux-aarch64.tar.gz"'
+          url-query: '"https://github.com/storytold/filmcraft/releases/download/v"
+            + $version + "/filmcraft-" + $version + "-linux-aarch64.tar.gz"'
