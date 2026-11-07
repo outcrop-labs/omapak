@@ -54,8 +54,8 @@ modules:
         && cp -R share/doc/wordcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/wordcraft/releases/download/v0.15.2/wordcraft-0.15.2-linux-x86_64.tar.gz
-        sha256: 366e54e235b4631779c0c78c0777a880de511163de9130ab78ce59583f7a0b9a
+        url: https://github.com/storytold/wordcraft/releases/download/v0.16.0/wordcraft-0.16.0-linux-x86_64.tar.gz
+        sha256: 325b97f15bbf532628a3176a9c17148a7175f3e4f19b9313de323ab513609752
         only-arches: [x86_64]
         x-checker-data:
           type: json
@@ -66,8 +66,8 @@ modules:
             + $version + "/wordcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/wordcraft/releases/download/v0.15.2/wordcraft-0.15.2-linux-aarch64.tar.gz
-        sha256: 645e8daa4785c3e68bfede740f55075ea60d45c9f428b26c9741e819082c0b1b
+        url: https://github.com/storytold/wordcraft/releases/download/v0.16.0/wordcraft-0.16.0-linux-aarch64.tar.gz
+        sha256: 065cb440c096d099d84cbbf86f0bde26ef2a29c4580105625d0b3b28e9409510
         only-arches: [aarch64]
         x-checker-data:
           type: json
