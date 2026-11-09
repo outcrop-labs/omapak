@@ -11,6 +11,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  statuses: write
 
 jobs:
   judge:
@@ -163,66 +164,34 @@ jobs:
               core.notice(`closed duplicate submission (of ${dup})`);
             }
 
-      # Auto-merge the update sweep's PRs: an already-accepted app whose
-      # update still builds, carries no critical security flag, and whose
-      # diff only moves pinned-source lines needs no human. Anything else
-      # — new permissions, files outside the app dir, a failed build —
-      # stays open for review.
-      - name: Auto-merge clean update-bot PRs
+      # The verdict as a commit status on the PR head: it shows in the PR's
+      # checks, and update-sweep.yml merges an update PR only on success.
+      # success = built with no critical security flag. A critical flag
+      # doesn't block publication (compute_verdict), but it does hold an
+      # automatic merge for a human. Merging lives in update-sweep.yml, not
+      # here, so the merge token never shares a job with the PR's artifact.
+      - name: Record verdict as commit status
+        if: "!cancelled()"
         uses: actions/github-script@v7
         with:
           script: |
+            const fs = require('fs');
             const run = context.payload.workflow_run;
             if (run.event !== 'pull_request') return;
-            let prNumber = run.pull_requests[0]?.number;
-            if (!prNumber) {
-              const prs = await github.rest.pulls.list({
-                owner: context.repo.owner, repo: context.repo.repo,
-                state: 'open', per_page: 100,
-              });
-              prNumber = prs.data.find(p => p.head.sha === run.head_sha)?.number;
-            }
-            if (!prNumber) return;
-            const { data: pr } = await github.rest.pulls.get({
-              owner: context.repo.owner, repo: context.repo.repo, pull_number: prNumber,
+            const reports = (fs.existsSync('final') ? fs.readdirSync('final') : []).flatMap(d => {
+              try { return [JSON.parse(fs.readFileSync(`final/${d}/report.json`, 'utf8'))]; }
+              catch { return []; }
             });
-            if (pr.user.login !== 'github-actions[bot]') return;
-            if (!pr.title.startsWith('Update ')) return;
-
-            const { data: files } = await github.rest.pulls.listFiles({
-              owner: context.repo.owner, repo: context.repo.repo, pull_number: prNumber,
+            // A run that never executed (pending approval) has no verdict.
+            if (!reports.length && run.conclusion !== 'failure') return;
+            let state = 'failure', description;
+            if (!reports.length) description = 'judge failed before writing a report';
+            else if (reports.some(r => r.verdict !== 'published')) description = 'build failed';
+            else if (reports.some(r => (r.rubric?.security_flags || []).some(f => f.severity === 'critical')))
+              description = 'critical security flag: needs a human';
+            else if (run.conclusion !== 'success') description = `judge run ${run.conclusion}`;
+            else { state = 'success'; description = 'accept'; }
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner, repo: context.repo.repo, sha: run.head_sha,
+              state, context: 'omapak/judge', description, target_url: run.html_url,
             });
-            const dirs = new Set(files.map(f => f.filename.split('/').slice(0, 2).join('/')));
-            if (dirs.size !== 1 || ![...dirs][0].match(/^apps\/[^/]+$/)) return;
-
-            const { data: diff } = await github.rest.pulls.get({
-              owner: context.repo.owner, repo: context.repo.repo, pull_number: prNumber,
-              mediaType: { format: 'diff' },
-            });
-            const changed = diff.split('\n')
-              .filter(l => (l.startsWith('+') || l.startsWith('-')) && !l.startsWith('+++') && !l.startsWith('---'));
-            const safeLine = l => /^\s*(url|sha256|tag|commit|dest-filename|version):\s|^\s*#|^\s*<release /.test(l.slice(1));
-            if (!changed.every(safeLine)) {
-              core.notice('update PR touches more than pinned sources — leaving for review');
-              return;
-            }
-
-            const name = [...dirs][0].split('/')[1];
-            let report;
-            try { report = JSON.parse(require('fs').readFileSync(`final/${name}/report.json`, 'utf8')); }
-            catch { core.notice('no report for ' + name); return; }
-            // Report JSON is snake_case; verdict values are lowercase.
-            if (report.verdict !== 'published') return;
-            const critical = (report.rubric?.security_flags || [])
-              .some(f => f.severity === 'critical');
-            if (critical) return;
-
-            try {
-              await github.rest.pulls.merge({
-                owner: context.repo.owner, repo: context.repo.repo,
-                pull_number: prNumber, merge_method: 'merge',
-              });
-              core.notice(`auto-merged: ${pr.title}`);
-            } catch (e) {
-              core.warning(`auto-merge declined (${e.message}) — leaving for review`);
-            }

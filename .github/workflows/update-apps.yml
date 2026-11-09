@@ -3,8 +3,9 @@ name: update-apps
 # Daily sweep for upstream releases. Runs flatpak-external-data-checker
 # (flathub's own bot) over every manifest's x-checker-data; with --update
 # it edits, commits to a branch, and opens a PR per app with updates. Those
-# PRs go through the judge like any submission: a version bump that fails to
-# build or trips a gate does not merge. Auto-updates never bypass review.
+# PRs go through the judge like any submission; update-sweep.yml then closes
+# superseded ones and merges a standard update (judge passed, only source
+# pins moved, same upstream). Anything else waits for a human.
 #
 # Until 2026-11 this job never ran the checker. `pip install` of the git
 # repo installs no `flatpak-external-data-checker` command (upstream ships
