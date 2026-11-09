@@ -25,6 +25,18 @@
  },
  {
   "type": "archive",
+  "url": "https://registry.npmjs.org/@fontsource/ibm-plex-mono/-/ibm-plex-mono-5.3.0.tgz",
+  "sha512": "7938276636441a4d50b43dd9b2d17e55c968d872c09e2f18332df8fc3c6597066fcb3d6547fd5117fc53880aae3813bb32fa81c7c0f6220d9608f3157dd66eed",
+  "dest": "bun_cache/@fontsource/ibm-plex-mono@5.3.0@@@1"
+ },
+ {
+  "type": "archive",
+  "url": "https://registry.npmjs.org/@fontsource/ibm-plex-sans/-/ibm-plex-sans-5.3.0.tgz",
+  "sha512": "09b13809b6c4119257f3ad17c94891a6c92c5c8411f11a765c3bdad953b9dcd268c7db5536dbacaf2b1ddb1e58914118dc4ad0eba5b52228902fcff08a1870e7",
+  "dest": "bun_cache/@fontsource/ibm-plex-sans@5.3.0@@@1"
+ },
+ {
+  "type": "archive",
   "url": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz",
   "sha512": "da492dffb9e227a32010fc45d1b61d43a7ad65a03e7d0bc370b29c921cb5c8840ecdaa0a8c10634a3eb7fda2d58d8137aa146de5dbccfae5327c283a50a0816c",
   "dest": "bun_cache/@jridgewell/gen-mapping@0.3.13@@@1"
