@@ -51,8 +51,8 @@ modules:
         && cp -R share/doc/vectorcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/vectorcraft/releases/download/v0.21.1/vectorcraft-0.21.1-linux-x86_64.tar.gz
-        sha256: 383bba06fbde7cb87c7e137937ad516a9a585491c5a927d8631ee54bbf1d4e93
+        url: https://github.com/storytold/vectorcraft/releases/download/v0.23.0/vectorcraft-0.23.0-linux-x86_64.tar.gz
+        sha256: 07c24a6094fb457c665b95848d55bfbd05460354bc0eac9b4ec9f9467a8b1e31
         only-arches: [x86_64]
         x-checker-data:
           type: json
@@ -63,8 +63,8 @@ modules:
             + $version + "/vectorcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/vectorcraft/releases/download/v0.21.1/vectorcraft-0.21.1-linux-aarch64.tar.gz
-        sha256: 2e6f3026856b0f9609acb1529bb138dcda7bee2e34a285e06549937696ac3604
+        url: https://github.com/storytold/vectorcraft/releases/download/v0.23.0/vectorcraft-0.23.0-linux-aarch64.tar.gz
+        sha256: 6cd54b76ac0ac05fc8842b6fb13a2b3992faec499dc497b090279da0afea25e6
         only-arches: [aarch64]
         x-checker-data:
           type: json
