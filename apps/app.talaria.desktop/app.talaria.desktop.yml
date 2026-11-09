@@ -50,8 +50,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/outcrop-labs/talaria
-        tag: desktop-v0.11.0
-        commit: be5929d027ff17f91fbb73c0c335bd6d8a08d55a
+        tag: desktop-v0.12.0
+        commit: 631b2cf7ae4a496d9d53ad8e1738ee6cf54d50ec
       # rust 1.97.1: desktop/src-tauri/rust-toolchain.toml pins it (edition
       # 2024 + the tauri `unstable` multiwebview feature). Self-contained
       # dist tarball; the wrapper dir is auto-stripped on extract.
