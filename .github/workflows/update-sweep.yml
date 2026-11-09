@@ -1,0 +1,55 @@
+name: update-sweep
+
+# Clears the update bot's queue (policy: deploy/update-sweep.py). Per app it
+# closes superseded and stale update PRs and merges the newest when it is a
+# standard update: judge passed, the diff only moves checker-driven source
+# pins, and every url still points at the same upstream. Anything else
+# stays open with a comment saying why.
+on:
+  # Fast path: right after the checker opens PRs (closes the ones they
+  # supersede) and after every judge verdict (merges). The schedule is the
+  # backstop for a missed event.
+  workflow_run:
+    workflows: [update-apps, judge-report]
+    types: [completed]
+  schedule:
+    - cron: "47 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write        # delete closed update branches
+  pull-requests: write   # close, comment, approve
+  statuses: read         # the judge's omapak/judge verdict
+
+# Two sweeps racing would double-close and double-comment. A queued sweep
+# replacing another queued one loses nothing: each sweep reads the whole
+# queue.
+concurrency:
+  group: update-sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      # Default branch only: this job holds the merge token, so it runs
+      # main's sweep and reads PR content through the API as data.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: pip install -q pyyaml
+
+      - name: Sweep update PRs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # A merge pushed with GITHUB_TOKEN triggers no workflows, so
+          # publish.yml would never ship the update. Approval stays with
+          # github-actions[bot]; the token owner can't approve their own PRs.
+          MERGE_TOKEN: ${{ secrets.UPDATE_BOT_TOKEN }}
+        run: python3 deploy/update-sweep.py
