@@ -60,8 +60,8 @@ modules:
         && cp -R share/doc/effectcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/effectcraft/releases/download/v0.21.1/effectcraft-0.21.1-linux-x86_64.tar.gz
-        sha256: ec39afa51fb0a2c0b58a8c1102325e2355016fe754563d24075fa29b3e1c5315
+        url: https://github.com/storytold/effectcraft/releases/download/v0.23.0/effectcraft-0.23.0-linux-x86_64.tar.gz
+        sha256: 13d9ab23b75be7b8a71775cc9402e0f832280b166147467282557e9c6a21d3d2
         only-arches: [x86_64]
         x-checker-data:
           type: json
@@ -72,8 +72,8 @@ modules:
             + $version + "/effectcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/effectcraft/releases/download/v0.21.1/effectcraft-0.21.1-linux-aarch64.tar.gz
-        sha256: 77a91020eff524617fc9db4b7443c8fc22f7874f4b0c85b74b15fa0eebc825fe
+        url: https://github.com/storytold/effectcraft/releases/download/v0.23.0/effectcraft-0.23.0-linux-aarch64.tar.gz
+        sha256: b266f4713c8f860dd2bc847930413c0a2fa07f82c3f3752a40ca6d0cf00467b1
         only-arches: [aarch64]
         x-checker-data:
           type: json
