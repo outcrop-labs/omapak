@@ -46,8 +46,8 @@ modules:
     sources:
       # Tracked by the update sweep via x-checker-data.
       - type: file
-        url: https://github.com/ZenNotes/zennotes/releases/download/v2.82.0/ZenNotes-2.82.0-linux-x86_64.AppImage
-        sha256: b384dc73f964ae355dc8d50b66c3562e19eaed582fa08a458fed028768549218
+        url: https://github.com/ZenNotes/zennotes/releases/download/v2.83.0/ZenNotes-2.83.0-linux-x86_64.AppImage
+        sha256: 4d38da25481e4d0e63f43bb8be20fcfecb90e4703deb823a7bc55775ffee2f01
         dest-filename: ZenNotes.AppImage
         x-checker-data:
           type: json
