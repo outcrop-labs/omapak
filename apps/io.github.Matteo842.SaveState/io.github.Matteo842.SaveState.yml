@@ -59,9 +59,9 @@ modules:
     sources:
       - type: archive
         # LINK DIRETTO: Aggiornalo ogni volta che fai una nuova release
-        url: https://github.com/Matteo842/SaveState/releases/download/v3.2/SaveState_v3.2_Linux.tar.xz
+        url: https://github.com/Matteo842/SaveState/releases/download/v3.2.1/SaveState_v3.2.1_Linux.tar.xz
         # SHA256: Importante per la sicurezza (Flathub lo esige)
-        sha256: 1ade98946166b3730c131001a6d86e7ccdb32f174f5ef69734a57acc159d44f3
+        sha256: 7b38b9da0d5d7d7067b66727adccc607a3cc9e49ca7d645e5ff14abcea0354ce
         # v3.0 renamed the asset to SaveState_v<version>_Linux.tar.xz; the
         # checker will carry the jump (and the judge validates the repack).
         x-checker-data:
