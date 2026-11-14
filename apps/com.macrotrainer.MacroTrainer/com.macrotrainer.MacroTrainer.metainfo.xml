@@ -28,7 +28,7 @@
   </description>
 
   <launchable type="desktop-id">com.macrotrainer.MacroTrainer.desktop</launchable>
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
 
   <url type="homepage">https://macrotrainer.com</url>
   <url type="contact">https://macrotrainer.com</url>
@@ -67,6 +67,9 @@
   </screenshots>
 
   <releases>
+    <release version="1.18.1" date="2026-11-03">
+      <description></description>
+    </release>
     <release version="1.5.6" date="2026-08-07">
       <description>
         <p>Adds an intermittent fasting timer and renames the Coaching Hub tab to Coach.</p>
