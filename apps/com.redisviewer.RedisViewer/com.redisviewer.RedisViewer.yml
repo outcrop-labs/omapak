@@ -25,8 +25,8 @@ modules:
       - install -Dm644 com.redisviewer.RedisViewer.metainfo.xml /app/share/metainfo/com.redisviewer.RedisViewer.metainfo.xml
     sources:
       - type: archive
-        url: https://github.com/redisviewer/redisviewer/releases/download/v3.2.4/RedisViewer_3.2.4_linux_amd64_bin.tar.gz
-        sha256: af4eb138005373bbb7056e4a2958521f54577ab3daabbb7a804d0252ab78f6d0
+        url: https://github.com/redisviewer/redisviewer/releases/download/v3.4.1/RedisViewer_3.4.1_linux_amd64_bin.tar.gz
+        sha256: 164ee70447b77eb52dadbb91d2b72b9f64b0026ce9a8e07499917141ebde735e
         strip-components: 0
         only-arches:
           - x86_64
@@ -35,11 +35,12 @@ modules:
           url: https://api.github.com/repos/redisviewer/redisviewer/releases/latest
           version-query: .tag_name
           version-query-type: shell
-          url-query: '"https://github.com/redisviewer/redisviewer/releases/download/" + $version + "/RedisViewer_" + ($version | sub("^v"; "")) + "_linux_amd64_bin.tar.gz"'
+          url-query: '"https://github.com/redisviewer/redisviewer/releases/download/"
+            + $version + "/RedisViewer_" + ($version | sub("^v"; "")) + "_linux_amd64_bin.tar.gz"'
 
       - type: archive
-        url: https://github.com/redisviewer/redisviewer/releases/download/v3.2.4/RedisViewer_3.2.4_linux_arm64_bin.tar.gz
-        sha256: 1d778f073cc533af19a744595ab4b99642c427a2f325b4bb4b7b44b443895ae8
+        url: https://github.com/redisviewer/redisviewer/releases/download/v3.4.1/RedisViewer_3.4.1_linux_arm64_bin.tar.gz
+        sha256: 89d6611c43e8f1bde0c35728bb4dd4de226830dac89b02e4661f5f10b7a01cd1
         strip-components: 0
         only-arches:
           - aarch64
@@ -48,7 +49,8 @@ modules:
           url: https://api.github.com/repos/redisviewer/redisviewer/releases/latest
           version-query: .tag_name
           version-query-type: shell
-          url-query: '"https://github.com/redisviewer/redisviewer/releases/download/" + $version + "/RedisViewer_" + ($version | sub("^v"; "")) + "_linux_arm64_bin.tar.gz"'
+          url-query: '"https://github.com/redisviewer/redisviewer/releases/download/"
+            + $version + "/RedisViewer_" + ($version | sub("^v"; "")) + "_linux_arm64_bin.tar.gz"'
 
       - type: file
         path: com.redisviewer.RedisViewer.desktop
