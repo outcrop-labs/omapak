@@ -40,6 +40,9 @@
   </recommends>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="2.1.0" date="2026-11-13" type="stable">
+      <description><p>Plain-language errors with a next step and a clearer account setup; a date picker and 12/24-hour time entry; per-event colours; default reminders; copy and paste of events; Saturday week start, hidden weekends and declined events, and 2 to 6 day views; a first-run welcome, webcal links and drag-and-drop import; a backup button and command; new shortcuts with a cheat sheet; translations, plural forms and locale dates; a friendlier omacalendarctl. Fixes recurring Outlook and Exchange events, Google series edits, reminders after time-zone changes and for long-running series, and hardens the background service and network handling. The database upgrades to schema 4; back up first if you may return to 2.0.</p></description>
+    </release>
     <release version="2.0.2" date="2026-10-12" type="stable">
       <description><p>Security hardening: calendar data with excessive nesting or too many components is rejected before parsing, and the app refuses unsafe fallback runtime directories.</p></description>
     </release>
