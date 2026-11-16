@@ -34,6 +34,21 @@
   </categories>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="1.2.0" date="2026-11-13">
+      <description>
+        <p>
+          Target Music Assistant 2.10.9 and get ready for 2.11. Show and step
+          through chapters of the playing audiobook or episode, and start an
+          audiobook at a chosen chapter. Add a details pane for podcasts,
+          episodes and audiobooks, publish dates and season/episode numbers on
+          episode rows, and full paging of long shows. On Music Assistant 2.11,
+          filter unplayed episodes on the server, use the new sort and
+          favourites forms, and read transcripts that follow playback. Move the
+          embedded Sendspin client to 0.3.8. Physical desktop output and
+          media-key qualification remain unperformed.
+        </p>
+      </description>
+    </release>
     <release version="1.1.1" date="2026-10-09">
       <description>
         <p>
