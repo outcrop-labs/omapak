@@ -1,0 +1,19 @@
+submitter: joniler
+source_repo: https://github.com/outcrop-labs/workspaced
+summary: Several Google Workspace accounts signed in at once, in one window
+description: >-
+  Builds Workspaced from source at tag workspaced-v0.1.2: the SvelteKit
+  frontend is compiled offline from a populated pnpm store (node-sources.json)
+  and the Tauri v2 shell from vendored crates (cargo-sources.json), linked
+  against the WebKitGTK 4.1 that org.gnome.Platform//50 carries. Rust 1.90.0
+  (the app's own rust-toolchain.toml pin), node 26 and pnpm 12.3.4 enter as
+  sha-pinned source modules. cargo --features custom-protocol embeds the
+  built frontend. Accounts keep isolated WebKit sessions; the Omarchy theme
+  integration reads ~/.local/state/omarchy read-only. Calls and Meet need a
+  WebRTC webview, which WebKitGTK does not ship yet, so meeting links open in
+  a Chromium-family browser per account, or the default browser when none is
+  installed — the webview is expected to run calls itself once it ships
+  libwebrtc.
+license: MIT
+homepage: https://github.com/outcrop-labs/workspaced
+tags: [office, email]

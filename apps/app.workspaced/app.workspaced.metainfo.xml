@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>app.workspaced</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Workspaced</name>
+  <summary>Several Google Workspace accounts, signed in at once</summary>
+  <developer id="com.outcroplabs">
+    <name>Outcrop Labs</name>
+  </developer>
+  <description>
+    <p>
+      Workspaced keeps several Google Workspace accounts signed in at the same
+      time, one keystroke apart, each in its own isolated session — no more
+      signing out of one account to check another, and no more incognito
+      windows.
+    </p>
+    <p>
+      Pick an account in the rail and its apps open as tabs under it: Gmail,
+      Calendar, Drive, Docs, Sheets, Slides, Chat, Keep and the rest. Accounts
+      you are not using sleep on their own, holding their place with a small
+      unread feed instead of a full Gmail, and wake the moment you switch back.
+      New mail in a sleeping account arrives as a notification.
+    </p>
+    <ul>
+      <li>Any number of Google accounts, each with its own cookie jar</li>
+      <li>Per-account tabs across the Workspace apps, Alt+1–9 to switch</li>
+      <li>Idle accounts sleep and are polled for unread mail; one click wakes them</li>
+      <li>On Omarchy, every app is repainted in the system theme as it changes</li>
+      <li>Meet links open per account in a Chromium window, or the default browser when none is installed</li>
+      <li>mailto: links land in the right account's Gmail</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">app.workspaced.desktop</launchable>
+  <url type="homepage">https://github.com/outcrop-labs/workspaced</url>
+  <url type="bugtracker">https://github.com/outcrop-labs/workspaced/issues</url>
+  <url type="vcs-browser">https://github.com/outcrop-labs/workspaced</url>
+  <categories>
+    <category>Office</category>
+    <category>Email</category>
+    <category>Network</category>
+  </categories>
+  <keywords>
+    <keyword>gmail</keyword>
+    <keyword>google</keyword>
+    <keyword>workspace</keyword>
+    <keyword>calendar</keyword>
+    <keyword>drive</keyword>
+    <keyword>docs</keyword>
+    <keyword>multi-account</keyword>
+  </keywords>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="0.1.2" date="2026-11-03">
+      <description>
+        <p>
+          A page whose web process dies — a renderer crash the sandbox cannot
+          keep quiet — is now loaded again automatically, up to three times in
+          two minutes. A tab that keeps dying is marked with a red ring in the
+          sidebar, and clicking it reloads; reloading goes through WebKit
+          itself rather than a script, which a dead process cannot run.
+        </p>
+      </description>
+    </release>
+    <release version="0.1.1" date="2026-10-16">
+      <description>
+        <p>
+          On systems where no Chromium-family browser is installed — inside a
+          Flatpak sandbox, among others — Meet links and calls now open in the
+          default browser instead of doing nothing, with the account they came
+          from named in the URL.
+        </p>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-10-15">
+      <description>
+        <p>First public release.</p>
+      </description>
+    </release>
+  </releases>
+</component>
