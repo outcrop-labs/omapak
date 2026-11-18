@@ -6,7 +6,7 @@
 # on the first try) — so nothing but the app itself ships. The rust pin is
 # the app's own (rust-toolchain.toml); node and pnpm are the versions the
 # app's CI builds with (.node-version, packageManager).
-app-id: app.workspaced
+app-id: com.outcroplabs.Workspaced
 runtime: org.gnome.Platform
 runtime-version: '50'
 sdk: org.gnome.Sdk
@@ -80,9 +80,9 @@ modules:
           [source.crates-io]
           replace-with = "vendored-sources"
       - type: file
-        path: app.workspaced.desktop
+        path: com.outcroplabs.Workspaced.desktop
       - type: file
-        path: app.workspaced.metainfo.xml
+        path: com.outcroplabs.Workspaced.metainfo.xml
     build-commands:
       - ./rust-dist/install.sh --prefix=/run/build/workspaced/toolchain --without=rust-docs
       - install -Dm755 node-dist/bin/node /run/build/workspaced/toolchain/bin/node
@@ -97,11 +97,11 @@ modules:
       - cd src-tauri && cargo build --release --offline --locked --features custom-protocol
       - install -Dm755 src-tauri/target/release/workspaced /app/bin/workspaced
       # Icons: flatpak looks these up by app id, not binary name.
-      - install -Dm644 src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/app.workspaced.png
-      - install -Dm644 src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/app.workspaced.png
-      - install -Dm644 src-tauri/icons/128x128@2x.png /app/share/icons/hicolor/256x256/apps/app.workspaced.png
-      - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/512x512/apps/app.workspaced.png
-      - install -Dm644 app.workspaced.desktop /app/share/applications/app.workspaced.desktop
-      - install -Dm644 app.workspaced.metainfo.xml /app/share/metainfo/app.workspaced.metainfo.xml
-      - desktop-file-validate /app/share/applications/app.workspaced.desktop
-      - appstreamcli validate --no-net /app/share/metainfo/app.workspaced.metainfo.xml
+      - install -Dm644 src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/com.outcroplabs.Workspaced.png
+      - install -Dm644 src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/com.outcroplabs.Workspaced.png
+      - install -Dm644 src-tauri/icons/128x128@2x.png /app/share/icons/hicolor/256x256/apps/com.outcroplabs.Workspaced.png
+      - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/512x512/apps/com.outcroplabs.Workspaced.png
+      - install -Dm644 com.outcroplabs.Workspaced.desktop /app/share/applications/com.outcroplabs.Workspaced.desktop
+      - install -Dm644 com.outcroplabs.Workspaced.metainfo.xml /app/share/metainfo/com.outcroplabs.Workspaced.metainfo.xml
+      - desktop-file-validate /app/share/applications/com.outcroplabs.Workspaced.desktop
+      - appstreamcli validate --no-net /app/share/metainfo/com.outcroplabs.Workspaced.metainfo.xml

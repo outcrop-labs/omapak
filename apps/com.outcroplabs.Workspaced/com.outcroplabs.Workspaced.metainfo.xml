@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>app.workspaced</id>
+  <id>com.outcroplabs.Workspaced</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
   <name>Workspaced</name>
@@ -31,7 +31,7 @@
       <li>mailto: links land in the right account's Gmail</li>
     </ul>
   </description>
-  <launchable type="desktop-id">app.workspaced.desktop</launchable>
+  <launchable type="desktop-id">com.outcroplabs.Workspaced.desktop</launchable>
   <url type="homepage">https://github.com/outcrop-labs/workspaced</url>
   <url type="bugtracker">https://github.com/outcrop-labs/workspaced/issues</url>
   <url type="vcs-browser">https://github.com/outcrop-labs/workspaced</url>
