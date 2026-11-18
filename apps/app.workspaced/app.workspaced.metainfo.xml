@@ -51,6 +51,19 @@
   </keywords>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="0.1.3" date="2026-11-17">
+      <description>
+        <p>
+          A session that Google drops no longer strands a tab on a marketing
+          page: the view is sent back to the sign-in page, aimed at the app it
+          was showing, so signing in again lands where the old session was.
+          The ad-tracking hops in Google's sign-out journeys stay inside the
+          app instead of being handed to the system browser, where content
+          blockers break them, and a signed-out account's unread check backs
+          off from every two minutes to every fifteen.
+        </p>
+      </description>
+    </release>
     <release version="0.1.2" date="2026-11-03">
       <description>
         <p>
