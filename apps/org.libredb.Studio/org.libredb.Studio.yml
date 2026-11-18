@@ -101,8 +101,8 @@ modules:
       - type: file
         only-arches:
           - x86_64
-        url: https://github.com/libredb/libredb-studio/releases/download/1.2.0/libredb-studio-desktop-1.2.0-linux-x64.AppImage
-        sha256: "81cf1d32f34fcc90a1d51148a29b9a804f70227372fa42654eae32c7a5ed695f"
+        url: https://github.com/libredb/libredb-studio/releases/download/1.3.0/libredb-studio-desktop-1.3.0-linux-x64.AppImage
+        sha256: "738bb92202fd62db94b42bce00eda1de48c655264e7a2a72f8208739ef76b16a"
         dest-filename: libredb-studio.AppImage
         x-checker-data:
           type: json
@@ -114,8 +114,8 @@ modules:
       - type: file
         only-arches:
           - aarch64
-        url: https://github.com/libredb/libredb-studio/releases/download/1.2.0/libredb-studio-desktop-1.2.0-linux-arm64.AppImage
-        sha256: "25795c6ef77283e2ffff50def736c9272702d78648a98a6f17ef1d45eb1e26d2"
+        url: https://github.com/libredb/libredb-studio/releases/download/1.3.0/libredb-studio-desktop-1.3.0-linux-arm64.AppImage
+        sha256: "9ca816d36bab578d16e6d20f8708994ff6b9c6bf55a38b050d3a6bf475cbb081"
         dest-filename: libredb-studio.AppImage
         x-checker-data:
           type: json
