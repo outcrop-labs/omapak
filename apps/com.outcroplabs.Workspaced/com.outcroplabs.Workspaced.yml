@@ -46,7 +46,9 @@ modules:
         # must live here rather than in an `export` line
         PATH: /run/build/workspaced/toolchain/bin:/app/bin:/usr/bin
         CARGO_HOME: /run/build/workspaced/cargo
-        npm_config_store_dir: /run/build/workspaced/pnpm-store
+        # pnpm reads its registry-metadata mirror from the state cache, so
+        # the vendored one has to be where it looks.
+        XDG_CACHE_HOME: /run/build/workspaced/flatpak-node/pnpm-cache
     sources:
       - type: git
         url: https://github.com/outcrop-labs/workspaced
@@ -68,8 +70,18 @@ modules:
         dest: pnpm-dist
         url: https://registry.npmjs.org/@pnpm/exe.linux-x64/-/exe.linux-x64-12.3.4.tgz
         sha512: d99a8e9523e47f05f5879711f853e259ff3e17eda1653ff74ef8542b9b22807ab06900888aaf11ec21b186774ab3adc9b5c2e2d9ad50a68fb05ff128c9f8f225
+      # The pnpm store and the registry metadata mirror, for the offline
+      # install below. Built with the app's own pnpm against this tag's
+      # lockfile: `pnpm fetch --store-dir pnpm-store`, then one online
+      # `pnpm install` with an empty XDG_CACHE_HOME, then the abbreviated
+      # metadata it wrote (pnpm/v11/metadata) copied over the near-empty
+      # metadata-full, because --offline resolution reads metadata-full even
+      # with --frozen-lockfile. Both trees tarred onto the release.
+      - type: archive
+        dest: flatpak-node
+        url: https://github.com/outcrop-labs/workspaced/releases/download/workspaced-v0.1.3/pnpm-offline-v0.1.3.tar.xz
+        sha256: 98f20eee4db8f700b490832476a724a6774e8fd9911da2bcd9dee63065cdc27b
       - cargo-sources.json
-      - node-sources.json
       - type: inline
         dest: cargo
         dest-filename: config.toml
@@ -90,7 +102,7 @@ modules:
       # The frontend, offline from the populated pnpm store. The tauri build
       # would run this itself via beforeBuildCommand, but the toolchain is
       # already on PATH here and pnpm is idempotent.
-      - pnpm install --frozen-lockfile --offline
+      - pnpm install --frozen-lockfile --offline --store-dir /run/build/workspaced/flatpak-node/pnpm-store
       - pnpm build
       # The shell: generate_context! embeds ../build. --features custom-protocol
       # makes cargo --release a production webview.
