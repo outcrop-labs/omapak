@@ -62,8 +62,8 @@ modules:
         && cp -R share/doc/filmcraft /app/share/doc/
     sources:
       - type: archive
-        url: https://github.com/storytold/filmcraft/releases/download/v0.17.1/filmcraft-0.17.1-linux-x86_64.tar.gz
-        sha256: 397ae9fece559b37863b4b076af46a63b6e4387c35f781709e4efad14fe71ebe
+        url: https://github.com/storytold/filmcraft/releases/download/v0.19.0/filmcraft-0.19.0-linux-x86_64.tar.gz
+        sha256: 76149343c19700ba6ac905fde8a019e0917d06507f426a5938396d97a1ca2124
         only-arches: [x86_64]
         x-checker-data:
           type: json
@@ -74,8 +74,8 @@ modules:
             + $version + "/filmcraft-" + $version + "-linux-x86_64.tar.gz"'
           is-main-source: true
       - type: archive
-        url: https://github.com/storytold/filmcraft/releases/download/v0.17.1/filmcraft-0.17.1-linux-aarch64.tar.gz
-        sha256: 225d6d815fad8cdfb720b5ce382196b60edd6ee10a9216660bcdabb28beaaa95
+        url: https://github.com/storytold/filmcraft/releases/download/v0.19.0/filmcraft-0.19.0-linux-aarch64.tar.gz
+        sha256: 7e9e857325be2b6197b57e2a21fcf8faf45fa42644c79eebed1fb734c3f8bed7
         only-arches: [aarch64]
         x-checker-data:
           type: json
