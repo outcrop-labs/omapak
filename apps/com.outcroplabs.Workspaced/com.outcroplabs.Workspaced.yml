@@ -1,0 +1,111 @@
+# Workspaced — source build at tag workspaced-v0.1.3. GNOME's runtime is the
+# one that carries WebKitGTK 4.1, which the shell links against. The rust,
+# node and pnpm toolchains enter as sha-pinned source modules and install
+# into the build dir — never /app, where flatpak-builder's eu-strip pass
+# corrupts rustc's DWARF 5 libs (libLLVM came out with "no loadable segments"
+# on the first try) — so nothing but the app itself ships. The rust pin is
+# the app's own (rust-toolchain.toml); node and pnpm are the versions the
+# app's CI builds with (.node-version, packageManager).
+app-id: com.outcroplabs.Workspaced
+runtime: org.gnome.Platform
+runtime-version: '50'
+sdk: org.gnome.Sdk
+command: workspaced
+
+finish-args:
+  - --share=network # the app's whole point: Google Workspace in webviews
+  - --share=ipc # WebKit shares buffers with the compositor
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri # WebKit composites on the GPU wherever it can
+  # The sandbox's render node is not the host driver's: WebKit's DMABUF
+  # renderer dies on a Wayland protocol error before a window exists, and a
+  # .desktop launch is silent. The app does not set this itself yet, so the
+  # manifest carries it, as Talaria's did before the app grew the same line.
+  - --env=WEBKIT_DISABLE_DMABUF_RENDERER=1
+  # notify-rust speaks the legacy org.freedesktop.Notifications interface
+  # directly — it has no portal path, so without this the show() call fails
+  # inside the sandbox and no new-mail banner ever appears.
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.freedesktop.portal.* # external links, mailto, reveal download
+  # Google downloads belong in the user's downloads folder.
+  - --filesystem=xdg-download
+  # The Omarchy theme: colors.toml, theme.name and the current symlink,
+  # watched with inotify so a theme switch repaints the pages live.
+  - --filesystem=~/.local/state/omarchy:ro
+  # The gsettings read for the desktop font needs the dconf service.
+  - --filesystem=xdg-run/dconf
+  - --talk-name=ca.desrt.dconf
+
+modules:
+  - name: workspaced
+    buildsystem: simple
+    build-options:
+      env:
+        # each build-command runs as its own shell, so the toolchain path
+        # must live here rather than in an `export` line
+        PATH: /run/build/workspaced/toolchain/bin:/app/bin:/usr/bin
+        CARGO_HOME: /run/build/workspaced/cargo
+        # pnpm reads its registry-metadata mirror from the state cache, so
+        # the vendored one has to be where it looks.
+        XDG_CACHE_HOME: /run/build/workspaced/flatpak-node/pnpm-cache
+    sources:
+      - type: git
+        url: https://github.com/outcrop-labs/workspaced
+        tag: workspaced-v0.1.3
+        commit: 936e1f80892a93558629d40d5de19a1da3cf87d5
+      # rust 1.90.0: src-tauri/rust-toolchain.toml pins it. Self-contained
+      # dist tarball.
+      - type: archive
+        dest: rust-dist
+        url: https://static.rust-lang.org/dist/rust-1.90.0-x86_64-unknown-linux-gnu.tar.xz
+        sha256: bff8974f2d3ee6c0e6ac926b533f65bbdd3697d2c2b925bdae5f45b9eed10a67
+      # node 26: .node-version pins 26.
+      - type: archive
+        dest: node-dist
+        url: https://nodejs.org/dist/v26.12.0/node-v26.12.0-linux-x64.tar.xz
+        sha256: fd47865ecd6391ebb431fc815e01b9135bf83ded5cf373247e9331e196b7aded
+      # pnpm 12.3.4: packageManager pins it. The self-contained binary.
+      - type: archive
+        dest: pnpm-dist
+        url: https://registry.npmjs.org/@pnpm/exe.linux-x64/-/exe.linux-x64-12.3.4.tgz
+        sha512: d99a8e9523e47f05f5879711f853e259ff3e17eda1653ff74ef8542b9b22807ab06900888aaf11ec21b186774ab3adc9b5c2e2d9ad50a68fb05ff128c9f8f225
+      # The pnpm store and the registry metadata mirror, for the offline
+      # install below. Built with the app's own pnpm against this tag's
+      # lockfile: `pnpm fetch --store-dir pnpm-store`, then one online
+      # `pnpm install` with an empty XDG_CACHE_HOME, then the abbreviated
+      # metadata it wrote (pnpm/v11/metadata) copied over the near-empty
+      # metadata-full, because --offline resolution reads metadata-full even
+      # with --frozen-lockfile. Both trees tarred onto the release.
+      - type: archive
+        dest: flatpak-node
+        url: https://github.com/outcrop-labs/workspaced/releases/download/workspaced-v0.1.3/pnpm-offline-v0.1.3.tar.xz
+        sha256: 98f20eee4db8f700b490832476a724a6774e8fd9911da2bcd9dee63065cdc27b
+      - cargo-sources.json
+      - type: file
+        path: com.outcroplabs.Workspaced.desktop
+      - type: file
+        path: com.outcroplabs.Workspaced.metainfo.xml
+    build-commands:
+      - ./rust-dist/install.sh --prefix=/run/build/workspaced/toolchain --without=rust-docs
+      - install -Dm755 node-dist/bin/node /run/build/workspaced/toolchain/bin/node
+      - install -Dm755 pnpm-dist/pnpm /run/build/workspaced/toolchain/bin/pnpm
+      # The frontend, offline from the populated pnpm store. The tauri build
+      # would run this itself via beforeBuildCommand, but the toolchain is
+      # already on PATH here and pnpm is idempotent.
+      - pnpm install --frozen-lockfile --offline --store-dir /run/build/workspaced/flatpak-node/pnpm-store
+      - pnpm build
+      # The shell: generate_context! embeds ../build. tauri/custom-protocol
+      # makes cargo --release a production webview; the feature belongs to
+      # the tauri crate, not this package.
+      - cd src-tauri && cargo build --release --offline --locked --features tauri/custom-protocol
+      - install -Dm755 src-tauri/target/release/workspaced /app/bin/workspaced
+      # Icons: flatpak looks these up by app id, not binary name.
+      - install -Dm644 src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/com.outcroplabs.Workspaced.png
+      - install -Dm644 src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/com.outcroplabs.Workspaced.png
+      - install -Dm644 src-tauri/icons/128x128@2x.png /app/share/icons/hicolor/256x256/apps/com.outcroplabs.Workspaced.png
+      - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/512x512/apps/com.outcroplabs.Workspaced.png
+      - install -Dm644 com.outcroplabs.Workspaced.desktop /app/share/applications/com.outcroplabs.Workspaced.desktop
+      - install -Dm644 com.outcroplabs.Workspaced.metainfo.xml /app/share/metainfo/com.outcroplabs.Workspaced.metainfo.xml
+      - desktop-file-validate /app/share/applications/com.outcroplabs.Workspaced.desktop
+      - appstreamcli validate --no-net /app/share/metainfo/com.outcroplabs.Workspaced.metainfo.xml
